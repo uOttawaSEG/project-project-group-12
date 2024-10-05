@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "EAMS"
+rootProject.name = "Event Attendance Management System"
 include(":app")
  
