@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">My Application</string>
+
+    <string name="LoginButton">Button 1</string>
+    <string name="RegisterButton">Button 2</string>
+    <string name="welcome_to_eams">Welcome to EAMS</string>
+    <string name="organizer">Organizer</string>
+    <string name="registering_as">Registering as:</string>
+    <string name="attendee">Attendee</string>
+    <string name="confirm_sign_up">Confirm sign up</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="first_name">First Name</string>
+    <string name="phone_number">Phone number</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="last_name">Last Name</string>
+    <string name="address">Address</string>
+    <string name="sign_up">Sign Up</string>
+
+
 </resources>
