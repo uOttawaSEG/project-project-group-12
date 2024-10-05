@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EAMS"
         tools:targetApi="31">
+
+        <activity android:name=".ActivityOrganizer" />
+        <activity android:name=".ActivityAttendee" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
