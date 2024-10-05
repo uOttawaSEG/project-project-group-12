@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.uottawa.eams"
+    namespace = "com.example.myapplication"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.uottawa.eams"
+        applicationId = "com.example.myapplication"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

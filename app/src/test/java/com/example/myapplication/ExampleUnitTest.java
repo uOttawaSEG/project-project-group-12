@@ -1,4 +1,4 @@
-package com.uottawa.eams;
+package com.example.myapplication;
 
 import org.junit.Test;
 
