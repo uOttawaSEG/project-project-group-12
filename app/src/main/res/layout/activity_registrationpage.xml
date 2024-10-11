@@ -5,13 +5,42 @@
     android:id="@id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".Registrationpage">
+
+    <ImageView
+        android:id="@+id/tmpBackground"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/tmpbackground" />
+
+    <Button
+        android:id="@+id/backBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="162dp"
+        android:layout_marginTop="667dp"
+        android:layout_marginEnd="161dp"
+        android:layout_marginBottom="16dp"
+        android:text="BACK"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/topText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/sign_up"
+        android:textColor="@color/cardview_dark_background"
+        android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,15 +52,16 @@
         android:layout_width="373dp"
         android:layout_height="52dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="60dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="536dp"
+        android:layout_marginEnd="22dp"
+        android:layout_marginBottom="143dp"
         android:ems="10"
         android:hint="@string/address"
         android:inputType="textPostalAddress"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ConfirmPassword" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/lastName"
@@ -40,9 +70,11 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="244dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="430dp"
         android:ems="10"
         android:hint="@string/last_name"
         android:inputType="text"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -55,9 +87,11 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="300dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="378dp"
         android:ems="10"
         android:hint="@string/email"
         android:inputType="textEmailAddress"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -70,9 +104,11 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="356dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="311dp"
         android:ems="10"
         android:hint="@string/password"
         android:inputType="textPassword"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -85,9 +121,11 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="476dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="198dp"
         android:ems="10"
         android:hint="@string/phone_number"
         android:inputType="phone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -100,9 +138,11 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="188dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="488dp"
         android:ems="10"
         android:hint="@string/first_name"
         android:inputType="text"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -115,9 +155,11 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="420dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="256dp"
         android:ems="10"
         android:hint="@string/confirm_password"
         android:inputType="textPassword"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -127,15 +169,18 @@
         android:id="@+id/ConfirmSignUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="130dp"
+        android:layout_marginTop="604dp"
+        android:layout_marginEnd="131dp"
+        android:layout_marginBottom="79dp"
         android:text="@string/confirm_sign_up"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.944" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <RadioGroup
+        android:id="@+id/radioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -149,12 +194,12 @@
         <RadioButton
             android:layout_width="128dp"
             android:layout_height="match_parent"
-            android:text="@string/attendee"/>
+            android:text="@string/attendee" />
 
         <RadioButton
             android:layout_width="141dp"
             android:layout_height="match_parent"
-            android:text="@string/organizer"/>
+            android:text="@string/organizer" />
 
     </RadioGroup>
 
