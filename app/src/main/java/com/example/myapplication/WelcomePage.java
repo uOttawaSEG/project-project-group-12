@@ -11,34 +11,27 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class RegistrationPage extends AppCompatActivity {
+public class WelcomePage extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_registrationpage);
+        setContentView(R.layout.activity_welcome_page);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        Button backButton = findViewById(R.id.backBtn);
+        Button logOutButton = findViewById(R.id.logOutBtn);
 
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(RegistrationPage.this, LoginPage.class));
-            }
-        });
-
-        /*
-        Button button2 = findViewById(R.id.ConfirmSignUp);
-        button1.setOnClickListener(new View.OnClickListener() {
-
-        });
-
-         */
+        logOutButton.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            startActivity(new Intent(WelcomePage.this, LoginPage.class));
+        }
+    });
     }
 }

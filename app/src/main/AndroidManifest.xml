@@ -23,7 +23,7 @@
         </activity>
 
         <activity
-            android:name=".Registrationpage"
+            android:name=".RegistrationPage"
             android:exported="false" />
 
     </application>
