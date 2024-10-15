@@ -81,6 +81,7 @@ public class RegistrationPage extends AppCompatActivity {
         confirmPasswordField = findViewById(R.id.confirmPassword);
         addressField = findViewById(R.id.Address);
         phoneNumberField = findViewById(R.id.PhoneNumber);
+        organizationNameField = findViewById(R.id.organizationNameField);
         radioGroupField = findViewById(R.id.radioGroup);
         organizerRadioButton = findViewById(R.id.organizerRadioButton);
         attendeeRadioButton = findViewById(R.id.attendeeRadioButton);
