@@ -28,9 +28,9 @@ public class LoginPage extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login_page);
 
-        //Extract the login credentials
+        // Extract the login credentials
         EditText email = findViewById(R.id.editTextEmailAddress);
-        EditText password = findViewById(R.id.editTextPassword);
+        editTextPassword = findViewById(R.id.editTextPassword); // Initialize editTextPassword here
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -40,66 +40,55 @@ public class LoginPage extends AppCompatActivity {
 
         // Button to switch to registration
         Button button1 = findViewById(R.id.registerButton);
+        button1.setOnClickListener(v -> startActivity(new Intent(LoginPage.this, RegistrationPage.class)));
 
-        button1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(LoginPage.this, RegistrationPage.class));
-            }
-        });
-
-        //Button to confirm login
+        // Button to confirm login
         Button button2 = findViewById(R.id.LoginBtn);
-        button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        button2.setOnClickListener(v -> {
 
-                //check if credentials are right before proceeding
-                boolean verified = checkCredentials(email, password);
+            // Check if credentials are right before proceeding
+            boolean verified = checkCredentials(email, editTextPassword);
 
-                if(verified){
-                    //passes on role and name of the user to welcome page
-                    String userRole = determineRole();
-                    Intent intent =new Intent(LoginPage.this, WelcomePage.class);
-                    intent.putExtra("userRole", userRole);
-                    startActivity(intent);
-                }
-                else{
-                    //shows toast message if not credentials not verified
-                    Toast.makeText(LoginPage.this, "Login failed. Try again.", Toast.LENGTH_SHORT).show();
-                }
+            if (verified) {
+                // Passes on role and name of the user to the welcome page
+                String userRole = determineRole();
+                Intent intent = new Intent(LoginPage.this, WelcomePage.class);
+                intent.putExtra("userRole", userRole);
+                startActivity(intent);
+            } else {
+                // Shows toast message if credentials are not verified
+                Toast.makeText(LoginPage.this, "Login failed. Try again.", Toast.LENGTH_SHORT).show();
             }
         });
 
-        //Password visibility Switch
+        // Password visibility Switch
         EyeSw = findViewById(R.id.EyeSw);
 
-        EyeSw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        EyeSw.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (editTextPassword != null) { //Ensure editTextPassword is not null
                 if (editTextPassword.getTransformationMethod().equals(HideReturnsTransformationMethod.getInstance())) {
-
+                    //If the password is visible, hide it
                     editTextPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
                     EyeSw.getTrackDrawable().setTint(getResources().getColor(android.R.color.holo_red_light));
                 } else {
+                    //If the password is hidden, show it
                     editTextPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
                     EyeSw.getTrackDrawable().setTint(getResources().getColor(android.R.color.holo_green_light));
                 }
-
                 editTextPassword.setSelection(editTextPassword.getText().length());
             }
         });
     }
 
-    //Determine whether role is attendee/organize
-    private String determineRole(){
-        //logic to extract role
+    // Determine whether the role is attendee/organizer
+    private String determineRole() {
+        // Logic to extract role
         return "Attendee";
     }
 
-    //Checks if credentials are right
-    private boolean checkCredentials(EditText email, EditText password){
-        //logic to verify the credentials
+    // Checks if credentials are right
+    private boolean checkCredentials(EditText email, EditText password) {
+        // Logic to verify the credentials
         return true;
     }
 }
