@@ -24,15 +24,12 @@
         android:id="@+id/backBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="162dp"
-        android:layout_marginTop="667dp"
-        android:layout_marginEnd="161dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="288dp"
         android:text="BACK"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/tmpBackground"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.948" />
 
     <TextView
         android:id="@+id/topText"
@@ -169,13 +166,10 @@
         android:id="@+id/ConfirmSignUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="130dp"
-        android:layout_marginTop="604dp"
-        android:layout_marginEnd="131dp"
-        android:layout_marginBottom="79dp"
+        android:layout_marginTop="648dp"
         android:text="@string/confirm_sign_up"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.839"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -192,11 +186,13 @@
 
 
         <RadioButton
+            android:id="@+id/attendeeRadioButton"
             android:layout_width="128dp"
             android:layout_height="match_parent"
             android:text="@string/attendee" />
 
         <RadioButton
+            android:id="@+id/organizerRadioButton"
             android:layout_width="141dp"
             android:layout_height="match_parent"
             android:text="@string/organizer" />
@@ -213,5 +209,20 @@
         app:layout_constraintHorizontal_bias="0.248"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/organizationNameField"
+        android:layout_width="375dp"
+        android:layout_height="49dp"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Organization Name"
+        app:layout_constraintBottom_toBottomOf="@+id/tmpBackground"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.444"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.862"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

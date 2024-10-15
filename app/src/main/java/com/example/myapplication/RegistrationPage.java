@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,7 +32,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class RegistrationPage extends AppCompatActivity {
 
     //form Field
-    private EditText firstNameField, lastNameField, emailField, passwordField, confirmPasswordField, addressField, phoneNumberField;
+    private EditText firstNameField, lastNameField, emailField, passwordField, confirmPasswordField, addressField, phoneNumberField, organizationNameField;
     private RadioGroup radioGroupField;
 
     // Firebase Authentication and database reference
@@ -79,6 +81,18 @@ public class RegistrationPage extends AppCompatActivity {
         addressField = findViewById(R.id.Address);
         phoneNumberField = findViewById(R.id.PhoneNumber);
         radioGroupField = findViewById(R.id.radioGroup);
+
+        radioGroupField.setOnCheckedChangeListener((group, checkedId) -> {
+            if(checkedId == R.id.organizerRadioButton) {
+                //field fades in when selecting organizer
+                fadeInView(organizationNameField);
+            }
+            else{
+                //field fades out if selected attendee (or stays hidden in the first place)
+                fadeOutView(organizationNameField);
+            }
+        });
+
 
         // Initialize Firebase Authentication and  database reference
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
@@ -222,5 +236,28 @@ public class RegistrationPage extends AppCompatActivity {
 
         return allFieldsValid;
     }
+
+    //creating the two methods to fadeIn/fadeOut the organizationNameField
+    private void fadeInView(EditText randomField){
+        randomField.setVisibility(View.VISIBLE);
+        randomField.setAlpha(0f);
+        randomField.animate()
+                .alpha(1f)
+                .setDuration(300)
+                .setListener(null);
+    }
+    //creating the two methods to fadeIn/fadeOut the organizationNameField
+    private void fadeOutView(EditText randomField){
+        randomField.animate()
+                .alpha(0f)
+                .setDuration(300)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        randomField.setVisibility(View.GONE);
+                    }
+                });
+    }
+
 
 }
