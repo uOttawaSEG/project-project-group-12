@@ -10,6 +10,7 @@ activity = "1.9.2"
 constraintlayout = "2.1.4"
 firebaseAuth = "23.0.0"
 firebaseFirestore = "25.1.0"
+googleGmsGoogleServices = "4.4.2"
 
 [libraries]
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
