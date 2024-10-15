@@ -218,7 +218,7 @@
         android:layout_height="49dp"
         android:ems="10"
         android:inputType="text"
-        android:text="Organization Name"
+        android:hint="Organization Name"
         app:layout_constraintBottom_toBottomOf="@+id/tmpBackground"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.444"
