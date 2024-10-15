@@ -219,12 +219,12 @@
         android:ems="10"
         android:inputType="text"
         android:text="Organization Name"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/tmpBackground"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.444"
+        app:layout_constraintHorizontal_bias="0.361"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.862"
-        android:visibility="gone"/>
+        app:layout_constraintVertical_bias="0.848" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
