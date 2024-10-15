@@ -133,7 +133,7 @@
     <Button
         android:id="@+id/LoginBtn"
         android:layout_height="46dp"
-        android:layout_width="30dp"
+        android:layout_width="120dp"
         android:layout_marginTop="412dp"
         android:layout_marginBottom="273dp"
         android:text="Log in"
