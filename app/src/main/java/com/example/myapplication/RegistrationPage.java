@@ -34,6 +34,7 @@ public class RegistrationPage extends AppCompatActivity {
     //form Field
     private EditText firstNameField, lastNameField, emailField, passwordField, confirmPasswordField, addressField, phoneNumberField, organizationNameField;
     private RadioGroup radioGroupField;
+    private RadioButton organizerRadioButton, attendeeRadioButton;
 
     // Firebase Authentication and database reference
     private DatabaseReference mDatabase;
@@ -81,7 +82,11 @@ public class RegistrationPage extends AppCompatActivity {
         addressField = findViewById(R.id.Address);
         phoneNumberField = findViewById(R.id.PhoneNumber);
         radioGroupField = findViewById(R.id.radioGroup);
+        organizerRadioButton = findViewById(R.id.organizerRadioButton);
+        attendeeRadioButton = findViewById(R.id.attendeeRadioButton);
 
+
+        //setting up the onCheckedChangeListener for the radioGroup
         radioGroupField.setOnCheckedChangeListener((group, checkedId) -> {
             if(checkedId == R.id.organizerRadioButton) {
                 //field fades in when selecting organizer
