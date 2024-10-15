@@ -31,7 +31,7 @@ public class RegistrationPage extends AppCompatActivity {
 
     //form Field
     private EditText firstNameField, lastNameField, emailField, passwordField, confirmPasswordField, addressField, phoneNumberField;
-    private RadioGroup radioGroup;
+    private RadioGroup radioGroupField;
 
     // Firebase Authentication and database reference
     private DatabaseReference mDatabase;
@@ -78,7 +78,7 @@ public class RegistrationPage extends AppCompatActivity {
         confirmPasswordField = findViewById(R.id.confirmPassword);
         addressField = findViewById(R.id.Address);
         phoneNumberField = findViewById(R.id.PhoneNumber);
-        radioGroup = findViewById(R.id.radioGroup);
+        radioGroupField = findViewById(R.id.radioGroup);
 
         // Initialize Firebase Authentication and  database reference
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
@@ -134,8 +134,17 @@ public class RegistrationPage extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             String userId = user.getUid();
 
-                            User userInfo = new User(firstName,lastName,phoneNumber,address);
-                            mDatabase.child("users").child(userId).setValue(userInfo);
+                            // Attendee or  Organizer  - idk the id -_- could guess but nah -> tho prolly better
+                            String userType = ((RadioButton)findViewById(radioGroupField.getCheckedRadioButtonId())).getText().toString();
+
+                            if ( userType.equals("attendee")){
+                                Attendee userInfo = new Attendee(firstName,lastName,phoneNumber,address);
+                                mDatabase.child("users").child(userId).setValue(userInfo);
+                            } else {
+                                Organizer userInfo = new Organizer(firstName,lastName,phoneNumber,address,"OrgName-bruh");
+                                mDatabase.child("users").child(userId).setValue(userInfo);
+                            }
+
 
                             //TODO  redirect to welcome page
 
@@ -205,7 +214,7 @@ public class RegistrationPage extends AppCompatActivity {
         }
 
         //check if user selected a identity
-        if (radioGroup.getCheckedRadioButtonId() == -1) {
+        if (radioGroupField.getCheckedRadioButtonId() == -1) {
             Toast.makeText(RegistrationPage.this, "Please select registering as Attendee or Organizer", Toast.LENGTH_SHORT).show();
             allFieldsValid = false;
         }
