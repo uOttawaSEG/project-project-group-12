@@ -13,7 +13,6 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -34,11 +33,9 @@ android {
 
 dependencies {
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.database.ktx)
     implementation(libs.firebase.auth.ktx)
-    implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
-    implementation("com.google.firebase:firebase-auth")
-
+    implementation(libs.firebase.database.ktx)
+    implementation(libs.google.firebase.auth)
 
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -52,3 +49,4 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 }
 
+apply(plugin = "com.google.gms.google-services")

@@ -42,5 +42,6 @@ public class WelcomePage extends AppCompatActivity {
             startActivity(new Intent(WelcomePage.this, LoginPage.class));
         }
     });
+
     }
 }

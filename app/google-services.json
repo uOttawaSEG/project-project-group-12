@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "910717348787",
-    "project_id": "eams-db",
-    "storage_bucket": "eams-db.appspot.com"
+    "project_number": "814753679877",
+    "project_id": "eams-68bc8",
+    "storage_bucket": "eams-68bc8.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:910717348787:android:3bc5a4c6f37448cecaf9c6",
+        "mobilesdk_app_id": "1:814753679877:android:8791ff173608c5b7452a6c",
         "android_client_info": {
           "package_name": "com.example.myapplication"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDvnC13rYbHv---EcXSXeGcRLT4QWFFEvk"
+          "current_key": "AIzaSyDTXOwdf76rSg5hOKFdo-YTh7WMu8eaQdA"
         }
       ],
       "services": {

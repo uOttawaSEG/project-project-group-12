@@ -29,6 +29,9 @@ public class User {
         this.address = address;
     }
 
+    public User(String firstName, String lastName, String email, String password, String phoneNumber, String address) {
+    }
+
     //Getters and Setters
     public String getFirstName() {
         return firstName;
