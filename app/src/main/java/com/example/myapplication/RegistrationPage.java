@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.widget.RadioGroup;
+import android.widget.RadioButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -28,11 +29,16 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class RegistrationPage extends AppCompatActivity {
 
+    //form Field
     private EditText firstNameField, lastNameField, emailField, passwordField, confirmPasswordField, addressField, phoneNumberField;
+    private RadioGroup radioGroup;
 
     // Firebase Authentication and database reference
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
+
+    //for field validation ?
+    private Boolean checkAllFields;
 
 
     //check if not already log -> redirect to another activity/page
@@ -53,8 +59,10 @@ public class RegistrationPage extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_registrationpage);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -70,6 +78,7 @@ public class RegistrationPage extends AppCompatActivity {
         confirmPasswordField = findViewById(R.id.confirmPassword);
         addressField = findViewById(R.id.Address);
         phoneNumberField = findViewById(R.id.PhoneNumber);
+        radioGroup = findViewById(R.id.radioGroup);
 
         // Initialize Firebase Authentication and  database reference
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
@@ -93,14 +102,16 @@ public class RegistrationPage extends AppCompatActivity {
             }
         });
 
-
-
     }
 
 
     private void addUserToDB(){
-        //TODO field validation beforehand
-        //...
+        if (!checkAllFields() ) {
+            //TODO scarp everything and display error message
+            //Toast.makeText(RegistrationPage.this, "Registration Unsuccessful", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         ///rest of method - for now at least
         String email = emailField.getText().toString().trim();
         String password = passwordField.getText().toString().trim();
@@ -130,16 +141,77 @@ public class RegistrationPage extends AppCompatActivity {
 
 
                         } else {
-                            //there was an error in the registration process
-                            //TODO display error message
-                            //use toast ? 
+                            //TODO there was an error in the registration process
+                            //Toast.makeText(RegistrationPage.this, "Registration Unsuccessful", Toast.LENGTH_LONG).show();
+                            return;
                         }
                     }
                 });
 
+    }
 
 
+    private boolean checkAllFields() {
+        boolean allFieldsValid = true;
 
+
+        //first name must contain 2 letters
+        if (firstNameField.getText().toString().trim().length() < 2) {
+            firstNameField.setError("First name must be at least 2 characters");
+            allFieldsValid = false;
+        }
+
+        // lastname must contain 2 letters
+        if (lastNameField.getText().toString().trim().length() < 2) {
+            lastNameField.setError("Last name must be at least 2 characters");
+            allFieldsValid = false;
+        }
+
+
+        // email must contain @
+        String emailInput = emailField.getText().toString();
+        if (!emailInput.contains("@")) {
+            emailField.setError("Valid email is required");
+            allFieldsValid = false;
+        }
+
+        // password must contain 1 letter or 1 number
+        String passwordInput = passwordField.getText().toString();
+        if (passwordInput.length() < 8 || !passwordInput.matches(".*[a-zA-Z0-9].*")) {
+            passwordField.setError("Password must be at least 8 characters long and contain a letter or number");
+            allFieldsValid = false;
+        }
+
+
+        // double check password
+        String confirmPasswordInput = confirmPasswordField.getText().toString();
+
+        if (!confirmPasswordInput.equals(passwordInput)) {
+            confirmPasswordField.setError("Two passwords are not the same");
+            allFieldsValid = false;
+        }
+
+        // phone number must be pure numbers
+        String phoneInput = phoneNumberField.getText().toString();
+        if (phoneInput.isEmpty() || !phoneInput.matches(".*[0-9].*")) {
+            phoneNumberField.setError("Please enter numbers");
+            allFieldsValid = false;
+        }
+
+        // check address input is empty or not
+        if (addressField.getText().toString().trim().isEmpty()) {
+            addressField.setError("Address is required");
+            allFieldsValid = false;
+        }
+
+        //check if user selected a identity
+        if (radioGroup.getCheckedRadioButtonId() == -1) {
+            Toast.makeText(RegistrationPage.this, "Please select registering as Attendee or Organizer", Toast.LENGTH_SHORT).show();
+            allFieldsValid = false;
+        }
+
+
+        return allFieldsValid;
     }
 
 }
