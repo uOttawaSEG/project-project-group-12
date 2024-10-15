@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.widget.RadioGroup;
+import android.widget.RadioButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,9 +23,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class RegistrationPage extends AppCompatActivity {
 
-    private EditText firstNameField, lastNameField, emailField, passwordField, confirmPasswordField, addressField, phoneNumberField;
-    private RadioGroup rolegroup;
-
+    private EditText firstName, lastName, emailAddress, password, confirmPassword, phoneNumber, address;
+    private RadioGroup radioGroup;
+    private Button SignUpButton;
+    private Boolean checkAllFields;
     private Button confirmSignUpButton, backButton;
 
     private FirebaseAuth auth;
@@ -47,16 +49,15 @@ public class RegistrationPage extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        firstNameField = findViewById(R.id.firstName);
-        lastNameField = findViewById(R.id.lastName);
-        emailField = findViewById(R.id.emailAddress);
-        passwordField = findViewById(R.id.password);
-        confirmPasswordField = findViewById(R.id.ConfirmPassword);
-        addressField = findViewById(R.id.Address);
-        phoneNumberField = findViewById(R.id.PhoneNumber);
-        rolegroup = findViewById(R.id.radioGroup);
-        confirmSignUpButton = findViewById(R.id.ConfirmSignUp);
-        backButton = findViewById(R.id.backBtn);
+        firstName = findViewById(R.id.firstName);
+        lastName = findViewById(R.id.lastName);
+        emailAddress = findViewById(R.id.emailAddress);
+        password = findViewById(R.id.password);
+        confirmPassword = findViewById(R.id.ConfirmPassword);
+        phoneNumber = findViewById(R.id.PhoneNumber);
+        address = findViewById(R.id.Address);
+        radioGroup = findViewById(R.id.radioGroup);
+        SignUpButton = findViewById(R.id.ConfirmSignUp);
 
 
 
@@ -66,6 +67,80 @@ public class RegistrationPage extends AppCompatActivity {
                 startActivity(new Intent(RegistrationPage.this, LoginPage.class));
             }
         });
+
+
+        SignUpButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (checkAllFields()) {
+                    Toast.makeText(RegistrationPage.this, "Registration Successful", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            private boolean checkAllFields() {
+                boolean allFieldsValid = true;
+
+
+                //first name must contain 2 letters
+                if (firstName.getText().toString().trim().length() < 2) {
+                    firstName.setError("First name must be at least 2 characters");
+                    allFieldsValid = false;
+                }
+
+                // lastname must contain 2 letters
+                if (lastName.getText().toString().trim().length() < 2) {
+                    lastName.setError("Last name must be at least 2 characters");
+                    allFieldsValid = false;
+                }
+
+
+                // email must contain @
+                String emailInput = emailAddress.getText().toString();
+                if (!emailInput.contains("@")) {
+                    emailAddress.setError("Valid email is required");
+                    allFieldsValid = false;
+                }
+
+                // password must contain 1 letter or 1 number
+                String passwordInput = password.getText().toString();
+                if (passwordInput.length() < 8 || !passwordInput.matches(".*[a-zA-Z0-9].*")) {
+                    password.setError("Password must be at least 8 characters long and contain a letter or number");
+                    allFieldsValid = false;
+                }
+
+
+                // double check password
+                String confirmPasswordInput = confirmPassword.getText().toString();
+
+                if (!confirmPasswordInput.equals(passwordInput)) {
+                    confirmPassword.setError("Two passwords are not the same");
+                    allFieldsValid = false;
+                }
+
+                // phone number must be pure numbers
+                String phoneInput = phoneNumber.getText().toString();
+                if (phoneInput.isEmpty() || !phoneInput.matches(".*[0-9].*")) {
+                    phoneNumber.setError("Please enter numbers");
+                    allFieldsValid = false;
+                }
+
+                // check address input is empty or not
+                if (address.getText().toString().trim().isEmpty()) {
+                    address.setError("Address is required");
+                    allFieldsValid = false;
+                }
+
+                //check if user selected a identity
+                if (radioGroup.getCheckedRadioButtonId() == -1) {
+                    Toast.makeText(RegistrationPage.this, "Please select registering as Attendee or Organizer", Toast.LENGTH_SHORT).show();
+                    allFieldsValid = false;
+                }
+
+
+                return allFieldsValid;
+            }        });
+    }
+}
+
 
         /*
         Button button2 = findViewById(R.id.ConfirmSignUp);
