@@ -19,16 +19,12 @@ public class User {
      *
      * @param firstName the user's first name
      * @param lastName the user's last name
-     * @param email the user's email address
-     * @param password the user's password
      * @param phoneNumber the user's phone number
      * @param address the user's address
      */
-    public User(String firstName, String lastName, String email, String password, String phoneNumber, String address) {
+    public User(String firstName, String lastName, String phoneNumber, String address) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.email = email;
-        this.password = password;
         this.phoneNumber = phoneNumber;
         this.address = address;
     }
