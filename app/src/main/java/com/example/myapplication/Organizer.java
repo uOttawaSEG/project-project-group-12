@@ -22,6 +22,11 @@ public class Organizer extends User {
         this.organizationName = organizationName;
     }
 
+    public Organizer() {
+        super();
+        // For firebase
+    }
+
 
     //Getter and Setter for organizationName
     public String getOrganizationName() {

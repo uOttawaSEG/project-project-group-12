@@ -29,6 +29,10 @@ public abstract class User {
         this.address = address;
     }
 
+    public User() {
+        // For firebase (needs an empty constructor method)
+    }
+
 
     //Getters and Setters
     public String getFirstName() {
