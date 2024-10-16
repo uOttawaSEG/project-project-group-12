@@ -127,7 +127,6 @@ public class RegistrationPage extends AppCompatActivity {
 
     private void addUserToDB(){
         if (!checkAllFields() ) {
-            //TODO scarp everything and display error message
             //Toast.makeText(RegistrationPage.this, "Registration Unsuccessful", Toast.LENGTH_LONG).show();
             return;
         }
@@ -139,6 +138,7 @@ public class RegistrationPage extends AppCompatActivity {
         String lastName = lastNameField.getText().toString().trim();
         String address = addressField.getText().toString().trim();
         String phoneNumber = phoneNumberField.getText().toString().trim();
+        String organizationName = organizationNameField.getText().toString().trim();
 
 
         //Using Firebase auth -  handles user session, password hashing,etc
@@ -161,7 +161,7 @@ public class RegistrationPage extends AppCompatActivity {
                                 Attendee userInfo = new Attendee(firstName,lastName,phoneNumber,address);
                                 mDatabase.child("users").child(userId).setValue(userInfo);
                             } else {
-                                Organizer userInfo = new Organizer(firstName,lastName,phoneNumber,address,"OrgName-bruh");
+                                Organizer userInfo = new Organizer(firstName,lastName,phoneNumber,address,organizationName);
                                 mDatabase.child("users").child(userId).setValue(userInfo);
                             }
 
@@ -176,6 +176,8 @@ public class RegistrationPage extends AppCompatActivity {
                                     startActivity(intent);
                                 }
                             });
+
+                            Toast.makeText(RegistrationPage.this, "Registration successful, please return to login", Toast.LENGTH_LONG).show();
 
                         } else {
                             //TODO there was an error in the registration process
@@ -244,6 +246,11 @@ public class RegistrationPage extends AppCompatActivity {
         //check if user selected a identity
         if (radioGroupField.getCheckedRadioButtonId() == -1) {
             Toast.makeText(RegistrationPage.this, "Please select registering as Attendee or Organizer", Toast.LENGTH_SHORT).show();
+            allFieldsValid = false;
+        }
+
+        if(organizationNameField.getText().toString().trim().isEmpty()){
+            organizationNameField.setError("Organization name is required");
             allFieldsValid = false;
         }
 
