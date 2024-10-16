@@ -34,6 +34,7 @@ public class LoginPage extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +44,13 @@ public class LoginPage extends AppCompatActivity {
         // Extract the login credentials
         emailField = findViewById(R.id.editTextEmailAddress);
         passwordField = findViewById(R.id.editTextPassword); // Initialize editTextPassword here
+
+
+        // Initialize Database Reference
+        mDatabase = FirebaseDatabase.getInstance().getReference("users");
+        mAuth = FirebaseAuth.getInstance();
+        addAdministratorToDB();
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -162,5 +170,31 @@ public class LoginPage extends AppCompatActivity {
         Toast.makeText(LoginPage.this, "Login successful", Toast.LENGTH_LONG).show();
         startActivity(intent);
     }
+
+    private void addAdministratorToDB() {
+        String email = "admin@gmail.com";
+        String password = "adminadmin";
+        String firstName = "admin";
+        String lastName = "admin";
+
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null) {
+                            String userId = user.getUid();
+
+                            Administrator adminInfo = new Administrator();
+                            adminInfo.setEmail(email);
+                            adminInfo.setFirstName(firstName);  // Assuming you have a method to set first name
+                            adminInfo.setLastName(lastName);    // Assuming you have a method to set last name
+
+                            mDatabase.child("users").child(userId).setValue(adminInfo);
+                            mDatabase.child("administrators").child(userId).setValue(adminInfo);
+                        }
+                    }
+                });
+    }
+
 
 }
