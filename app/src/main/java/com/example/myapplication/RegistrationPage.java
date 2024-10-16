@@ -127,6 +127,7 @@ public class RegistrationPage extends AppCompatActivity {
 
     private void addUserToDB(){
         if (!checkAllFields() ) {
+            //TODO scarp everything and display error message
             //Toast.makeText(RegistrationPage.this, "Registration Unsuccessful", Toast.LENGTH_LONG).show();
             return;
         }
@@ -139,7 +140,6 @@ public class RegistrationPage extends AppCompatActivity {
         String address = addressField.getText().toString().trim();
         String phoneNumber = phoneNumberField.getText().toString().trim();
         String organizationName = organizationNameField.getText().toString().trim();
-
 
         //Using Firebase auth -  handles user session, password hashing,etc
 
@@ -160,9 +160,12 @@ public class RegistrationPage extends AppCompatActivity {
                             if ( userType.equals("attendee")){
                                 Attendee userInfo = new Attendee(firstName,lastName,phoneNumber,address);
                                 mDatabase.child("users").child(userId).setValue(userInfo);
+                                navigateToWelcomePage("Attendee");
+
                             } else {
-                                Organizer userInfo = new Organizer(firstName,lastName,phoneNumber,address,organizationName);
+                                Organizer userInfo = new Organizer(firstName,lastName,phoneNumber,address, organizationName);
                                 mDatabase.child("users").child(userId).setValue(userInfo);
+                                navigateToWelcomePage("Organizer");
                             }
 
 
@@ -173,7 +176,6 @@ public class RegistrationPage extends AppCompatActivity {
                                 public void onClick(View v) {
                                     Intent intent = new Intent(RegistrationPage.this, WelcomePage.class);
                                     intent.putExtra("userRole", userType);
-                                    Toast.makeText(RegistrationPage.this, "Registration successful", Toast.LENGTH_LONG).show();
                                     startActivity(intent);
                                 }
                             });
@@ -248,11 +250,6 @@ public class RegistrationPage extends AppCompatActivity {
             allFieldsValid = false;
         }
 
-        if(organizationNameField.getText().toString().trim().isEmpty()){
-            organizationNameField.setError("Organization name is required");
-            allFieldsValid = false;
-        }
-
 
         return allFieldsValid;
     }
@@ -279,5 +276,14 @@ public class RegistrationPage extends AppCompatActivity {
                 });
     }
 
+
+    private void navigateToWelcomePage(String userRole) {
+        Intent intent = new Intent(LoginPage.this, WelcomePage.class);
+        intent.putExtra("userRole", userRole);
+        Toast.makeText(LoginPage.this, "Login successful", Toast.LENGTH_LONG).show();
+        startActivity(intent);
+    }
+
+}
 
 }
