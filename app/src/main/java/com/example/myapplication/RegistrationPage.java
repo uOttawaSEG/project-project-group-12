@@ -299,7 +299,7 @@ public class RegistrationPage extends AppCompatActivity {
             allFieldsValid = false;
         }
 
-        if(!((RadioButton)findViewById(radioGroupField.getCheckedRadioButtonId())).getText().toString().equals("attendee") && organizationNameField.getText().toString().trim().isEmpty()){
+        if(((RadioButton)findViewById(radioGroupField.getCheckedRadioButtonId())).getText().toString().equals("Organizer") && organizationNameField.getText().toString().trim().isEmpty()){
             organizationNameField.setError("Organization name is required");
             allFieldsValid = false;
         }
