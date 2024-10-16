@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -28,7 +29,8 @@ public class WelcomePage extends AppCompatActivity {
 
         //Displays it effectively
         TextView welcome = findViewById(R.id.topText);
-        welcome.setText("Welcome. You are logged in as: " + userRole);
+        welcome.setText("Welcome. You are logged in as: \n" + userRole);
+        welcome.setGravity(Gravity.CENTER); // Centre the text
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
