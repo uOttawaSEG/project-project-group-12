@@ -5,7 +5,7 @@ package com.example.myapplication;
  * The User class represents a user with common fields like first name, last name,
  * email, password, phone number, and address. It serves as a base class for Organizer and Attendee.
  */
-public class User {
+public abstract class User {
 
     private String firstName;
     private String lastName;

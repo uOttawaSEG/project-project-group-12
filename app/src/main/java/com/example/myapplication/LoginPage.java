@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -21,6 +22,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -85,14 +87,17 @@ public class LoginPage extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
+                                // Sign in success, redirect to welcome page with the signed-in user's information ( role )
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                // TODO redirect to login page with role
-                                
+
+                                String userRole = determineRole(user);
+                                Intent intent = new Intent(LoginPage.this, WelcomePage.class);
+                                intent.putExtra("userRole", userRole);
+                                startActivity(intent);
 
                             } else {
-                                // TODO If sign in fails, display a message to the user.
-
+                                //sign in failed - display message to user
+                                Toast.makeText(LoginPage.this, "Login failed. Try again.", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -118,9 +123,43 @@ public class LoginPage extends AppCompatActivity {
     }
 
     // Determine whether the role is attendee/organizer
-    private String determineRole() {
-        // Logic to extract role
-        return "Attendee";
+    private String determineRole(FirebaseUser user) {
+
+        final String[] ans = {""};
+
+        mDatabase.child("users").child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                }
+                else {
+                    Log.d("firebase", String.valueOf(task.getResult().getValue()));
+
+                    try {
+                        Attendee user = task.getResult().getValue(Attendee.class);
+                        ans[0] =  "Attendee";
+
+                    } catch ( Exception error){
+                        Log.e("firebase", "attempt to get attendee", error);
+                    }
+
+                    try {
+                        Organizer user = task.getResult().getValue(Organizer.class);
+                        ans[0] =  "Organizer";
+
+                    } catch ( Exception error){
+                        Log.e("firebase", "attempt to get attendee", error);
+                    }
+                    
+
+                    //TODO actually save the role in db instead of doing whatever is above
+
+                }
+            }
+        });
+
+        return ans[0];
     }
 
 }
