@@ -154,6 +154,7 @@ public class LoginPage extends AppCompatActivity {
     private void navigateToWelcomePage(String userRole) {
         Intent intent = new Intent(LoginPage.this, WelcomePage.class);
         intent.putExtra("userRole", userRole);
+        Toast.makeText(LoginPage.this, "Login successful", Toast.LENGTH_LONG).show();
         startActivity(intent);
     }
 

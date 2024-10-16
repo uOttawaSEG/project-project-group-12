@@ -173,11 +173,10 @@ public class RegistrationPage extends AppCompatActivity {
                                 public void onClick(View v) {
                                     Intent intent = new Intent(RegistrationPage.this, WelcomePage.class);
                                     intent.putExtra("userRole", userType);
+                                    Toast.makeText(RegistrationPage.this, "Registration successful", Toast.LENGTH_LONG).show();
                                     startActivity(intent);
                                 }
                             });
-
-                            Toast.makeText(RegistrationPage.this, "Registration successful, please return to login", Toast.LENGTH_LONG).show();
 
                         } else {
                             //TODO there was an error in the registration process
