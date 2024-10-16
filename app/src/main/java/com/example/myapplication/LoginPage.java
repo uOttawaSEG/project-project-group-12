@@ -141,7 +141,7 @@ public class LoginPage extends AppCompatActivity {
                             navigateToWelcomePage("Organizer");
                         }
                         //check if user is Administrator
-                        else if (snapshot.getValue(Administrator.class) != null) {
+                        else {
                             navigateToWelcomePage("Administrator");
                         }
 
