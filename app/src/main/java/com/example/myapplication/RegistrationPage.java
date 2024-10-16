@@ -35,7 +35,7 @@ public class RegistrationPage extends AppCompatActivity {
     private EditText firstNameField, lastNameField, emailField, passwordField, confirmPasswordField, addressField, phoneNumberField, organizationNameField;
     private RadioGroup radioGroupField;
     private RadioButton organizerRadioButton, attendeeRadioButton;
-
+    private Button logInButton;
     // Firebase Authentication and database reference
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
@@ -167,11 +167,19 @@ public class RegistrationPage extends AppCompatActivity {
 
 
                             //TODO  redirect to welcome page
-
+                            logInButton = findViewById(R.id.ConfirmSignUp);
+                            logInButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(RegistrationPage.this, WelcomePage.class);
+                                    intent.putExtra("userRole", userType);
+                                    startActivity(intent);
+                                }
+                            });
 
                         } else {
                             //TODO there was an error in the registration process
-                            //Toast.makeText(RegistrationPage.this, "Registration Unsuccessful", Toast.LENGTH_LONG).show();
+                            Toast.makeText(RegistrationPage.this, "Registration Unsuccessful", Toast.LENGTH_LONG).show();
                             return;
                         }
                     }

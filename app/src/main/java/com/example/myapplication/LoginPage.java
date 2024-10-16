@@ -61,47 +61,36 @@ public class LoginPage extends AppCompatActivity {
         // Button to confirm login
         Button button2 = findViewById(R.id.LoginBtn);
         button2.setOnClickListener(v -> {
-
-            /*
-            // Check if credentials are right before proceeding
-            boolean verified = checkCredentials(email, passwordField);
-
-            if (verified) {
-                // Passes on role and name of the user to the welcome page
-                String userRole = determineRole();
-                Intent intent = new Intent(LoginPage.this, WelcomePage.class);
-                intent.putExtra("userRole", userRole);
-                startActivity(intent);
-            } else {
-                // Shows toast message if credentials are not verified
-                Toast.makeText(LoginPage.this, "Login failed. Try again.", Toast.LENGTH_SHORT).show();
-            }
-
-            */
-
             String email = emailField.getText().toString().trim();
             String password = passwordField.getText().toString().trim();
 
+            if (email.isEmpty()) {
+                Toast.makeText(LoginPage.this, "Please enter an email", Toast.LENGTH_SHORT).show();
+                return; //stop execution if email is empty
+            }
+
+            if (password.isEmpty()) {
+                Toast.makeText(LoginPage.this, "Please enter a password", Toast.LENGTH_SHORT).show();
+                return; //stop execution if password is empty
+            }
+
             mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    .addOnCompleteListener(LoginPage.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                // Sign in success, redirect to welcome page with the signed-in user's information ( role )
                                 FirebaseUser user = mAuth.getCurrentUser();
-
-                                String userRole = determineRole(user);
-                                Intent intent = new Intent(LoginPage.this, WelcomePage.class);
-                                intent.putExtra("userRole", userRole);
-                                startActivity(intent);
-
+                                if (user != null) {
+                                    determineRole(user); // Pass user to determine role
+                                }
                             } else {
-                                //sign in failed - display message to user
+                                // Sign in failed - display message to user
                                 Toast.makeText(LoginPage.this, "Login failed. Try again.", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
         });
+
 
         // Password visibility Switch
         EyeSw = findViewById(R.id.EyeSw);
@@ -123,43 +112,38 @@ public class LoginPage extends AppCompatActivity {
     }
 
     // Determine whether the role is attendee/organizer
-    private String determineRole(FirebaseUser user) {
-
-        final String[] ans = {""};
-
+    private void determineRole(FirebaseUser user) {
         mDatabase.child("users").child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (!task.isSuccessful()) {
                     Log.e("firebase", "Error getting data", task.getException());
-                }
-                else {
-                    Log.d("firebase", String.valueOf(task.getResult().getValue()));
+                } else {
+                    if (task.getResult().exists()) {
+                        DataSnapshot snapshot = task.getResult();
 
-                    try {
-                        Attendee user = task.getResult().getValue(Attendee.class);
-                        ans[0] =  "Attendee";
-
-                    } catch ( Exception error){
-                        Log.e("firebase", "attempt to get attendee", error);
+                        // Check if user is Attendee
+                        if (snapshot.getValue(Attendee.class) != null) {
+                            // User is an Attendee
+                            navigateToWelcomePage("Attendee");
+                        }
+                        // Check if user is Organizer
+                        else if (snapshot.getValue(Organizer.class) != null) {
+                            // User is an Organizer
+                            navigateToWelcomePage("Organizer");
+                        }
+                    } else {
+                        Log.e("firebase", "User data not found");
                     }
-
-                    try {
-                        Organizer user = task.getResult().getValue(Organizer.class);
-                        ans[0] =  "Organizer";
-
-                    } catch ( Exception error){
-                        Log.e("firebase", "attempt to get attendee", error);
-                    }
-                    
-
-                    //TODO actually save the role in db instead of doing whatever is above
-
                 }
             }
         });
+    }
 
-        return ans[0];
+    private void navigateToWelcomePage(String userRole) {
+        Intent intent = new Intent(LoginPage.this, WelcomePage.class);
+        intent.putExtra("userRole", userRole);
+        startActivity(intent);
     }
 
 }
