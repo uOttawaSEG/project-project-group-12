@@ -12,6 +12,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class WelcomePage extends AppCompatActivity {
 
 
@@ -39,6 +41,7 @@ public class WelcomePage extends AppCompatActivity {
         logOutButton.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(WelcomePage.this, LoginPage.class));
         }
     });
