@@ -15,6 +15,10 @@ public class Administrator {
         // For firebase (needs an empty constructor method)
     }
 
+    public Administrator(String email, String pwd){
+        this.email = email;
+        this.password = pwd;
+    }
 
     // Getters and Setters
     public String getEmail() {
