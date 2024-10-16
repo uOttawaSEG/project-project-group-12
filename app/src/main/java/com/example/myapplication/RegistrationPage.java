@@ -139,7 +139,7 @@ public class RegistrationPage extends AppCompatActivity {
         String lastName = lastNameField.getText().toString().trim();
         String address = addressField.getText().toString().trim();
         String phoneNumber = phoneNumberField.getText().toString().trim();
-
+        String organizationName = organizationNameField.getText().toString().trim();
 
         //Using Firebase auth -  handles user session, password hashing,etc
 
@@ -161,7 +161,7 @@ public class RegistrationPage extends AppCompatActivity {
                                 Attendee userInfo = new Attendee(firstName,lastName,phoneNumber,address);
                                 mDatabase.child("users").child(userId).setValue(userInfo);
                             } else {
-                                Organizer userInfo = new Organizer(firstName,lastName,phoneNumber,address,"OrgName-bruh");
+                                Organizer userInfo = new Organizer(firstName,lastName,phoneNumber,address, organizationName);
                                 mDatabase.child("users").child(userId).setValue(userInfo);
                             }
 

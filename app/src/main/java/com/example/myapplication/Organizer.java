@@ -22,7 +22,7 @@ public class Organizer extends User {
         this.organizationName = organizationName;
     }
 
-    /* for later maybe
+
     //Getter and Setter for organizationName
     public String getOrganizationName() {
 
@@ -32,6 +32,6 @@ public class Organizer extends User {
     public void setOrganizationName(String organizationName) {
         this.organizationName = organizationName;
     }
-    */
+
 
 }

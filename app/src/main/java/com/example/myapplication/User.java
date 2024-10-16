@@ -9,6 +9,8 @@ public abstract class User {
 
     private String firstName;
     private String lastName;
+    private String email;
+    private String password;
     private String phoneNumber;
     private String address;
 
@@ -27,7 +29,7 @@ public abstract class User {
         this.address = address;
     }
 
-    /* maybe useful for later
+
     //Getters and Setters
     public String getFirstName() {
         return firstName;
@@ -77,6 +79,5 @@ public abstract class User {
     public void setAddress(String address) {
         this.address = address;
     }
-    */
 
 }
