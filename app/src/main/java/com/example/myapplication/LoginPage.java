@@ -41,7 +41,7 @@ public class LoginPage extends AppCompatActivity {
         setContentView(R.layout.activity_login_page);
 
         // Extract the login credentials
-        EditText emailField = findViewById(R.id.editTextEmailAddress);
+        emailField = findViewById(R.id.editTextEmailAddress);
         passwordField = findViewById(R.id.editTextPassword); // Initialize editTextPassword here
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -51,6 +51,7 @@ public class LoginPage extends AppCompatActivity {
         });
 
 
+        // Initialize database
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
         mAuth = FirebaseAuth.getInstance();
 
@@ -74,21 +75,8 @@ public class LoginPage extends AppCompatActivity {
                 return; //stop execution if password is empty
             }
 
-            mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(LoginPage.this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                if (user != null) {
-                                    determineRole(user); // Pass user to determine role
-                                }
-                            } else {
-                                // Sign in failed - display message to user
-                                Toast.makeText(LoginPage.this, "Login failed. Try again.", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+            loginUser(email, password);
+
         });
 
 
@@ -110,6 +98,26 @@ public class LoginPage extends AppCompatActivity {
             }
         });
     }
+
+    // I Separated into a separate class for cleanliness.
+    private void loginUser(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(LoginPage.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            if (user != null) {
+                                determineRole(user); // Pass user to determine role
+                            }
+                        } else {
+                            // Sign in failed - display message to user
+                            Toast.makeText(LoginPage.this, "Login failed. Try again.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
 
     // Determine whether the role is attendee/organizer
     private void determineRole(FirebaseUser user) {
@@ -139,6 +147,9 @@ public class LoginPage extends AppCompatActivity {
             }
         });
     }
+
+
+
 
     private void navigateToWelcomePage(String userRole) {
         Intent intent = new Intent(LoginPage.this, WelcomePage.class);

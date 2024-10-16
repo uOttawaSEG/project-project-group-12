@@ -17,5 +17,9 @@ public class Attendee extends User {
     public Attendee(String firstName, String lastName, String phoneNumber, String address) {
         super(firstName, lastName, phoneNumber, address); //Call parent class constructor
     }
+    public Attendee() {
+        super();
+        // For firebase
+    }
 
 }

@@ -29,13 +29,16 @@ public abstract class User {
         this.address = address;
     }
 
-    public User(String firstName, String lastName, String email, String password, String phoneNumber, String address) {
+    public User() {
+        // For firebase (needs an empty constructor method)
     }
+
 
     //Getters and Setters
     public String getFirstName() {
         return firstName;
     }
+
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -80,6 +83,5 @@ public abstract class User {
     public void setAddress(String address) {
         this.address = address;
     }
-
 
 }
