@@ -9,6 +9,7 @@ public class Administrator {
 
     private String email;
     private String password;
+    private String role;
 
     // Default Constructor
     public Administrator() {

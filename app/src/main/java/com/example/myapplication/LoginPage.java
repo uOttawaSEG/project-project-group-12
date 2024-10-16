@@ -121,33 +121,28 @@ public class LoginPage extends AppCompatActivity {
 
     // Determine whether the role is attendee/organizer
     private void determineRole(FirebaseUser user) {
-        mDatabase.child("users").child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (!task.isSuccessful()) {
-                    Log.e("firebase", "Error getting data", task.getException());
+        mDatabase.child("users").child("admins").child(user.getUid()).get().addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                Log.e("firebase", "Error getting data", task.getException());
+            } else {
+                if (task.getResult().exists()) {
+                    navigateToWelcomePage("Admin");
                 } else {
-                    if (task.getResult().exists()) {
-                        DataSnapshot snapshot = task.getResult();
-
-                        // Check if user is Organizer
-                        if (snapshot.getValue(Organizer.class) != null) {
-                            // User is an Organizer
+                    // Check if user is Organizer
+                    mDatabase.child("users").child("organizers").child(user.getUid()).get().addOnCompleteListener(task2 -> {
+                        if (task2.isSuccessful() && task2.getResult().exists()) {
                             navigateToWelcomePage("Organizer");
+                        } else {
+                            // Check if user is Attendee
+                            mDatabase.child("users").child("attendees").child(user.getUid()).get().addOnCompleteListener(task3 -> {
+                                if (task3.isSuccessful() && task3.getResult().exists()) {
+                                    navigateToWelcomePage("Attendee");
+                                } else {
+                                    Log.e("firebase", "User role not found");
+                                }
+                            });
                         }
-                        // Check if user is Attendee
-                        else if (snapshot.getValue(Attendee.class) != null) {
-                            // User is an Attendee
-                            navigateToWelcomePage("Attendee");
-                        }
-                        //check if user is Administrator
-                        else {
-                            navigateToWelcomePage("Administrator");
-                        }
-
-                    } else {
-                        Log.e("firebase", "User data not found");
-                    }
+                    });
                 }
             }
         });

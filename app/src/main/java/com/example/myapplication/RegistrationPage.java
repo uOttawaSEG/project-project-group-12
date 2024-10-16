@@ -159,10 +159,10 @@ public class RegistrationPage extends AppCompatActivity {
 
                             if ( userType.equals("attendee")){
                                 Attendee userInfo = new Attendee(firstName,lastName,phoneNumber,address);
-                                mDatabase.child("users").child(userId).setValue(userInfo);
+                                mDatabase.child("users").child("Attendees").setValue(userInfo);
                             } else {
                                 Organizer userInfo = new Organizer(firstName,lastName,phoneNumber,address,organizationName);
-                                mDatabase.child("users").child(userId).setValue(userInfo);
+                                mDatabase.child("users").child("Organizers").setValue(userInfo);
                             }
 
 
