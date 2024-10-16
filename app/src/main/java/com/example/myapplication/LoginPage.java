@@ -40,8 +40,6 @@ public class LoginPage extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login_page);
 
-        createAdminAccount();
-
         // Extract the login credentials
         emailField = findViewById(R.id.editTextEmailAddress);
         passwordField = findViewById(R.id.editTextPassword); // Initialize editTextPassword here
@@ -153,29 +151,6 @@ public class LoginPage extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    private void createAdminAccount() {
-        // Create a new admin instance with predetermined credentials
-        String adminEmail = "admin@gmail.com";
-        String adminPassword = "adminadmin";
-        Administrator admin = new Administrator(adminEmail, adminPassword);
-
-        // Get a reference to the Firebase database
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
-
-        // Add admin to the database
-        mDatabase.child("users").child("adminUserId").setValue(admin)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d("Firebase", "Admin added successfully.");
-                        } else {
-                            Log.e("Firebase", "Failed to add admin", task.getException());
-                        }
-                    }
-                });
     }
 
 
