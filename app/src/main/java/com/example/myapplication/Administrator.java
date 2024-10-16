@@ -5,7 +5,7 @@ package com.example.myapplication;
  * The Administrator class represents a Administrator with common fields like
  * email, password.
  */
-public abstract class Administrator {
+public class Administrator {
 
     private String email;
     private String password;
