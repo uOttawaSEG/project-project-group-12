@@ -19,19 +19,13 @@ public class MainActivity extends AppCompatActivity {
         Button button1 = findViewById(R.id.LoginButton);
         Button button2 = findViewById(R.id.RegisterButton);
 
-        button1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, RegistrationPage.class));
-            }
-        });
+        // Sends user to Login page
+        button1.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, LoginPage.class)));
 
-        button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, LoginPage.class));
-            }
-        });
+        // Sends user to Register Page
+        button2.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, RegistrationPage.class)));
+
+
 
     }
 }
