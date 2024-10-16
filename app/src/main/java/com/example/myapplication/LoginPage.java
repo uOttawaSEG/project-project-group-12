@@ -139,9 +139,12 @@ public class LoginPage extends AppCompatActivity {
                         else if (snapshot.getValue(Organizer.class) != null) {
                             // User is an Organizer
                             navigateToWelcomePage("Organizer");
-                        } else if (snapshot.getValue(Administrator.class) != null) {
+                        }
+                        //check if user is Administrator
+                        else if (snapshot.getValue(Administrator.class) != null) {
                             navigateToWelcomePage("Administrator");
                         }
+
                     } else {
                         Log.e("firebase", "User data not found");
                     }
