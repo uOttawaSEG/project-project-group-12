@@ -130,15 +130,15 @@ public class LoginPage extends AppCompatActivity {
                     if (task.getResult().exists()) {
                         DataSnapshot snapshot = task.getResult();
 
-                        // Check if user is Attendee
-                        if (snapshot.getValue(Attendee.class) != null) {
-                            // User is an Attendee
-                            navigateToWelcomePage("Attendee");
-                        }
                         // Check if user is Organizer
-                        else if (snapshot.getValue(Organizer.class) != null) {
+                        if (snapshot.getValue(Organizer.class) != null) {
                             // User is an Organizer
                             navigateToWelcomePage("Organizer");
+                        }
+                        // Check if user is Attendee
+                        else if (snapshot.getValue(Attendee.class) != null) {
+                            // User is an Attendee
+                            navigateToWelcomePage("Attendee");
                         }
                         //check if user is Administrator
                         else {
