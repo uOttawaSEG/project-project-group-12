@@ -158,6 +158,7 @@ public class RegistrationPage extends AppCompatActivity {
 
                             // Attendee or  Organizer  - idk the id -_- could guess but nah -> tho prolly better
                             String userType = ((RadioButton)findViewById(radioGroupField.getCheckedRadioButtonId())).getText().toString();
+                            Log.d("UserType", "Selected User Type: " + userType); // Log userType for debugging
 
                             if ( userType.equals("attendee")){
                                 Attendee userInfo = new Attendee(firstName,lastName,phoneNumber,address,"Attendee");
