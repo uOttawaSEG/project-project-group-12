@@ -129,12 +129,12 @@ public class LoginPage extends AppCompatActivity {
                     navigateToWelcomePage("Admin");
                 } else {
                     // Check if user is Organizer
-                    mDatabase.child("users").child("organizers").child(user.getUid()).get().addOnCompleteListener(task2 -> {
+                    mDatabase.child("users").child("Attendees").child(user.getUid()).get().addOnCompleteListener(task2 -> {
                         if (task2.isSuccessful() && task2.getResult().exists()) {
                             navigateToWelcomePage("Organizer");
                         } else {
                             // Check if user is Attendee
-                            mDatabase.child("users").child("attendees").child(user.getUid()).get().addOnCompleteListener(task3 -> {
+                            mDatabase.child("users").child("Organizers").child(user.getUid()).get().addOnCompleteListener(task3 -> {
                                 if (task3.isSuccessful() && task3.getResult().exists()) {
                                     navigateToWelcomePage("Attendee");
                                 } else {
