@@ -49,7 +49,6 @@ public class LoginPage extends AppCompatActivity {
         // Initialize Database Reference
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
         mAuth = FirebaseAuth.getInstance();
-        addAdministratorToDB();
 
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -129,22 +128,25 @@ public class LoginPage extends AppCompatActivity {
 
     // Determine whether the role is attendee/organizer
     private void determineRole(FirebaseUser user) {
-        mDatabase.child("users").child("Admin").child(user.getUid()).get().addOnCompleteListener(task -> {
+        String userId = user.getUid();
+
+        // Check if user is Admin
+        mDatabase.child("users").child("Admin").child(userId).get().addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
                 Log.e("firebase", "Error getting data", task.getException());
             } else {
                 if (task.getResult().exists()) {
                     navigateToWelcomePage("Admin");
                 } else {
-                    // Check if user is Organizer
-                    mDatabase.child("users").child("Attendees").child(user.getUid()).get().addOnCompleteListener(task2 -> {
+                    // Check if user is an Attendee
+                    mDatabase.child("users").child("Attendees").child(userId).get().addOnCompleteListener(task2 -> {
                         if (task2.isSuccessful() && task2.getResult().exists()) {
-                            navigateToWelcomePage("Organizer");
+                            navigateToWelcomePage("Attendee");
                         } else {
-                            // Check if user is Attendee
-                            mDatabase.child("users").child("Organizers").child(user.getUid()).get().addOnCompleteListener(task3 -> {
+                            // Check if user is an Organizer
+                            mDatabase.child("users").child("Organizers").child(userId).get().addOnCompleteListener(task3 -> {
                                 if (task3.isSuccessful() && task3.getResult().exists()) {
-                                    navigateToWelcomePage("Attendee");
+                                    navigateToWelcomePage("Organizer");
                                 } else {
                                     Log.e("firebase", "User role not found");
                                 }
@@ -163,24 +165,5 @@ public class LoginPage extends AppCompatActivity {
         Toast.makeText(LoginPage.this, "Login successful", Toast.LENGTH_LONG).show();
         startActivity(intent);
     }
-
-    private void addAdministratorToDB() {
-        String email = "admin@gmail.com";
-        String password = "adminadmin";
-        String firstName = "admin";
-        String lastName = "admin";
-
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        if (user != null) {
-                            String userId = user.getUid();
-
-                        }
-                    }
-                });
-    }
-
 
 }
