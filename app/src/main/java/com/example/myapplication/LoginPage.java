@@ -129,37 +129,20 @@ public class LoginPage extends AppCompatActivity {
 
     // Determine whether the role is attendee/organizer
     private void determineRole(FirebaseUser user) {
-        mDatabase.child("users").child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+        mDatabase.child("users").child(user.getUid()).child("userType").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (!task.isSuccessful()) {
-                    Log.e("firebase", "Error getting data", task.getException());
+                if (task.isSuccessful() && task.getResult().exists()) {
+
+                    String userRole = task.getResult().getValue(String.class);
+
+                    navigateToWelcomePage(userRole);
                 } else {
-                    if (task.getResult().exists()) {
-                        DataSnapshot snapshot = task.getResult();
-
-                        // Check if user is Attendee
-                        if (snapshot.getValue(Attendee.class) != null) {
-                            // User is an Attendee
-                            navigateToWelcomePage("Attendee");
-                        }
-                        // Check if user is Organizer
-                        else if (snapshot.getValue(Organizer.class) != null) {
-                            // User is an Organizer
-                            navigateToWelcomePage("Organizer");
-                        }
-                        //check if user is Administrator
-                        else if (snapshot.getValue(Administrator.class) != null) {
-                            navigateToWelcomePage("Administrator");
-                        }
-
-                    } else {
-                        Log.e("firebase", "User data not found");
-                    }
+                    Log.e("firebase", "user role not found", task.getException());
                 }
             }
-        });
-    }
+            });
+            }
 
 
 
