@@ -73,6 +73,7 @@ public class RegistrationPage extends AppCompatActivity {
         });
 
 
+
         //init form fields
         firstNameField  = findViewById(R.id.firstName);
         lastNameField = findViewById(R.id.lastName);
@@ -104,6 +105,8 @@ public class RegistrationPage extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
         mAuth = FirebaseAuth.getInstance();
 
+        addAdminToDB();
+
 
         Button confirmSignUpButton = findViewById(R.id.ConfirmSignUp);
         //anonymous function for event listener bruh
@@ -122,6 +125,50 @@ public class RegistrationPage extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void addAdminToDB() {
+        String email = "admin24@gmail.com";
+        String password = "adminadmin";
+
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+
+                        //when a user is created successfully automatically signed in
+                        if (task.isSuccessful()) {
+
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            String userId = user.getUid();
+
+                            // Attendee or  Organizer  - idk the id -_- could guess but nah -> tho prolly better
+                            String userType = ((RadioButton)findViewById(radioGroupField.getCheckedRadioButtonId())).getText().toString();
+
+                            Administrator userInfo = new Administrator();
+                            mDatabase.child("users").child(userId).setValue(userInfo);
+
+
+
+                            //TODO  redirect to welcome page
+                            logInButton = findViewById(R.id.ConfirmSignUp);
+                            logInButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(RegistrationPage.this, WelcomePage.class);
+                                    intent.putExtra("userRole", userType);
+                                    Toast.makeText(RegistrationPage.this, "Registration successful", Toast.LENGTH_LONG).show();
+                                    startActivity(intent);
+                                }
+                            });
+
+                        } else {
+                            //TODO there was an error in the registration process
+                            Toast.makeText(RegistrationPage.this, "Registration Unsuccessful", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                    }
+                });
     }
 
 
