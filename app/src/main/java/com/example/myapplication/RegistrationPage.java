@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +27,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.auth.FirebaseAuth;
+
+
+import androidx.appcompat.app.AlertDialog;
 
 
 
@@ -167,18 +171,28 @@ public class RegistrationPage extends AppCompatActivity {
                                 mDatabase.child("users").child("Organizers").child(userId).setValue(userInfo);
                             }
 
+                            // Creating AlertDialog
+                            AlertDialog.Builder builder = new AlertDialog.Builder(RegistrationPage.this);
+                            builder.setTitle("Registration Successful");
+                            builder.setMessage("Your account is: " + email);
 
-                            //TODO  redirect to welcome page
-                            logInButton = findViewById(R.id.ConfirmSignUp);
-                            logInButton.setOnClickListener(new View.OnClickListener() {
+                            // Back to Login Button
+                            builder.setPositiveButton("Back to Login", new DialogInterface.OnClickListener() {
                                 @Override
-                                public void onClick(View v) {
-                                    Intent intent = new Intent(RegistrationPage.this, WelcomePage.class);
-                                    intent.putExtra("userRole", userType);
-                                    Toast.makeText(RegistrationPage.this, "Registration successful", Toast.LENGTH_LONG).show();
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // back to login then
+                                    Intent intent = new Intent(RegistrationPage.this, LoginPage.class);
                                     startActivity(intent);
+                                    finish();
                                 }
                             });
+
+
+                            builder.setCancelable(false);
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+
+
 
                         } else {
                             //TODO there was an error in the registration process
