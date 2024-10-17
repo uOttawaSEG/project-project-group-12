@@ -7,5 +7,5 @@ Group Project 12 for SEG 2105 Section A with Dr. Hadi Al Osman in Fall 2024
 - Firebase
 
 Administrator credentials:
-email: admin@gmail.com
-pwd: admin
+email: admin90@gmail.com
+pwd: adminadmin

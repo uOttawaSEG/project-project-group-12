@@ -108,7 +108,7 @@ public class RegistrationPage extends AppCompatActivity {
         // Initialize Firebase Authentication and  database reference
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
-        
+
         Button confirmSignUpButton = findViewById(R.id.ConfirmSignUp);
         //anonymous function for event listener bruh
         confirmSignUpButton.setOnClickListener(v -> {
