@@ -205,10 +205,10 @@ public class RegistrationPage extends AppCompatActivity {
                             String userType = ((RadioButton)findViewById(radioGroupField.getCheckedRadioButtonId())).getText().toString();
 
                             if ( userType.equals("attendee")){
-                                Attendee userInfo = new Attendee(firstName,lastName,phoneNumber,address);
+                                Attendee userInfo = new Attendee(firstName,lastName,phoneNumber,address,"Attendee");
                                 mDatabase.child("users").child("Attendees").setValue(userInfo);
                             } else {
-                                Organizer userInfo = new Organizer(firstName,lastName,phoneNumber,address,organizationName);
+                                Organizer userInfo = new Organizer(firstName,lastName,phoneNumber,address,organizationName,"Organizer");
                                 mDatabase.child("users").child("Organizers").setValue(userInfo);
                             }
 

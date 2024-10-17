@@ -129,7 +129,7 @@ public class LoginPage extends AppCompatActivity {
 
     // Determine whether the role is attendee/organizer
     private void determineRole(FirebaseUser user) {
-        mDatabase.child("users").child("admins").child(user.getUid()).get().addOnCompleteListener(task -> {
+        mDatabase.child("users").child("Admin").child(user.getUid()).get().addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
                 Log.e("firebase", "Error getting data", task.getException());
             } else {

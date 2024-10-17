@@ -14,42 +14,20 @@ import com.google.android.gms.tasks.Task;
  */
 public class Administrator {
 
-    private String firstName;
-    private String lastName;
     private String email;
     private String password;
     private String role;
 
-    public Administrator(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-
+    public Administrator(String email, String pwd, String role) {
+        this.email = email;
+        this.password = pwd;
+        this.role = role;
     }
     // Default Constructor
     public Administrator() {
         // For firebase (needs an empty constructor method)
     }
 
-    public Administrator(String email, String pwd){
-        this.email = email;
-        this.password = pwd;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
 
     // Getters and Setters
     public String getEmail() {
@@ -68,5 +46,8 @@ public class Administrator {
         this.password = password;
     }
 
+    public String getRole(){
+        return role;
+    }
 
 }

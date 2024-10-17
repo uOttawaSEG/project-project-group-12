@@ -13,6 +13,7 @@ public abstract class User {
     private String password;
     private String phoneNumber;
     private String address;
+    private String role;
 
     /**
      * Constructs a new User with the given details.
@@ -22,11 +23,12 @@ public abstract class User {
      * @param phoneNumber the user's phone number
      * @param address the user's address
      */
-    public User(String firstName, String lastName, String phoneNumber, String address) {
+    public User(String firstName, String lastName, String phoneNumber, String address, String role) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.address = address;
+        this.role = role;
     }
 
     public User() {
@@ -84,4 +86,5 @@ public abstract class User {
         this.address = address;
     }
 
+    public void getRole(String role) { this.role = role;}
 }

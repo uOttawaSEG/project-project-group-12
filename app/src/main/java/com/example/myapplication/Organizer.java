@@ -17,8 +17,8 @@ public class Organizer extends User {
      * @param address the organizer's address
      * @param organizationName the name of the organization the organizer represents
      */
-    public Organizer(String firstName, String lastName, String phoneNumber, String address, String organizationName) {
-        super(firstName, lastName, phoneNumber, address); // Call parent class constructor
+    public Organizer(String firstName, String lastName, String phoneNumber, String address, String organizationName, String role) {
+        super(firstName, lastName, phoneNumber, address, role); // Call parent class constructor
         this.organizationName = organizationName;
     }
 
