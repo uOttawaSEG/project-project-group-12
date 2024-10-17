@@ -106,12 +106,9 @@ public class RegistrationPage extends AppCompatActivity {
 
 
         // Initialize Firebase Authentication and  database reference
-        mDatabase = FirebaseDatabase.getInstance().getReference("users");
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
-
-        addAdminToDB();
-
-
+        
         Button confirmSignUpButton = findViewById(R.id.ConfirmSignUp);
         //anonymous function for event listener bruh
         confirmSignUpButton.setOnClickListener(v -> {
@@ -132,8 +129,12 @@ public class RegistrationPage extends AppCompatActivity {
     }
 
     private void addAdminToDB() {
-        String email = "admin24@gmail.com";
+        String email = "admin90@gmail.com";
         String password = "adminadmin";
+
+
+
+        //Using Firebase auth -  handles user session, password hashing,etc
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -146,25 +147,32 @@ public class RegistrationPage extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             String userId = user.getUid();
 
-                            // Attendee or  Organizer  - idk the id -_- could guess but nah -> tho prolly better
-                            String userType = ((RadioButton)findViewById(radioGroupField.getCheckedRadioButtonId())).getText().toString();
-
                             Administrator userInfo = new Administrator();
                             mDatabase.child("users").child(userId).setValue(userInfo);
+                            mDatabase.child("users").child(userId).child("userType").setValue("Administrator");
 
+                            // Creating AlertDialog
+                            AlertDialog.Builder builder = new AlertDialog.Builder(RegistrationPage.this);
+                            builder.setTitle("Registration Successful");
+                            builder.setMessage("Your account is: " + email);
 
-
-                            //TODO  redirect to welcome page
-                            logInButton = findViewById(R.id.ConfirmSignUp);
-                            logInButton.setOnClickListener(new View.OnClickListener() {
+                            // Back to Login Button
+                            builder.setPositiveButton("Back to Login", new DialogInterface.OnClickListener() {
                                 @Override
-                                public void onClick(View v) {
-                                    Intent intent = new Intent(RegistrationPage.this, WelcomePage.class);
-                                    intent.putExtra("userRole", userType);
-                                    Toast.makeText(RegistrationPage.this, "Registration successful", Toast.LENGTH_LONG).show();
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // back to login then
+                                    Intent intent = new Intent(RegistrationPage.this, LoginPage.class);
                                     startActivity(intent);
+                                    finish();
                                 }
                             });
+
+
+                            builder.setCancelable(false);
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+
+
 
                         } else {
                             //TODO there was an error in the registration process
@@ -173,6 +181,7 @@ public class RegistrationPage extends AppCompatActivity {
                         }
                     }
                 });
+
     }
 
 
