@@ -177,13 +177,6 @@ public class LoginPage extends AppCompatActivity {
                         if (user != null) {
                             String userId = user.getUid();
 
-                            Administrator adminInfo = new Administrator();
-                            adminInfo.setEmail(email);
-                            adminInfo.setFirstName(firstName);  // Assuming you have a method to set first name
-                            adminInfo.setLastName(lastName);    // Assuming you have a method to set last name
-
-                            mDatabase.child("users").child(userId).setValue(adminInfo);
-                            mDatabase.child("administrators").child(userId).setValue(adminInfo);
                         }
                     }
                 });
