@@ -11,7 +11,7 @@
         android:id="@+id/topText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Pending and Rejected Requests"
+        android:text="Pending Requests"
         android:textColor="@color/cardview_dark_background"
         android:textSize="25sp"
         android:layout_marginTop="20dp"
@@ -26,7 +26,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="5dp"
         android:scrollbars="vertical"
-        app:layout_constraintBottom_toTopOf="@id/logOutBtn"
+        app:layout_constraintBottom_toTopOf="@id/middleText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.4"
         app:layout_constraintHorizontal_bias="0.511"
@@ -34,6 +34,19 @@
         app:layout_constraintTop_toBottomOf="@id/topText"
         app:layout_constraintVertical_bias="0.065"
         app:layout_constraintWidth_percent="0.9" />
+
+
+    <TextView
+        android:id="@+id/middleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rejected Requests"
+        android:textColor="@color/cardview_dark_background"
+        android:textSize="25sp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/pendingList" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rejectedList"
@@ -46,7 +59,7 @@
         app:layout_constraintHeight_percent="0.4"
         app:layout_constraintHorizontal_bias="0.511"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pendingList"
+        app:layout_constraintTop_toBottomOf="@id/middleText"
         app:layout_constraintVertical_bias="0.065"
         app:layout_constraintWidth_percent="0.9" />
 
@@ -56,6 +69,7 @@
         android:layout_height="wrap_content"
         android:text="Log Out"
         android:layout_marginTop="20dp"
+        android:backgroundTint="@android:color/darker_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
