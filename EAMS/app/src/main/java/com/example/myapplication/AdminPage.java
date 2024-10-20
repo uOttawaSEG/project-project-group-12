@@ -31,11 +31,6 @@ public class AdminPage extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_admin_page);
 
-        //Set welcome text
-        TextView welcome = findViewById(R.id.topText);
-        welcome.setText("Pending Requests");
-        welcome.setGravity(Gravity.CENTER);
-
         //Set insets for proper layout handling
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
