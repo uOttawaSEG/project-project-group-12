@@ -12,11 +12,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.List;
+
 public class AdminPage extends AppCompatActivity {
 
+    private RecyclerView pendingList;
+    private PendingAdapter pendingAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,29 +30,50 @@ public class AdminPage extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_admin_page);
 
-        //Retrieves name and role of the user from last page
-        String userRole = getIntent().getStringExtra("userRole");
-
-        //Displays it effectively
+        //Set welcome text
         TextView welcome = findViewById(R.id.topText);
         welcome.setText("Welcome to admin page");
-        welcome.setGravity(Gravity.CENTER); // Centre the text
+        welcome.setGravity(Gravity.CENTER);
 
+        //Set insets for proper layout handling
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
+        //Logout button
         Button logOutButton = findViewById(R.id.logOutBtn);
-
-        logOutButton.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
+        logOutButton.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(AdminPage.this, LoginPage.class));
-        }
-    });
+        });
 
+        //Add two sample registrations to the pending list
+        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationPending.addRegistration("TEST - owo");
+
+        //RecyclerView for pending registrations
+        pendingList = findViewById(R.id.pendingList);
+        pendingList.setLayoutManager(new LinearLayoutManager(this));
+
+        //Initialize adapter
+        pendingAdapter = new PendingAdapter(RegistrationPending.getPendingRegistrations(), new RegistrationPending.OnItemActionListener() {
+            @Override
+            public void onApprove(String item) {
+                //Handle the approval action
+                RegistrationPending.approveRegistration(item);  // Just call approveRegistration without passing 'this'
+                pendingAdapter.updateData(RegistrationPending.getPendingRegistrations()); // Refresh the list
+            }
+
+            @Override
+            public void onReject(String item) {
+                //Handle the rejection action
+                RegistrationPending.rejectRegistration(item);  // Just call rejectRegistration without passing 'this'
+                pendingAdapter.updateData(RegistrationPending.getPendingRegistrations()); // Refresh the list
+            }
+        });
+
+        pendingList.setAdapter(pendingAdapter);
     }
 }

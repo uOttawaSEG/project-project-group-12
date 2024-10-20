@@ -21,6 +21,7 @@
         <activity android:name=".WelcomePage" />
 
         <activity android:name=".AdminPage" />
+
         <activity
             android:name=".LoginPage"
             android:exported="true">
