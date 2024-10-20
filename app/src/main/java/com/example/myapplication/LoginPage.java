@@ -26,6 +26,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Objects;
+
 public class LoginPage extends AppCompatActivity {
 
     private EditText passwordField, emailField;
@@ -147,7 +149,15 @@ public class LoginPage extends AppCompatActivity {
 
 
     private void navigateToWelcomePage(String userRole) {
-        Intent intent = new Intent(LoginPage.this, WelcomePage.class);
+        Intent intent;
+
+        if(Objects.equals(userRole, "Administrator")) {
+
+            intent = new Intent(LoginPage.this, AdminPage.class);
+        } else {
+            intent = new Intent(LoginPage.this, WelcomePage.class);
+        }
+
         intent.putExtra("userRole", userRole);
         Toast.makeText(LoginPage.this, "Login successful", Toast.LENGTH_LONG).show();
         startActivity(intent);
