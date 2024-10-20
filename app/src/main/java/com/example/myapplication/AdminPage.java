@@ -51,6 +51,22 @@ public class AdminPage extends AppCompatActivity {
 
         //Add two sample registrations to the pending list
         RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationPending.addRegistration("Persona 5 royal - Registration Request");
+        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationPending.addRegistration("scrolling works? - Registration Request");
+
         RegistrationPending.addRegistration("TEST - owo");
 
         //RecyclerView for pending registrations

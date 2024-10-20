@@ -24,11 +24,13 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="20dp"
+        android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/topText"
         app:layout_constraintBottom_toTopOf="@id/logOutBtn"
         app:layout_constraintWidth_percent="0.9" />
+
 
     <Button
         android:id="@+id/logOutBtn"
