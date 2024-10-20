@@ -32,7 +32,7 @@ public class AdminPage extends AppCompatActivity {
 
         //Set welcome text
         TextView welcome = findViewById(R.id.topText);
-        welcome.setText("Welcome to admin page");
+        welcome.setText("Pending Requests");
         welcome.setGravity(Gravity.CENTER);
 
         //Set insets for proper layout handling
