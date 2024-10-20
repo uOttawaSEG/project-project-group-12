@@ -21,8 +21,9 @@ import java.util.List;
 
 public class AdminPage extends AppCompatActivity {
 
-    private RecyclerView pendingList;
+    private RecyclerView pendingList, rejectedList;
     private PendingAdapter pendingAdapter;
+    private RejectedAdapter rejectedAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +67,20 @@ public class AdminPage extends AppCompatActivity {
         RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
         RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
         RegistrationPending.addRegistration("scrolling works? - Registration Request");
-
         RegistrationPending.addRegistration("TEST - owo");
+
+        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
+        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
+        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
+        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
+        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
+        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
+        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
+        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
+        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
+        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
+        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
+        RegistrationRejected.addRejectedRegistration("end of line uwu - Registration Request");
 
         //RecyclerView for pending registrations
         pendingList = findViewById(R.id.pendingList);
@@ -91,5 +104,26 @@ public class AdminPage extends AppCompatActivity {
         });
 
         pendingList.setAdapter(pendingAdapter);
+
+
+        // Initialize RecyclerView for rejected items
+        rejectedList = findViewById(R.id.rejectedList);
+        rejectedList.setLayoutManager(new LinearLayoutManager(this));
+
+        // Initialize the adapter with the list of rejected items and the listener
+        rejectedAdapter = new RejectedAdapter(RegistrationRejected.getRejectedRegistrations(), new RegistrationRejected.OnItemActionListener() {
+            @Override
+            public void onApprove(String item) {
+                // Logic to re-approve the registration
+                RegistrationRejected.approveRegistration(item); // Approve the registration
+                rejectedAdapter.updateData(RegistrationRejected.getRejectedRegistrations()); // Refresh the list
+            }
+        });
+
+// Set the adapter to the RecyclerView for rejected items
+        rejectedList.setAdapter(rejectedAdapter);
+
+
+
     }
 }
