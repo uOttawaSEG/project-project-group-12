@@ -1,20 +1,13 @@
 package com.example.myapplication;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The RegistrationPending class manages a list of pending registrations,
+ * The RegistrationsPendingList class manages a list of pending registrations,
  * allowing for adding, approving, and rejecting registrations.
  */
-public class RegistrationPending {
+public class RegistrationsPendingList {
 
     //Static list to hold pending registrations
     private static List<String> pendingRegistration = new ArrayList<>();
@@ -22,7 +15,7 @@ public class RegistrationPending {
     private OnItemActionListener listener;
 
     //Constructor that initializes the listener
-    public RegistrationPending(OnItemActionListener listener) {
+    public RegistrationsPendingList(OnItemActionListener listener) {
         this.listener = listener;
     }
 

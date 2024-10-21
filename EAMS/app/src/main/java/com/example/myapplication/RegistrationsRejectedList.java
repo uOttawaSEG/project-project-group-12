@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The RegistrationRejected class manages a list of rejected registrations,
+ * The RegistrationsRejectedList class manages a list of rejected registrations,
  * allowing for displaying and approving rejected registrations.
  */
-public class RegistrationRejected {
+public class RegistrationsRejectedList {
 
     // Static list to hold rejected registrations
     private static List<String> rejectedRegistration = new ArrayList<>();
@@ -15,7 +15,7 @@ public class RegistrationRejected {
     private OnItemActionListener listener;
 
     // Constructor that initializes the listener
-    public RegistrationRejected(OnItemActionListener listener) {
+    public RegistrationsRejectedList(OnItemActionListener listener) {
         this.listener = listener;
     }
 

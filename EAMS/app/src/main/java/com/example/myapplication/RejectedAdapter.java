@@ -16,10 +16,10 @@ public class RejectedAdapter extends RecyclerView.Adapter<RejectedAdapter.ViewHo
     // List to hold the rejected registration items
     private List<String> rejectedItems;
     // Listener to handle approve actions
-    private RegistrationRejected.OnItemActionListener listener;
+    private RegistrationsRejectedList.OnItemActionListener listener;
 
     // Constructor to initialize the adapter with rejected items and a listener
-    public RejectedAdapter(List<String> rejectedItems, RegistrationRejected.OnItemActionListener listener) {
+    public RejectedAdapter(List<String> rejectedItems, RegistrationsRejectedList.OnItemActionListener listener) {
         this.rejectedItems = rejectedItems;
         this.listener = listener;
     }

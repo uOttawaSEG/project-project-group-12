@@ -9,8 +9,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.RegistrationPending;
-
 import java.util.List;
 
 //The PendingAdapter class is responsible for displaying a list of pending registrations in a RecyclerView.
@@ -18,10 +16,10 @@ public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.ViewHold
     //List to hold the pending registration items
     private List<String> pendingItems;
     //Listener to handle approve and reject actions
-    private RegistrationPending.OnItemActionListener listener;
+    private RegistrationsPendingList.OnItemActionListener listener;
 
     //Constructor to initialize the adapter with pending items and a listener
-    public PendingAdapter(List<String> pendingItems, RegistrationPending.OnItemActionListener listener) {
+    public PendingAdapter(List<String> pendingItems, RegistrationsPendingList.OnItemActionListener listener) {
         this.pendingItems = pendingItems;
         this.listener = listener;
     }
