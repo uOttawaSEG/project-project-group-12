@@ -201,6 +201,51 @@ public class RegistrationPage extends AppCompatActivity {
         String organizationName = organizationNameField.getText().toString().trim();
 
 
+        //create our registration object
+        User userInfo;
+        String userType = ((RadioButton)findViewById(radioGroupField.getCheckedRadioButtonId())).getText().toString().toLowerCase();
+        if ( userType.equals("attendee")){
+            userInfo = new Attendee(firstName,lastName,phoneNumber,address, "Attendee");
+        } else {
+            userInfo = new Organizer(firstName,lastName,phoneNumber,address,organizationName , "Organizer") ;
+        }
+        RegistrationPending registrationPending = new RegistrationPending(userInfo);
+
+        //generate unique ID
+        String registrationID =  mDatabase.child("registration").push().getKey();
+
+        //write to database
+        assert registrationID != null; //throws error if null
+        mDatabase.child("registration").child(registrationID).setValue(userInfo)
+                .addOnSuccessListener(aVoid -> {
+                    //display log of successful registration
+
+                    // Creating AlertDialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(RegistrationPage.this);
+                    builder.setTitle("Registration Successful");
+                    builder.setMessage("Now wait for the Admin to approve the request of the account with this email address " + email );
+
+                    // Back to Login Button
+                    builder.setPositiveButton("Back to Login", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // back to login then
+                            Intent intent = new Intent(RegistrationPage.this, LoginPage.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    });
+
+
+                    builder.setCancelable(false);
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                })
+                .addOnFailureListener(e -> Toast.makeText(RegistrationPage.this, "Failed registration attempt", Toast.LENGTH_SHORT).show());
+
+
+
+
         //Using Firebase auth -  handles user session, password hashing,etc
 
         mAuth.createUserWithEmailAndPassword(email, password)

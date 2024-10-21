@@ -2,10 +2,7 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,8 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.List;
 
 public class AdminPage extends AppCompatActivity {
 
@@ -46,55 +41,55 @@ public class AdminPage extends AppCompatActivity {
         });
 
         //Add two sample registrations to the pending list
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Persona 5 royal - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("scrolling works? - Registration Request");
-        RegistrationPending.addRegistration("TEST - owo");
+        RegistrationsPendingList.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationsPendingList.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationsPendingList.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationsPendingList.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationsPendingList.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationsPendingList.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationsPendingList.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationsPendingList.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationsPendingList.addRegistration("Persona 5 royal - Registration Request");
+        RegistrationsPendingList.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationsPendingList.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationsPendingList.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationsPendingList.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationsPendingList.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationsPendingList.addRegistration("Ren Amamiya - Registration Request");
+        RegistrationsPendingList.addRegistration("scrolling works? - Registration Request");
+        RegistrationsPendingList.addRegistration("TEST - owo");
 
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("end of line uwu - Registration Request");
+        RegistrationsRejectedList.addRejectedRegistration("Ren Amamiya - Registration Request");
+        RegistrationsRejectedList.addRejectedRegistration("Ren Amamiya - Registration Request");
+        RegistrationsRejectedList.addRejectedRegistration("Ren Amamiya - Registration Request");
+        RegistrationsRejectedList.addRejectedRegistration("Ren Amamiya - Registration Request");
+        RegistrationsRejectedList.addRejectedRegistration("Ren Amamiya - Registration Request");
+        RegistrationsRejectedList.addRejectedRegistration("Ren Amamiya - Registration Request");
+        RegistrationsRejectedList.addRejectedRegistration("Ren Amamiya - Registration Request");
+        RegistrationsRejectedList.addRejectedRegistration("Ren Amamiya - Registration Request");
+        RegistrationsRejectedList.addRejectedRegistration("Ren Amamiya - Registration Request");
+        RegistrationsRejectedList.addRejectedRegistration("Ren Amamiya - Registration Request");
+        RegistrationsRejectedList.addRejectedRegistration("Ren Amamiya - Registration Request");
+        RegistrationsRejectedList.addRejectedRegistration("end of line uwu - Registration Request");
 
         //RecyclerView for pending registrations
         pendingList = findViewById(R.id.pendingList);
         pendingList.setLayoutManager(new LinearLayoutManager(this));
 
         //Initialize adapter
-        pendingAdapter = new PendingAdapter(RegistrationPending.getPendingRegistrations(), new RegistrationPending.OnItemActionListener() {
+        pendingAdapter = new PendingAdapter(RegistrationsPendingList.getPendingRegistrations(), new RegistrationsPendingList.OnItemActionListener() {
             @Override
             public void onApprove(String item) {
                 //Handle the approval action
-                RegistrationPending.approveRegistration(item);  // Just call approveRegistration without passing 'this'
-                pendingAdapter.updateData(RegistrationPending.getPendingRegistrations()); // Refresh the list
+                RegistrationsPendingList.approveRegistration(item);  // Just call approveRegistration without passing 'this'
+                pendingAdapter.updateData(RegistrationsPendingList.getPendingRegistrations()); // Refresh the list
             }
 
             @Override
             public void onReject(String item) {
                 //Handle the rejection action
-                RegistrationPending.rejectRegistration(item);  // Just call rejectRegistration without passing 'this'
-                pendingAdapter.updateData(RegistrationPending.getPendingRegistrations()); // Refresh the list
+                RegistrationsPendingList.rejectRegistration(item);  // Just call rejectRegistration without passing 'this'
+                pendingAdapter.updateData(RegistrationsPendingList.getPendingRegistrations()); // Refresh the list
             }
         });
 
@@ -106,12 +101,12 @@ public class AdminPage extends AppCompatActivity {
         rejectedList.setLayoutManager(new LinearLayoutManager(this));
 
         // Initialize the adapter with the list of rejected items and the listener
-        rejectedAdapter = new RejectedAdapter(RegistrationRejected.getRejectedRegistrations(), new RegistrationRejected.OnItemActionListener() {
+        rejectedAdapter = new RejectedAdapter(RegistrationsRejectedList.getRejectedRegistrations(), new RegistrationsRejectedList.OnItemActionListener() {
             @Override
             public void onApprove(String item) {
                 // Logic to re-approve the registration
-                RegistrationRejected.approveRegistration(item); // Approve the registration
-                rejectedAdapter.updateData(RegistrationRejected.getRejectedRegistrations()); // Refresh the list
+                RegistrationsRejectedList.approveRegistration(item); // Approve the registration
+                rejectedAdapter.updateData(RegistrationsRejectedList.getRejectedRegistrations()); // Refresh the list
             }
         });
 
