@@ -36,6 +36,8 @@ dependencies {
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.database.ktx)
     implementation(libs.google.firebase.auth)
+    implementation(libs.gson)
+    implementation(libs.okhttp)
 
     implementation(libs.appcompat)
     implementation(libs.material)

@@ -209,14 +209,15 @@ public class RegistrationPage extends AppCompatActivity {
         } else {
             userInfo = new Organizer(firstName,lastName,phoneNumber,address,organizationName , "Organizer") ;
         }
-        RegistrationPending registrationPending = new RegistrationPending(userInfo);
+
+        RegistrationPending registrationPending = new RegistrationPending(userInfo, email, password);
 
         //generate unique ID
         String registrationID =  mDatabase.child("registration").push().getKey();
 
         //write to database
         assert registrationID != null; //throws error if null
-        mDatabase.child("registration").child(registrationID).setValue(userInfo)
+        mDatabase.child("registration").child(registrationID).setValue(registrationPending)
                 .addOnSuccessListener(aVoid -> {
                     //display log of successful registration
 
