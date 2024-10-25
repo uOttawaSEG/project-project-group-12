@@ -30,6 +30,7 @@ public abstract class User {
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.role = role;
+        this.status = status;
     }
 
     public User() {
