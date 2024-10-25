@@ -218,11 +218,11 @@ public class RegistrationPage extends AppCompatActivity {
                             String userType = ((RadioButton)findViewById(radioGroupField.getCheckedRadioButtonId())).getText().toString().toLowerCase();
 
                             if ( userType.equals("attendee")){
-                                Attendee userInfo = new Attendee(firstName,lastName,phoneNumber,address, "Attendee");
+                                Attendee userInfo = new Attendee(firstName,lastName,phoneNumber,address, "Attendee", "pending");
                                 mDatabase.child("users").child(userId).setValue(userInfo);
                                 mDatabase.child("users").child(userId).child("userType").setValue("attendee");
                             } else {
-                                Organizer userInfo = new Organizer(firstName,lastName,phoneNumber,address,organizationName , "Organizer") ;
+                                Organizer userInfo = new Organizer(firstName,lastName,phoneNumber,address,organizationName , "Organizer", "pending") ;
                                 mDatabase.child("users").child(userId).setValue(userInfo);
                                 mDatabase.child("users").child(userId).child("userType").setValue("organizer");
                             }
