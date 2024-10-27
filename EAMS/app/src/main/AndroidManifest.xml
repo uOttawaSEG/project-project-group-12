@@ -20,10 +20,10 @@
 
         <activity android:name=".WelcomePage" />
 
-        <activity android:name=".LoginPage" />
+        <activity android:name=".AdminPage" />
 
         <activity
-            android:name=".AdminPage"
+            android:name=".LoginPage"
             android:exported="true">
 
             <intent-filter>
