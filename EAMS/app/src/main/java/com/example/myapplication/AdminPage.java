@@ -2,12 +2,15 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -16,6 +19,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
@@ -52,6 +60,38 @@ public class AdminPage extends AppCompatActivity {
 
         RegistrationRejected.addRejectedRegistration(new Attendee("Ren", "Amamiya", "6134567890", "123 street", "attendee", "status", "a@a.ca"));
         RegistrationRejected.addRejectedRegistration(new Organizer("Ren", "Amamiya", "6134567890", "123 street", "organization", "organizer", "status", "a@a.ca"));
+
+
+        //try to populate page
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
+
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                    //Retrieve role and ensure non-null, ignoring case in the comparison
+                    String role = childSnapshot.child("role").getValue(String.class);
+                    //equalsIgnoreCase allows comparisons with any case, ensuring “attendee” or “Attendee” match the same way.
+                    if ("Attendee".equalsIgnoreCase(role)) {
+                        Attendee attendeeData = childSnapshot.getValue(Attendee.class);
+                        if (attendeeData != null) {
+                            RegistrationPending.addRegistration(attendeeData);
+                        }
+                    } else if ("Organizer".equalsIgnoreCase(role)) {
+                        Organizer organizerData = childSnapshot.getValue(Organizer.class);
+                        if (organizerData != null) {
+                            RegistrationPending.addRegistration(organizerData);
+                        }
+                    }
+                }
+                pendingAdapter.updateData(RegistrationPending.getPendingRegistrations()); // Refresh pending list
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w("FirebaseData", "loadPost:onCancelled", databaseError.toException());
+            }
+        });
 
 
 
