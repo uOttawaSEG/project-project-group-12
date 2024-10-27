@@ -1,6 +1,8 @@
 package com.example.myapplication;
 
 
+import androidx.annotation.NonNull;
+
 /**
  * The Organizer class is a subclass of User and represents an organizer with an additional
  * field for the organization name.
@@ -17,8 +19,8 @@ public class Organizer extends User {
      * @param address the organizer's address
      * @param organizationName the name of the organization the organizer represents
      */
-    public Organizer(String firstName, String lastName, String phoneNumber, String address, String organizationName, String role, String status) {
-        super(firstName, lastName, phoneNumber, address, role, status); // Call parent class constructor
+    public Organizer(String firstName, String lastName, String phoneNumber, String address, String organizationName, String role, String status, String email) {
+        super(firstName, lastName, phoneNumber, address, role, status, email); // Call parent class constructor
         this.organizationName = organizationName;
     }
 
@@ -36,6 +38,17 @@ public class Organizer extends User {
 
     public void setOrganizationName(String organizationName) {
         this.organizationName = organizationName;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Role: " + getRole() + "\n" +
+                "Email: " + getEmail() + "\n" +
+                "Name: " + getFirstName() +  " " + getLastName() + "\n" +
+                "Phone: " + getPhoneNumber() + "\n" +
+                "Address: " + getAddress() + "\n" +
+                "Organization: " + getOrganizationName();
     }
 
 

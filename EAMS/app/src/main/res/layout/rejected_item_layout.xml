@@ -14,8 +14,8 @@
 
     <Button
         android:id="@+id/approveBtn"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:text="✔"
         android:textColor="@android:color/white"
         android:textSize="16sp"

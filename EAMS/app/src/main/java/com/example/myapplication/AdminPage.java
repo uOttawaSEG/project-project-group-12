@@ -45,37 +45,15 @@ public class AdminPage extends AppCompatActivity {
             startActivity(new Intent(AdminPage.this, LoginPage.class));
         });
 
-        //Add two sample registrations to the pending list
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Persona 5 royal - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("scrolling works? - Registration Request");
-        RegistrationPending.addRegistration("TEST - owo");
+        //Add sample registrations to the pending list (delete later)
+        RegistrationPending.addRegistration(new Attendee("Ren", "Amamiya", "6134567890", "123 street", "attendee", "status", "a@a.ca"));
+        RegistrationPending.addRegistration(new Organizer("Ren", "Amamiya", "6134567890", "123 street", "organization", "organizer", "status", "a@a.ca"));
 
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("end of line uwu - Registration Request");
+
+        RegistrationRejected.addRejectedRegistration(new Attendee("Ren", "Amamiya", "6134567890", "123 street", "attendee", "status", "a@a.ca"));
+        RegistrationRejected.addRejectedRegistration(new Organizer("Ren", "Amamiya", "6134567890", "123 street", "organization", "organizer", "status", "a@a.ca"));
+
+
 
         //RecyclerView for pending registrations
         pendingList = findViewById(R.id.pendingList);
@@ -84,14 +62,14 @@ public class AdminPage extends AppCompatActivity {
         //Initialize adapter
         pendingAdapter = new PendingAdapter(RegistrationPending.getPendingRegistrations(), new RegistrationPending.OnItemActionListener() {
             @Override
-            public void onApprove(String item) {
+            public void onApprove(User item) {
                 //Handle the approval action
                 RegistrationPending.approveRegistration(item);  // Just call approveRegistration without passing 'this'
                 pendingAdapter.updateData(RegistrationPending.getPendingRegistrations()); // Refresh the list
             }
 
             @Override
-            public void onReject(String item) {
+            public void onReject(User item) {
                 //Handle the rejection action
                 RegistrationPending.rejectRegistration(item);  // Just call rejectRegistration without passing 'this'
                 pendingAdapter.updateData(RegistrationPending.getPendingRegistrations()); // Refresh the list
@@ -108,7 +86,7 @@ public class AdminPage extends AppCompatActivity {
         // Initialize the adapter with the list of rejected items and the listener
         rejectedAdapter = new RejectedAdapter(RegistrationRejected.getRejectedRegistrations(), new RegistrationRejected.OnItemActionListener() {
             @Override
-            public void onApprove(String item) {
+            public void onApprove(User item) {
                 // Logic to re-approve the registration
                 RegistrationRejected.approveRegistration(item); // Approve the registration
                 rejectedAdapter.updateData(RegistrationRejected.getRejectedRegistrations()); // Refresh the list

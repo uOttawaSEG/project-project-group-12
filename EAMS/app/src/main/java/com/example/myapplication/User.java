@@ -24,13 +24,14 @@ public abstract class User {
      * @param phoneNumber the user's phone number
      * @param address the user's address
      */
-    public User(String firstName, String lastName, String phoneNumber, String address, String role ,String status) {
+    public User(String firstName, String lastName, String phoneNumber, String address, String role , String status, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.role = role;
         this.status = status;
+        this.email = email;
     }
 
     public User() {

@@ -14,19 +14,19 @@ import java.util.List;
 // The RejectedAdapter class is responsible for displaying a list of rejected registrations in a RecyclerView.
 public class RejectedAdapter extends RecyclerView.Adapter<RejectedAdapter.ViewHolder> {
     // List to hold the rejected registration items
-    private List<String> rejectedItems;
+    private List<User> rejectedItems;
     // Listener to handle approve actions
     private RegistrationRejected.OnItemActionListener listener;
 
     // Constructor to initialize the adapter with rejected items and a listener
-    public RejectedAdapter(List<String> rejectedItems, RegistrationRejected.OnItemActionListener listener) {
+    public RejectedAdapter(List<User> rejectedItems, RegistrationRejected.OnItemActionListener listener) {
         this.rejectedItems = rejectedItems;
         this.listener = listener;
     }
 
 
     // Method to update the data in the adapter and refresh the view
-    public void updateData(List<String> newItems) {
+    public void updateData(List<User> newItems) {
         this.rejectedItems = newItems;
         notifyDataSetChanged(); // Notify the adapter that the data has changed
     }
@@ -44,9 +44,9 @@ public class RejectedAdapter extends RecyclerView.Adapter<RejectedAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         // Get the current item from the list
-        String item = rejectedItems.get(position);
+        User item = rejectedItems.get(position);
         // Set the text for the item TextView
-        holder.itemText.setText(item);
+        holder.itemText.setText(item.toString());
 
         // Set click listener for approve button
         holder.approveButton.setOnClickListener(v -> listener.onApprove(item));

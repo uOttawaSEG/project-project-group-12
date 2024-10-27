@@ -10,7 +10,7 @@ import java.util.List;
 public class RegistrationRejected {
 
     // Static list to hold rejected registrations
-    private static List<String> rejectedRegistration = new ArrayList<>();
+    private static List<User> rejectedRegistration = new ArrayList<>();
     // Listener for item action events
     private OnItemActionListener listener;
 
@@ -20,12 +20,12 @@ public class RegistrationRejected {
     }
 
     // Method to add a registration to the rejected list
-    public static void addRejectedRegistration(String item) {
+    public static void addRejectedRegistration(User item) {
         rejectedRegistration.add(item); // Add the item to the list
     }
 
     // Method to approve a registration from the rejected list
-    public static void approveRegistration(String item) {
+    public static void approveRegistration(User item) {
         if (rejectedRegistration.contains(item)) {
             // Notify the listener about the approval action
             rejectedRegistration.remove(item); // Remove the item from the list
@@ -35,12 +35,12 @@ public class RegistrationRejected {
     }
 
     // Method to get the current list of rejected registrations
-    public static List<String> getRejectedRegistrations() {
+    public static List<User> getRejectedRegistrations() {
         return rejectedRegistration; // Return the list of rejected registrations
     }
 
     // Interface to handle actions on registration items
     public interface OnItemActionListener {
-        void onApprove(String item); // Callback for approving an item
+        void onApprove(User item); // Callback for approving an item
     }
 }

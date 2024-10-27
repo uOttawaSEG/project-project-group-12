@@ -17,7 +17,7 @@ import java.util.List;
 public class RegistrationPending {
 
     //Static list to hold pending registrations
-    private static List<String> pendingRegistration = new ArrayList<>();
+    private static List<User> pendingRegistration = new ArrayList<>();
     //Listener for item action events
     private OnItemActionListener listener;
 
@@ -27,12 +27,12 @@ public class RegistrationPending {
     }
 
     //Method to add a registration to the pending list
-    public static void addRegistration(String item) {
+    public static void addRegistration(User item) {
         pendingRegistration.add(item); //Add the item to the list
     }
 
     //Method to approve a registration from the pending list
-    public static void approveRegistration(String item) {
+    public static void approveRegistration(User item) {
         if (pendingRegistration.contains(item)) {
             //Notify the listener about the approval (if needed)
             //Instead of using a listener here, handle any necessary actions directly if required
@@ -41,7 +41,7 @@ public class RegistrationPending {
     }
 
     //Method to reject a registration from the pending list
-    public static void rejectRegistration(String item) {
+    public static void rejectRegistration(User item) {
         if (pendingRegistration.contains(item)) {
             //Notify the listener about the rejection (if needed)
             //Instead of using a listener here, handle any necessary actions directly if required
@@ -50,13 +50,13 @@ public class RegistrationPending {
     }
 
     //Method to get the current list of pending registrations
-    public static List<String> getPendingRegistrations() {
+    public static List<User> getPendingRegistrations() {
         return pendingRegistration; //Return the list of pending registrations
     }
 
     //Interface to handle actions on registration items
     public interface OnItemActionListener {
-        void onApprove(String item); //Callback for approving an item
-        void onReject(String item);   //Callback for rejecting an item
+        void onApprove(User item); //Callback for approving an item
+        void onReject(User item);   //Callback for rejecting an item
     }
 }
