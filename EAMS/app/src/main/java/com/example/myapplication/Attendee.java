@@ -17,8 +17,8 @@ public class Attendee extends User {
      * @param address the attendee's address
      */
 
-    public Attendee(String firstName, String lastName, String phoneNumber, String address, String role, String status, String email) {
-        super(firstName, lastName, phoneNumber, address, role, status, email); //Call parent class constructor
+    public Attendee(String firstName, String lastName, String phoneNumber, String address, String role, String status) {
+        super(firstName, lastName, phoneNumber, address, role, status); //Call parent class constructor
     }
     public Attendee() {
         super();

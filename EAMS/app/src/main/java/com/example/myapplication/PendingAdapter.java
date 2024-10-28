@@ -51,8 +51,8 @@ public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.ViewHold
         holder.itemText.setText(item.toString());
 
         //Set click listeners for approve and reject buttons
-        holder.approveButton.setOnClickListener(v -> listener.onApprove(item));
-        holder.rejectButton.setOnClickListener(v -> listener.onReject(item));
+        holder.approveButton.setOnClickListener(v -> listener.onApprove(item, this.registrationsPending , this));
+        holder.rejectButton.setOnClickListener(v -> listener.onReject(item , this.registrationsPending, this));
     }
 
     //Method to get the total number of items in the list

@@ -35,7 +35,7 @@ public class RegistrationsPending {
     public  void approveRegistration(User item) {
         if (pendingRegistration.contains(item)) {
             DatabaseReference db = FirebaseDatabase.getInstance().getReference("users");
-            db.child(uid).child("status").setValue("approved");
+            db.child(item.getUid()).child("status").setValue("approved");
             pendingRegistration.remove(item); //Remove the item from the list
             //TODO Notify the listener about the approval
         }
@@ -44,9 +44,9 @@ public class RegistrationsPending {
     //Method to reject a registration from the pending list
     public  void rejectRegistration(User item) {
         if (pendingRegistration.contains(item)) {
-            //Notify the listener about the rejection (if needed)
-            //Instead of using a listener here, handle any necessary actions directly if required
+            //TODO rejection db manipulation and connect add elem to RegistrationRejected class  :-0
             pendingRegistration.remove(item); //Remove the item from the list
+            //TODO Notify the listener about the rejection (if needed)
         }
     }
 
@@ -69,15 +69,18 @@ public class RegistrationsPending {
 
     //Event Listener to handle actions on registration items
     public class OnItemActionListener {
-        public void onApprove(User item) //Callback for approving an item
+        public void onApprove(User user , RegistrationsPending registrationsPending, PendingAdapter pendingAdapter) //Callback for approving an item
         {
-
+            //update db references
+            registrationsPending.approveRegistration(user);
+            //update UI - aka refresh the list of pending registration
+            pendingAdapter.updateData(registrationsPending.getPendingRegistrations());
         }
 
         public void onReject(User user, RegistrationsPending registrationsPending, PendingAdapter pendingAdapter)   //Callback for rejecting an item
         {
             //update db references
-            registrationsPending.approveRegistration(user);
+            registrationsPending.rejectRegistration(user);
             //update UI - aka refresh the list of pending registration
             pendingAdapter.updateData(registrationsPending.getPendingRegistrations());
         }
