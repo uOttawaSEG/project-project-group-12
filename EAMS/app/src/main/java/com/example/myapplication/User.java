@@ -15,6 +15,7 @@ public abstract class User {
     private String address;
     private String role;
     private String status;
+    private String uid;
 
     /**
      * Constructs a new User with the given details.
@@ -24,7 +25,7 @@ public abstract class User {
      * @param phoneNumber the user's phone number
      * @param address the user's address
      */
-    public User(String firstName, String lastName, String phoneNumber, String address, String role ,String status) {
+    public User(String firstName, String lastName, String phoneNumber, String address, String role , String status) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
@@ -104,5 +105,13 @@ public abstract class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }

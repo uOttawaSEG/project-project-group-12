@@ -2,12 +2,12 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.View;
+import android.util.Log;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -16,14 +16,20 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.List;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class AdminPage extends AppCompatActivity {
 
     private RecyclerView pendingList, rejectedList;
     private PendingAdapter pendingAdapter;
     private RejectedAdapter rejectedAdapter;
+    private RegistrationsPending registrationsPending;
+    private DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +37,50 @@ public class AdminPage extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_admin_page);
 
+        initlayout();
+
+        //try to populate page
+        databaseReference = FirebaseDatabase.getInstance().getReference("users");
+        registrationsPending = new RegistrationsPending();
+        registrationsPending.initListener();
+        loadUsers();
+
+        registrationToUI();
+
+
+    }
+
+    private void registrationToUI() {
+        //RecyclerView for pending registrations
+        pendingList = findViewById(R.id.pendingList);
+        pendingList.setLayoutManager(new LinearLayoutManager(this));
+
+        //Initialize adapter
+        pendingAdapter = new PendingAdapter(registrationsPending);
+
+        pendingList.setAdapter(pendingAdapter);
+
+
+        // Initialize RecyclerView for rejected items
+        rejectedList = findViewById(R.id.rejectedList);
+        rejectedList.setLayoutManager(new LinearLayoutManager(this));
+
+        // Initialize the adapter with the list of rejected items and the listener
+        rejectedAdapter = new RejectedAdapter(RegistrationRejected.getRejectedRegistrations(), new RegistrationRejected.OnItemActionListener() {
+            @Override
+            public void onApprove(User item) {
+                // Logic to re-approve the registration
+                RegistrationRejected.approveRegistration(item); // Approve the registration
+                rejectedAdapter.updateData(RegistrationRejected.getRejectedRegistrations()); // Refresh the list
+            }
+        });
+
+        // Set the adapter to the RecyclerView for rejected items
+        rejectedList.setAdapter(rejectedAdapter);
+
+    }
+
+    private void initlayout() {
         //Set insets for proper layout handling
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -44,81 +94,65 @@ public class AdminPage extends AppCompatActivity {
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(AdminPage.this, LoginPage.class));
         });
+    }
 
-        //Add two sample registrations to the pending list
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Persona 5 royal - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("Ren Amamiya - Registration Request");
-        RegistrationPending.addRegistration("scrolling works? - Registration Request");
-        RegistrationPending.addRegistration("TEST - owo");
-
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("Ren Amamiya - Registration Request");
-        RegistrationRejected.addRejectedRegistration("end of line uwu - Registration Request");
-
-        //RecyclerView for pending registrations
-        pendingList = findViewById(R.id.pendingList);
-        pendingList.setLayoutManager(new LinearLayoutManager(this));
-
-        //Initialize adapter
-        pendingAdapter = new PendingAdapter(RegistrationPending.getPendingRegistrations(), new RegistrationPending.OnItemActionListener() {
+    private void loadUsers( ){
+        this.databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onApprove(String item) {
-                //Handle the approval action
-                RegistrationPending.approveRegistration(item);  // Just call approveRegistration without passing 'this'
-                pendingAdapter.updateData(RegistrationPending.getPendingRegistrations()); // Refresh the list
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                    //Retrieve role and ensure non-null, ignoring case in the comparison
+                    String status = childSnapshot.child("status").getValue(String.class);
+
+                    //send to pending or rejected list
+                    if ("pending".equalsIgnoreCase(status)) {
+                        addUserToRegistrationsPendingList(childSnapshot);
+                    } else if ("rejected".equalsIgnoreCase(status)) {
+                        addUserToRegistrationsRejectedPendingList(childSnapshot);
+                    }
+
+
+                }
+                pendingAdapter.updateData(AdminPage.this.registrationsPending.getPendingRegistrations()); // Refresh pending list
+                Toast.makeText(AdminPage.this, "Users loaded sucesfully", Toast.LENGTH_LONG).show();
+            }
+
+            private void addUserToRegistrationsRejectedPendingList(DataSnapshot childSnapshot) {
+                
+            }
+
+            private void addUserToRegistrationsPendingList(DataSnapshot childSnapshot) {
+                String role = childSnapshot.child("role").getValue(String.class);
+                String uid = childSnapshot.getKey();
+
+                //equalsIgnoreCase allows comparisons with any case, ensuring “attendee” or “Attendee” match the same way.
+                if ("Attendee".equalsIgnoreCase(role)) {
+                    Attendee attendeeData = childSnapshot.getValue(Attendee.class);
+                    assert attendeeData != null; //throws error when null, should never
+                    attendeeData.setUid(uid);
+
+                    AdminPage.this.registrationsPending.addRegistration(attendeeData);
+                    Log.d("Firebase", "User added: " + attendeeData.getFirstName());
+
+
+                } else if ("Organizer".equalsIgnoreCase(role)) {
+                    Organizer organizerData = childSnapshot.getValue(Organizer.class);
+                    assert organizerData != null; //throws error when null, should never
+                    organizerData.setUid(uid);
+
+                    AdminPage.this.registrationsPending.addRegistration(organizerData);
+                    Log.d("Firebase", "User added: " + organizerData.getFirstName());
+                }
             }
 
             @Override
-            public void onReject(String item) {
-                //Handle the rejection action
-                RegistrationPending.rejectRegistration(item);  // Just call rejectRegistration without passing 'this'
-                pendingAdapter.updateData(RegistrationPending.getPendingRegistrations()); // Refresh the list
-            }
-        });
-
-        pendingList.setAdapter(pendingAdapter);
-
-
-        // Initialize RecyclerView for rejected items
-        rejectedList = findViewById(R.id.rejectedList);
-        rejectedList.setLayoutManager(new LinearLayoutManager(this));
-
-        // Initialize the adapter with the list of rejected items and the listener
-        rejectedAdapter = new RejectedAdapter(RegistrationRejected.getRejectedRegistrations(), new RegistrationRejected.OnItemActionListener() {
-            @Override
-            public void onApprove(String item) {
-                // Logic to re-approve the registration
-                RegistrationRejected.approveRegistration(item); // Approve the registration
-                rejectedAdapter.updateData(RegistrationRejected.getRejectedRegistrations()); // Refresh the list
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("FirebaseData", "loadPost:onCancelled", databaseError.toException());
             }
         });
-
-// Set the adapter to the RecyclerView for rejected items
-        rejectedList.setAdapter(rejectedAdapter);
-
-
 
     }
+
+
+
 }

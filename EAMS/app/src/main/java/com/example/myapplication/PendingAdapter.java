@@ -9,25 +9,26 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.RegistrationPending;
-
 import java.util.List;
 
 //The PendingAdapter class is responsible for displaying a list of pending registrations in a RecyclerView.
 public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.ViewHolder> {
     //List to hold the pending registration items
-    private List<String> pendingItems;
+    private List<User> pendingItems;
     //Listener to handle approve and reject actions
-    private RegistrationPending.OnItemActionListener listener;
+    private RegistrationsPending.OnItemActionListener listener;
+
+    private RegistrationsPending registrationsPending;
 
     //Constructor to initialize the adapter with pending items and a listener
-    public PendingAdapter(List<String> pendingItems, RegistrationPending.OnItemActionListener listener) {
-        this.pendingItems = pendingItems;
-        this.listener = listener;
+    public PendingAdapter(RegistrationsPending registrationsPending) {
+        this.registrationsPending = registrationsPending;
+        this.pendingItems = registrationsPending.getPendingRegistrations();
+        this.listener = registrationsPending.getListener();
     }
 
     //Method to update the data in the adapter and refresh the view
-    public void updateData(List<String> newItems) {
+    public void updateData(List<User> newItems) {
         this.pendingItems = newItems;
         notifyDataSetChanged(); // Notify the adapter that the data has changed
     }
@@ -45,13 +46,13 @@ public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         //Get the current item from the list
-        String item = pendingItems.get(position);
+        User item = pendingItems.get(position);
         //Set the text for the item TextView
-        holder.itemText.setText(item);
+        holder.itemText.setText(item.toString());
 
         //Set click listeners for approve and reject buttons
-        holder.approveButton.setOnClickListener(v -> listener.onApprove(item));
-        holder.rejectButton.setOnClickListener(v -> listener.onReject(item));
+        holder.approveButton.setOnClickListener(v -> listener.onApprove(item, this.registrationsPending , this));
+        holder.rejectButton.setOnClickListener(v -> listener.onReject(item , this.registrationsPending, this));
     }
 
     //Method to get the total number of items in the list

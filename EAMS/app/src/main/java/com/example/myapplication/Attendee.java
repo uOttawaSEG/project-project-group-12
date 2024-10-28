@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import androidx.annotation.NonNull;
+
 /**
  * The Attendee class is a subclass of User and represents an attendee.
  * It does not add any additional fields to the base User class.
@@ -21,6 +23,16 @@ public class Attendee extends User {
     public Attendee() {
         super();
         // For firebase
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Role: " + getRole() + "\n" +
+                "Email: " + getEmail() + "\n" +
+                "Name: " + getFirstName() + " " + getLastName() + "\n" +
+                "Phone: " + getPhoneNumber() + "\n" +
+                "Address: " + getAddress();
     }
 
 }
