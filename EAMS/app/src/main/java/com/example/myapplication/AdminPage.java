@@ -102,30 +102,47 @@ public class AdminPage extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                     //Retrieve role and ensure non-null, ignoring case in the comparison
-                    String role = childSnapshot.child("role").getValue(String.class);
-                    String uid = childSnapshot.getKey();
+                    String status = childSnapshot.child("status").getValue(String.class);
 
-                    //equalsIgnoreCase allows comparisons with any case, ensuring “attendee” or “Attendee” match the same way.
-                    if ("Attendee".equalsIgnoreCase(role)) {
-                        Attendee attendeeData = childSnapshot.getValue(Attendee.class);
-                        assert attendeeData != null; //throws error when null, should never
-                        attendeeData.setUid(uid);
-
-                        AdminPage.this.registrationsPending.addRegistration(attendeeData);
-                        Log.d("Firebase", "User added: " + attendeeData.getFirstName());
-
-
-                    } else if ("Organizer".equalsIgnoreCase(role)) {
-                        Organizer organizerData = childSnapshot.getValue(Organizer.class);
-                        assert organizerData != null; //throws error when null, should never
-                        organizerData.setUid(uid);
-
-                        AdminPage.this.registrationsPending.addRegistration(organizerData);
-                        Log.d("Firebase", "User added: " + organizerData.getFirstName());
+                    //send to pending or rejected list
+                    if ("pending".equalsIgnoreCase(status)) {
+                        addUserToRegistrationsPendingList(childSnapshot);
+                    } else if ("rejected".equalsIgnoreCase(status)) {
+                        addUserToRegistrationsRejectedPendingList(childSnapshot);
                     }
+
+
                 }
                 pendingAdapter.updateData(AdminPage.this.registrationsPending.getPendingRegistrations()); // Refresh pending list
                 Toast.makeText(AdminPage.this, "Users loaded sucesfully", Toast.LENGTH_LONG).show();
+            }
+
+            private void addUserToRegistrationsRejectedPendingList(DataSnapshot childSnapshot) {
+                
+            }
+
+            private void addUserToRegistrationsPendingList(DataSnapshot childSnapshot) {
+                String role = childSnapshot.child("role").getValue(String.class);
+                String uid = childSnapshot.getKey();
+
+                //equalsIgnoreCase allows comparisons with any case, ensuring “attendee” or “Attendee” match the same way.
+                if ("Attendee".equalsIgnoreCase(role)) {
+                    Attendee attendeeData = childSnapshot.getValue(Attendee.class);
+                    assert attendeeData != null; //throws error when null, should never
+                    attendeeData.setUid(uid);
+
+                    AdminPage.this.registrationsPending.addRegistration(attendeeData);
+                    Log.d("Firebase", "User added: " + attendeeData.getFirstName());
+
+
+                } else if ("Organizer".equalsIgnoreCase(role)) {
+                    Organizer organizerData = childSnapshot.getValue(Organizer.class);
+                    assert organizerData != null; //throws error when null, should never
+                    organizerData.setUid(uid);
+
+                    AdminPage.this.registrationsPending.addRegistration(organizerData);
+                    Log.d("Firebase", "User added: " + organizerData.getFirstName());
+                }
             }
 
             @Override
