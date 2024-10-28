@@ -250,7 +250,7 @@ public class RegistrationPage extends AppCompatActivity {
 
                         } else {
                             //TODO there was an error in the registration process
-                            Toast.makeText(RegistrationPage.this, "Registration Unsuccessful", Toast.LENGTH_LONG).show();
+                            Toast.makeText(RegistrationPage.this, "This email address has already been registered", Toast.LENGTH_LONG).show();
                             return;
                         }
                     }
