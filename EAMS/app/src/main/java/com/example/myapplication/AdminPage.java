@@ -3,10 +3,7 @@ package com.example.myapplication;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -25,14 +22,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.List;
-
 public class AdminPage extends AppCompatActivity {
 
     private RecyclerView pendingList, rejectedList;
     private PendingAdapter pendingAdapter;
     private RejectedAdapter rejectedAdapter;
-    private  RegistrationPending registrationPending;
+    private RegistrationsPending registrationsPending;
     private DatabaseReference databaseReference;
 
     @Override
@@ -45,7 +40,8 @@ public class AdminPage extends AppCompatActivity {
 
         //try to populate page
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
-        registrationPending = new RegistrationPending();
+        registrationsPending = new RegistrationsPending();
+        registrationsPending.initListener();
         loadUsers();
 
         registrationToUI();
@@ -59,21 +55,7 @@ public class AdminPage extends AppCompatActivity {
         pendingList.setLayoutManager(new LinearLayoutManager(this));
 
         //Initialize adapter
-        pendingAdapter = new PendingAdapter(registrationPending.getPendingRegistrations(), new RegistrationPending.OnItemActionListener() {
-            @Override
-            public void onApprove(User item) {
-                //Handle the approval action
-                registrationPending.approveRegistration(item);  // Just call approveRegistration without passing 'this'
-                pendingAdapter.updateData(registrationPending.getPendingRegistrations()); // Refresh the list
-            }
-
-            @Override
-            public void onReject(User item) {
-                //Handle the rejection action
-                registrationPending.rejectRegistration(item);  // Just call rejectRegistration without passing 'this'
-                pendingAdapter.updateData(registrationPending.getPendingRegistrations()); // Refresh the list
-            }
-        });
+        pendingAdapter = new PendingAdapter(registrationsPending);
 
         pendingList.setAdapter(pendingAdapter);
 
@@ -124,7 +106,7 @@ public class AdminPage extends AppCompatActivity {
                     if ("Attendee".equalsIgnoreCase(role)) {
                         Attendee attendeeData = childSnapshot.getValue(Attendee.class);
                         if (attendeeData != null) {
-                            AdminPage.this.registrationPending.addRegistration(attendeeData);
+                            AdminPage.this.registrationsPending.addRegistration(attendeeData);
                             Log.d("Firebase", "User added: " + attendeeData.getFirstName());
                         }
 
@@ -132,12 +114,12 @@ public class AdminPage extends AppCompatActivity {
                     } else if ("Organizer".equalsIgnoreCase(role)) {
                         Organizer organizerData = childSnapshot.getValue(Organizer.class);
                         if (organizerData != null) {
-                            AdminPage.this.registrationPending.addRegistration(organizerData);
+                            AdminPage.this.registrationsPending.addRegistration(organizerData);
                             Log.d("Firebase", "User added: " + organizerData.getFirstName());
                         }
                     }
                 }
-                pendingAdapter.updateData(AdminPage.this.registrationPending.getPendingRegistrations()); // Refresh pending list
+                pendingAdapter.updateData(AdminPage.this.registrationsPending.getPendingRegistrations()); // Refresh pending list
                 Toast.makeText(AdminPage.this, "Users loaded sucesfully", Toast.LENGTH_LONG).show();
             }
 

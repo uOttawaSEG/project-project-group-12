@@ -1,11 +1,7 @@
 package com.example.myapplication;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +10,7 @@ import java.util.List;
  * The RegistrationPending class manages a list of pending registrations,
  * allowing for adding, approving, and rejecting registrations.
  */
-public class RegistrationPending {
+public class RegistrationsPending {
 
     //Static list to hold pending registrations
     private List<User> pendingRegistration ;
@@ -22,11 +18,11 @@ public class RegistrationPending {
     private OnItemActionListener listener;
 
     //Constructor that initializes the listener
-    public RegistrationPending(OnItemActionListener listener) {
+    public RegistrationsPending(OnItemActionListener listener) {
         this.listener = listener;
         this.pendingRegistration = new ArrayList<>();
     }
-    public RegistrationPending(){
+    public RegistrationsPending(){
         this.pendingRegistration = new ArrayList<>();
     }
 
@@ -38,9 +34,10 @@ public class RegistrationPending {
     //Method to approve a registration from the pending list
     public  void approveRegistration(User item) {
         if (pendingRegistration.contains(item)) {
-            //Notify the listener about the approval (if needed)
-            //Instead of using a listener here, handle any necessary actions directly if required
+            DatabaseReference db = FirebaseDatabase.getInstance().getReference("users");
+            db.child(uid).child("status").setValue("approved");
             pendingRegistration.remove(item); //Remove the item from the list
+            //TODO Notify the listener about the approval
         }
     }
 
@@ -58,9 +55,33 @@ public class RegistrationPending {
         return pendingRegistration; //Return the list of pending registrations
     }
 
-    //Interface to handle actions on registration items
-    public interface OnItemActionListener {
-        void onApprove(User item); //Callback for approving an item
-        void onReject(User item);   //Callback for rejecting an item
+    public OnItemActionListener getListener() {
+        return listener;
+    }
+
+    public void setListener(OnItemActionListener listener) {
+        this.listener = listener;
+    }
+
+    public void initListener(){
+        this.listener = new OnItemActionListener();
+    }
+
+    //Event Listener to handle actions on registration items
+    public class OnItemActionListener {
+        public void onApprove(User item) //Callback for approving an item
+        {
+
+        }
+
+        public void onReject(User user, RegistrationsPending registrationsPending, PendingAdapter pendingAdapter)   //Callback for rejecting an item
+        {
+            //update db references
+            registrationsPending.approveRegistration(user);
+            //update UI - aka refresh the list of pending registration
+            pendingAdapter.updateData(registrationsPending.getPendingRegistrations());
+        }
+
+        public  OnItemActionListener(){}
     }
 }
