@@ -136,7 +136,7 @@ public class LoginPage extends AppCompatActivity {
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (task.isSuccessful() && task.getResult().exists()) {
 
-                    String userRole = task.getResult().child("role").getValue(String.class);
+                    String userRole = task.getResult().child("userType").getValue(String.class);
 
                     if(Objects.equals(userRole, "Administrator")) {
                         navigateToWelcomePage(userRole);
