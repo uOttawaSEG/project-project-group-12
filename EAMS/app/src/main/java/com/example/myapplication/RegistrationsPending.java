@@ -16,6 +16,7 @@ public class RegistrationsPending {
     private List<User> pendingRegistration ;
     //Listener for item action events
     private OnItemActionListener listener;
+    private RegistrationRejected registrationRejected;
 
     //Constructor that initializes the listener
     public RegistrationsPending(OnItemActionListener listener) {
@@ -47,6 +48,7 @@ public class RegistrationsPending {
             //TODO rejection db manipulation and connect add elem to RegistrationRejected class  :-0
             DatabaseReference db = FirebaseDatabase.getInstance().getReference("users");
             db.child(item.getUid()).child("status").setValue("rejected");
+            registrationRejected.addRejectedRegistration(item);
             pendingRegistration.remove(item); //Remove the item from the list
             //TODO Notify the listener about the rejection (if needed)
         }
@@ -61,8 +63,8 @@ public class RegistrationsPending {
         return listener;
     }
 
-    public void setListener(OnItemActionListener listener) {
-        this.listener = listener;
+    public void initRegistrationRejected(RegistrationRejected registrationRejected){
+        this.registrationRejected = registrationRejected;
     }
 
     public void initListener(){

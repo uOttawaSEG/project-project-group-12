@@ -42,12 +42,15 @@ public class AdminPage extends AppCompatActivity {
 
         //try to populate page
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
-        registrationsPending = new RegistrationsPending();
-        registrationsPending.initListener();
+
         registrationRejected = new RegistrationRejected();
         registrationRejected.initListener();
-        loadUsers();
 
+        registrationsPending = new RegistrationsPending();
+        registrationsPending.initListener();
+        registrationsPending.initRegistrationRejected(registrationRejected);
+
+        loadUsers();
         registrationToUI();
 
 
@@ -114,7 +117,28 @@ public class AdminPage extends AppCompatActivity {
             }
 
             private void addUserToRegistrationsRejectedPendingList(DataSnapshot childSnapshot) {
-                //TODO - also instantiate RegistrationsRejected
+                String role = childSnapshot.child("role").getValue(String.class);
+                String uid = childSnapshot.getKey();
+
+                //equalsIgnoreCase allows comparisons with any case, ensuring “attendee” or “Attendee” match the same way.
+                if ("Attendee".equalsIgnoreCase(role)) {
+                    Attendee attendeeData = childSnapshot.getValue(Attendee.class);
+                    assert attendeeData != null; //throws error when null, should never
+                    attendeeData.setUid(uid);
+
+                    AdminPage.this.registrationRejected.addRejectedRegistration(attendeeData);
+                    Log.d("Firebase", "User added: " + attendeeData.getFirstName());
+
+
+                } else if ("Organizer".equalsIgnoreCase(role)) {
+                    Organizer organizerData = childSnapshot.getValue(Organizer.class);
+                    assert organizerData != null; //throws error when null, should never
+                    organizerData.setUid(uid);
+
+                    AdminPage.this.registrationRejected.addRejectedRegistration(organizerData);
+                    Log.d("Firebase", "User added: " + organizerData.getFirstName());
+                }
+
             }
 
             private void addUserToRegistrationsPendingList(DataSnapshot childSnapshot) {
