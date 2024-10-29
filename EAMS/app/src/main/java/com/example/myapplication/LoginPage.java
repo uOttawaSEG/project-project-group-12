@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -130,14 +131,20 @@ public class LoginPage extends AppCompatActivity {
 
     // Determine whether the role is attendee/organizer
     private void determineRole(FirebaseUser user) {
-        mDatabase.child("users").child(user.getUid()).child("userType").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+        mDatabase.child("users").child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (task.isSuccessful() && task.getResult().exists()) {
 
-                    String userRole = task.getResult().getValue(String.class);
+                    String userRole = task.getResult().child("role").getValue(String.class);
 
-                    navigateToWelcomePage(userRole);
+                    if(Objects.equals(userRole, "Administrator")) {
+                        navigateToWelcomePage(userRole);
+                    }
+                    else{
+                        String status = task.getResult().child("status").getValue(String.class);
+                        checkRegistrationStatus(userRole, status);
+                    }
                 } else {
                     Log.e("firebase", "user role not found", task.getException());
                 }
@@ -163,7 +170,19 @@ public class LoginPage extends AppCompatActivity {
         startActivity(intent);
     }
 
-
-
-
+    private void checkRegistrationStatus(String userRole,String status){
+        if(Objects.equals(status, "pending")){
+            Toast.makeText(LoginPage.this, "Your registration is still pending.", Toast.LENGTH_LONG).show();
+        }
+        else if(Objects.equals(status, "rejected")) {
+            //used an AlertDialog to give the user enough time to see the phone number of the admin
+            AlertDialog.Builder builder = new AlertDialog.Builder(LoginPage.this);
+            builder.setTitle("Your registration has been rejected by the Administrator");
+            builder.setMessage("Please contact them through this phone number: +1 123-456-7890");
+        }
+        else{
+            //the status is confirmed so send the user to WelcomePage
+            navigateToWelcomePage(userRole);
+        }
+    }
 }

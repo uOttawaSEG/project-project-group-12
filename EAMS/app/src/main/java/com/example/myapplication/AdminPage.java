@@ -3,10 +3,7 @@ package com.example.myapplication;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -19,19 +16,20 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.List;
-
 public class AdminPage extends AppCompatActivity {
 
     private RecyclerView pendingList, rejectedList;
     private PendingAdapter pendingAdapter;
     private RejectedAdapter rejectedAdapter;
+    private RegistrationsPending registrationsPending;
+    private DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,82 +37,26 @@ public class AdminPage extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_admin_page);
 
-        //Set insets for proper layout handling
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-
-        //Logout button
-        Button logOutButton = findViewById(R.id.logOutBtn);
-        logOutButton.setOnClickListener(v -> {
-            FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(AdminPage.this, LoginPage.class));
-        });
-
-        //Add sample registrations to the pending list (delete later)
-        RegistrationPending.addRegistration(new Attendee("Ren", "Amamiya", "6134567890", "123 street", "attendee", "status", "a@a.ca"));
-        RegistrationPending.addRegistration(new Organizer("Ren", "Amamiya", "6134567890", "123 street", "organization", "organizer", "status", "a@a.ca"));
-
-
-        RegistrationRejected.addRejectedRegistration(new Attendee("Ren", "Amamiya", "6134567890", "123 street", "attendee", "status", "a@a.ca"));
-        RegistrationRejected.addRejectedRegistration(new Organizer("Ren", "Amamiya", "6134567890", "123 street", "organization", "organizer", "status", "a@a.ca"));
-
+        initlayout();
 
         //try to populate page
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
+        databaseReference = FirebaseDatabase.getInstance().getReference("users");
+        registrationsPending = new RegistrationsPending();
+        registrationsPending.initListener();
+        loadUsers();
 
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
-                    //Retrieve role and ensure non-null, ignoring case in the comparison
-                    String role = childSnapshot.child("role").getValue(String.class);
-                    //equalsIgnoreCase allows comparisons with any case, ensuring “attendee” or “Attendee” match the same way.
-                    if ("Attendee".equalsIgnoreCase(role)) {
-                        Attendee attendeeData = childSnapshot.getValue(Attendee.class);
-                        if (attendeeData != null) {
-                            RegistrationPending.addRegistration(attendeeData);
-                        }
-                    } else if ("Organizer".equalsIgnoreCase(role)) {
-                        Organizer organizerData = childSnapshot.getValue(Organizer.class);
-                        if (organizerData != null) {
-                            RegistrationPending.addRegistration(organizerData);
-                        }
-                    }
-                }
-                pendingAdapter.updateData(RegistrationPending.getPendingRegistrations()); // Refresh pending list
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("FirebaseData", "loadPost:onCancelled", databaseError.toException());
-            }
-        });
+        registrationToUI();
 
 
+    }
 
+    private void registrationToUI() {
         //RecyclerView for pending registrations
         pendingList = findViewById(R.id.pendingList);
         pendingList.setLayoutManager(new LinearLayoutManager(this));
 
         //Initialize adapter
-        pendingAdapter = new PendingAdapter(RegistrationPending.getPendingRegistrations(), new RegistrationPending.OnItemActionListener() {
-            @Override
-            public void onApprove(User item) {
-                //Handle the approval action
-                RegistrationPending.approveRegistration(item);  // Just call approveRegistration without passing 'this'
-                pendingAdapter.updateData(RegistrationPending.getPendingRegistrations()); // Refresh the list
-            }
-
-            @Override
-            public void onReject(User item) {
-                //Handle the rejection action
-                RegistrationPending.rejectRegistration(item);  // Just call rejectRegistration without passing 'this'
-                pendingAdapter.updateData(RegistrationPending.getPendingRegistrations()); // Refresh the list
-            }
-        });
+        pendingAdapter = new PendingAdapter(registrationsPending);
 
         pendingList.setAdapter(pendingAdapter);
 
@@ -133,10 +75,84 @@ public class AdminPage extends AppCompatActivity {
             }
         });
 
-// Set the adapter to the RecyclerView for rejected items
+        // Set the adapter to the RecyclerView for rejected items
         rejectedList.setAdapter(rejectedAdapter);
 
+    }
 
+    private void initlayout() {
+        //Set insets for proper layout handling
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        //Logout button
+        Button logOutButton = findViewById(R.id.logOutBtn);
+        logOutButton.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(AdminPage.this, LoginPage.class));
+        });
+    }
+
+    private void loadUsers( ){
+        this.databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                    //Retrieve role and ensure non-null, ignoring case in the comparison
+                    String status = childSnapshot.child("status").getValue(String.class);
+
+                    //send to pending or rejected list
+                    if ("pending".equalsIgnoreCase(status)) {
+                        addUserToRegistrationsPendingList(childSnapshot);
+                    } else if ("rejected".equalsIgnoreCase(status)) {
+                        addUserToRegistrationsRejectedPendingList(childSnapshot);
+                    }
+
+
+                }
+                pendingAdapter.updateData(AdminPage.this.registrationsPending.getPendingRegistrations()); // Refresh pending list
+                Toast.makeText(AdminPage.this, "Users loaded sucesfully", Toast.LENGTH_LONG).show();
+            }
+
+            private void addUserToRegistrationsRejectedPendingList(DataSnapshot childSnapshot) {
+                
+            }
+
+            private void addUserToRegistrationsPendingList(DataSnapshot childSnapshot) {
+                String role = childSnapshot.child("role").getValue(String.class);
+                String uid = childSnapshot.getKey();
+
+                //equalsIgnoreCase allows comparisons with any case, ensuring “attendee” or “Attendee” match the same way.
+                if ("Attendee".equalsIgnoreCase(role)) {
+                    Attendee attendeeData = childSnapshot.getValue(Attendee.class);
+                    assert attendeeData != null; //throws error when null, should never
+                    attendeeData.setUid(uid);
+
+                    AdminPage.this.registrationsPending.addRegistration(attendeeData);
+                    Log.d("Firebase", "User added: " + attendeeData.getFirstName());
+
+
+                } else if ("Organizer".equalsIgnoreCase(role)) {
+                    Organizer organizerData = childSnapshot.getValue(Organizer.class);
+                    assert organizerData != null; //throws error when null, should never
+                    organizerData.setUid(uid);
+
+                    AdminPage.this.registrationsPending.addRegistration(organizerData);
+                    Log.d("Firebase", "User added: " + organizerData.getFirstName());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("FirebaseData", "loadPost:onCancelled", databaseError.toException());
+            }
+        });
 
     }
+
+
+
 }

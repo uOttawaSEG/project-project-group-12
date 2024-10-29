@@ -218,10 +218,12 @@ public class RegistrationPage extends AppCompatActivity {
                             String userType = ((RadioButton)findViewById(radioGroupField.getCheckedRadioButtonId())).getText().toString().toLowerCase();
 
                             if ( userType.equals("attendee")){
-                                Attendee userInfo = new Attendee(firstName,lastName,phoneNumber,address, "Attendee", "pending", email);
+                                Attendee userInfo = new Attendee(firstName,lastName,phoneNumber,address, "Attendee", "pending");
+                                userInfo.setEmail(email);//should be able to query firebase auth to get email of user
                                 mDatabase.child("users").child(userId).setValue(userInfo);
                             } else {
-                                Organizer userInfo = new Organizer(firstName,lastName,phoneNumber,address,organizationName , "Organizer", "pending", email) ;
+                                Organizer userInfo = new Organizer(firstName,lastName,phoneNumber,address,organizationName , "Organizer", "pending") ;
+                                userInfo.setEmail(email);//should be able to query firebase auth to get email of user
                                 mDatabase.child("users").child(userId).setValue(userInfo);
                             }
 
