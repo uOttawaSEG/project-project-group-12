@@ -122,7 +122,7 @@ public class AdminPage extends AppCompatActivity {
             }
 
             private void addUserToRegistrationsPendingList(DataSnapshot childSnapshot) {
-                String role = childSnapshot.child("role").getValue(String.class);
+                String role = childSnapshot.child("userType").getValue(String.class);
                 String uid = childSnapshot.getKey();
 
                 //equalsIgnoreCase allows comparisons with any case, ensuring “attendee” or “Attendee” match the same way.

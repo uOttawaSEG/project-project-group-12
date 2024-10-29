@@ -13,7 +13,7 @@ public abstract class User {
     private String password;
     private String phoneNumber;
     private String address;
-    private String role;
+    private String userType;
     private String status;
     private String uid;
 
@@ -25,12 +25,12 @@ public abstract class User {
      * @param phoneNumber the user's phone number
      * @param address the user's address
      */
-    public User(String firstName, String lastName, String phoneNumber, String address, String role , String status) {
+    public User(String firstName, String lastName, String phoneNumber, String address, String userType , String status) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.address = address;
-        this.role = role;
+        this.userType = userType;
         this.status = status;
     }
 
@@ -89,8 +89,6 @@ public abstract class User {
         this.address = address;
     }
 
-    public void getRole(String role) { this.role = role;}
-
     public String getStatus() {
         return status;
     }
@@ -99,12 +97,12 @@ public abstract class User {
         this.status = status;
     }
 
-    public String getRole() {
-        return role;
+    public String getUserType() {
+        return userType;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setUserType(String userType) {
+        this.userType = userType;
     }
 
     public String getUid() {

@@ -19,8 +19,8 @@ public class Organizer extends User {
      * @param address the organizer's address
      * @param organizationName the name of the organization the organizer represents
      */
-    public Organizer(String firstName, String lastName, String phoneNumber, String address, String organizationName, String role, String status) {
-        super(firstName, lastName, phoneNumber, address, role, status); // Call parent class constructor
+    public Organizer(String firstName, String lastName, String phoneNumber, String address, String organizationName, String userType, String status) {
+        super(firstName, lastName, phoneNumber, address, userType, status); // Call parent class constructor
         this.organizationName = organizationName;
     }
 
@@ -43,7 +43,7 @@ public class Organizer extends User {
     @NonNull
     @Override
     public String toString() {
-        return "Role: " + getRole() + "\n" +
+        return "Role: " + getUserType() + "\n" +
                 "Email: " + getEmail() + "\n" +
                 "Name: " + getFirstName() +  " " + getLastName() + "\n" +
                 "Phone: " + getPhoneNumber() + "\n" +
