@@ -16,6 +16,14 @@ import java.util.List;
  */
 public class RegistrationPending {
 
+/*    MailSender mailSender = new MailSender();
+
+    public void sendEmail(String toEmail, String subject, String messageBody){
+        mailSender.sendEmail(toEmail, subject, messageBody);
+    }*/
+
+
+
     //Static list to hold pending registrations
     private static List<User> pendingRegistration = new ArrayList<>();
     //Listener for item action events
@@ -36,7 +44,13 @@ public class RegistrationPending {
         if (pendingRegistration.contains(item)) {
             //Notify the listener about the approval (if needed)
             //Instead of using a listener here, handle any necessary actions directly if required
+
             pendingRegistration.remove(item); //Remove the item from the list
+            MailSender.getInstance().sendEmail(
+                    item.getEmail(),
+                    "Registration Approved",
+                    "Congratulations! Your registration has been approved."
+            );
         }
     }
 
@@ -53,6 +67,8 @@ public class RegistrationPending {
     public static List<User> getPendingRegistrations() {
         return pendingRegistration; //Return the list of pending registrations
     }
+
+
 
     //Interface to handle actions on registration items
     public interface OnItemActionListener {
