@@ -136,7 +136,7 @@ public class LoginPage extends AppCompatActivity {
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (task.isSuccessful() && task.getResult().exists()) {
 
-                    String userRole = task.getResult().child("role").getValue(String.class);
+                    String userRole = task.getResult().child("userType").getValue(String.class);
 
                     if(Objects.equals(userRole, "Administrator")) {
                         navigateToWelcomePage(userRole);
@@ -165,7 +165,7 @@ public class LoginPage extends AppCompatActivity {
             intent = new Intent(LoginPage.this, WelcomePage.class);
         }
 
-        intent.putExtra("userRole", userRole);
+        intent.putExtra("userType", userRole);
         Toast.makeText(LoginPage.this, "Login successful", Toast.LENGTH_LONG).show();
         startActivity(intent);
     }
@@ -179,6 +179,8 @@ public class LoginPage extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(LoginPage.this);
             builder.setTitle("Your registration has been rejected by the Administrator");
             builder.setMessage("Please contact them through this phone number: +1 123-456-7890");
+            builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+            builder.create().show();
         }
         else{
             //the status is confirmed so send the user to WelcomePage

@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,6 +29,7 @@ public class AdminPage extends AppCompatActivity {
     private RejectedAdapter rejectedAdapter;
     private RegistrationsPending registrationsPending;
     private DatabaseReference databaseReference;
+    private  RegistrationRejected registrationRejected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +41,15 @@ public class AdminPage extends AppCompatActivity {
 
         //try to populate page
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
+
+        registrationRejected = new RegistrationRejected();
+        registrationRejected.initListener();
+
         registrationsPending = new RegistrationsPending();
         registrationsPending.initListener();
-        loadUsers();
+        registrationsPending.initRegistrationRejected(registrationRejected);
 
+        loadUsers();
         registrationToUI();
 
 
@@ -56,7 +61,7 @@ public class AdminPage extends AppCompatActivity {
         pendingList.setLayoutManager(new LinearLayoutManager(this));
 
         //Initialize adapter
-        pendingAdapter = new PendingAdapter(registrationsPending);
+        pendingAdapter = new PendingAdapter(registrationsPending,rejectedAdapter);
 
         pendingList.setAdapter(pendingAdapter);
 
@@ -66,14 +71,7 @@ public class AdminPage extends AppCompatActivity {
         rejectedList.setLayoutManager(new LinearLayoutManager(this));
 
         // Initialize the adapter with the list of rejected items and the listener
-        rejectedAdapter = new RejectedAdapter(RegistrationRejected.getRejectedRegistrations(), new RegistrationRejected.OnItemActionListener() {
-            @Override
-            public void onApprove(User item) {
-                // Logic to re-approve the registration
-                RegistrationRejected.approveRegistration(item); // Approve the registration
-                rejectedAdapter.updateData(RegistrationRejected.getRejectedRegistrations()); // Refresh the list
-            }
-        });
+        rejectedAdapter = new RejectedAdapter(registrationRejected);
 
         // Set the adapter to the RecyclerView for rejected items
         rejectedList.setAdapter(rejectedAdapter);
@@ -114,15 +112,15 @@ public class AdminPage extends AppCompatActivity {
 
                 }
                 pendingAdapter.updateData(AdminPage.this.registrationsPending.getPendingRegistrations()); // Refresh pending list
-                Toast.makeText(AdminPage.this, "Users loaded sucesfully", Toast.LENGTH_LONG).show();
+                Toast.makeText(AdminPage.this, "Users loaded successfully", Toast.LENGTH_LONG).show();
             }
 
             private void addUserToRegistrationsRejectedPendingList(DataSnapshot childSnapshot) {
-                
+
             }
 
             private void addUserToRegistrationsPendingList(DataSnapshot childSnapshot) {
-                String role = childSnapshot.child("role").getValue(String.class);
+                String role = childSnapshot.child("userType").getValue(String.class);
                 String uid = childSnapshot.getKey();
 
                 //equalsIgnoreCase allows comparisons with any case, ensuring “attendee” or “Attendee” match the same way.

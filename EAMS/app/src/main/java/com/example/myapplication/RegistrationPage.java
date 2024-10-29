@@ -218,7 +218,7 @@ public class RegistrationPage extends AppCompatActivity {
                             String userType = ((RadioButton)findViewById(radioGroupField.getCheckedRadioButtonId())).getText().toString().toLowerCase();
 
                             if ( userType.equals("attendee")){
-                                Attendee userInfo = new Attendee(firstName,lastName,phoneNumber,address, "Attendee", "pending");
+                                Attendee userInfo = new Attendee(firstName,lastName,phoneNumber,address,"Attendee","pending");
                                 userInfo.setEmail(email);//should be able to query firebase auth to get email of user
                                 mDatabase.child("users").child(userId).setValue(userInfo);
                             } else {
@@ -229,8 +229,8 @@ public class RegistrationPage extends AppCompatActivity {
 
                             // Creating AlertDialog
                             AlertDialog.Builder builder = new AlertDialog.Builder(RegistrationPage.this);
-                            builder.setTitle("Registration Successful");
-                            builder.setMessage("Your account is: " + email);
+                            builder.setTitle("The registration request was sent successfully");
+                            builder.setMessage("Please wait for the admin's approval. \nYour account is: " + email);
 
                             // Back to Login Button
                             builder.setPositiveButton("Back to Login", new DialogInterface.OnClickListener() {
@@ -252,7 +252,7 @@ public class RegistrationPage extends AppCompatActivity {
 
                         } else {
                             //TODO there was an error in the registration process
-                            Toast.makeText(RegistrationPage.this, "Registration Unsuccessful", Toast.LENGTH_LONG).show();
+                            Toast.makeText(RegistrationPage.this, "This email address has already been registered", Toast.LENGTH_LONG).show();
                             return;
                         }
                     }
