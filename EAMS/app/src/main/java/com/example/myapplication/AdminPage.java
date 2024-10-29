@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -62,7 +61,7 @@ public class AdminPage extends AppCompatActivity {
         pendingList.setLayoutManager(new LinearLayoutManager(this));
 
         //Initialize adapter
-        pendingAdapter = new PendingAdapter(registrationsPending);
+        pendingAdapter = new PendingAdapter(registrationsPending,rejectedAdapter);
 
         pendingList.setAdapter(pendingAdapter);
 
@@ -117,32 +116,11 @@ public class AdminPage extends AppCompatActivity {
             }
 
             private void addUserToRegistrationsRejectedPendingList(DataSnapshot childSnapshot) {
-                String role = childSnapshot.child("role").getValue(String.class);
-                String uid = childSnapshot.getKey();
-
-                //equalsIgnoreCase allows comparisons with any case, ensuring “attendee” or “Attendee” match the same way.
-                if ("Attendee".equalsIgnoreCase(role)) {
-                    Attendee attendeeData = childSnapshot.getValue(Attendee.class);
-                    assert attendeeData != null; //throws error when null, should never
-                    attendeeData.setUid(uid);
-
-                    AdminPage.this.registrationRejected.addRejectedRegistration(attendeeData);
-                    Log.d("Firebase", "User added: " + attendeeData.getFirstName());
-
-
-                } else if ("Organizer".equalsIgnoreCase(role)) {
-                    Organizer organizerData = childSnapshot.getValue(Organizer.class);
-                    assert organizerData != null; //throws error when null, should never
-                    organizerData.setUid(uid);
-
-                    AdminPage.this.registrationRejected.addRejectedRegistration(organizerData);
-                    Log.d("Firebase", "User added: " + organizerData.getFirstName());
-                }
 
             }
 
             private void addUserToRegistrationsPendingList(DataSnapshot childSnapshot) {
-                String role = childSnapshot.child("role").getValue(String.class);
+                String role = childSnapshot.child("userType").getValue(String.class);
                 String uid = childSnapshot.getKey();
 
                 //equalsIgnoreCase allows comparisons with any case, ensuring “attendee” or “Attendee” match the same way.

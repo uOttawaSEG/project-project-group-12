@@ -26,7 +26,7 @@ public class RejectedAdapter extends RecyclerView.Adapter<RejectedAdapter.ViewHo
         this.rejectedItems = registrationRejected.getRejectedRegistrations();
         this.listener = registrationRejected.getListener();
     }
-
+    
 
     // Method to update the data in the adapter and refresh the view
     public void updateData(List<User> newItems) {
