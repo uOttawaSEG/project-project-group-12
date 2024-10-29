@@ -101,7 +101,7 @@ public abstract class User {
         return userType;
     }
 
-    public void setUserType(String role) {
+    public void setUserType(String userType) {
         this.userType = userType;
     }
 
