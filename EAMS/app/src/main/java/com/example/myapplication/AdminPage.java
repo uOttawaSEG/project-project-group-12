@@ -29,6 +29,7 @@ public class AdminPage extends AppCompatActivity {
     private RejectedAdapter rejectedAdapter;
     private RegistrationsPending registrationsPending;
     private DatabaseReference databaseReference;
+    private  RegistrationRejected registrationRejected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,10 +41,15 @@ public class AdminPage extends AppCompatActivity {
 
         //try to populate page
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
+
+        registrationRejected = new RegistrationRejected();
+        registrationRejected.initListener();
+
         registrationsPending = new RegistrationsPending();
         registrationsPending.initListener();
-        loadUsers();
+        registrationsPending.initRegistrationRejected(registrationRejected);
 
+        loadUsers();
         registrationToUI();
 
 
@@ -65,14 +71,7 @@ public class AdminPage extends AppCompatActivity {
         rejectedList.setLayoutManager(new LinearLayoutManager(this));
 
         // Initialize the adapter with the list of rejected items and the listener
-        rejectedAdapter = new RejectedAdapter(RegistrationRejected.getRejectedRegistrations(), new RegistrationRejected.OnItemActionListener() {
-            @Override
-            public void onApprove(User item) {
-                // Logic to re-approve the registration
-                RegistrationRejected.approveRegistration(item); // Approve the registration
-                rejectedAdapter.updateData(RegistrationRejected.getRejectedRegistrations()); // Refresh the list
-            }
-        });
+        rejectedAdapter = new RejectedAdapter(registrationRejected);
 
         // Set the adapter to the RecyclerView for rejected items
         rejectedList.setAdapter(rejectedAdapter);
@@ -113,7 +112,7 @@ public class AdminPage extends AppCompatActivity {
 
                 }
                 pendingAdapter.updateData(AdminPage.this.registrationsPending.getPendingRegistrations()); // Refresh pending list
-                Toast.makeText(AdminPage.this, "Users loaded sucesfully", Toast.LENGTH_LONG).show();
+                Toast.makeText(AdminPage.this, "Users loaded successfully", Toast.LENGTH_LONG).show();
             }
 
             private void addUserToRegistrationsRejectedPendingList(DataSnapshot childSnapshot) {

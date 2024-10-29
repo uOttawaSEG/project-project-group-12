@@ -17,11 +17,14 @@ public class RejectedAdapter extends RecyclerView.Adapter<RejectedAdapter.ViewHo
     private List<User> rejectedItems;
     // Listener to handle approve actions
     private RegistrationRejected.OnItemActionListener listener;
+    private RegistrationRejected registrationRejected;
 
     // Constructor to initialize the adapter with rejected items and a listener
-    public RejectedAdapter(List<User> rejectedItems, RegistrationRejected.OnItemActionListener listener) {
-        this.rejectedItems = rejectedItems;
-        this.listener = listener;
+    public RejectedAdapter(RegistrationRejected registrationRejected) {;
+
+        this.registrationRejected = registrationRejected;
+        this.rejectedItems = registrationRejected.getRejectedRegistrations();
+        this.listener = registrationRejected.getListener();
     }
     
 
@@ -49,7 +52,7 @@ public class RejectedAdapter extends RecyclerView.Adapter<RejectedAdapter.ViewHo
         holder.itemText.setText(item.toString());
 
         // Set click listener for approve button
-        holder.approveButton.setOnClickListener(v -> listener.onApprove(item));
+        holder.approveButton.setOnClickListener(v -> listener.onApprove(item , registrationRejected , this ));
     }
 
     // Method to get the total number of items in the list
