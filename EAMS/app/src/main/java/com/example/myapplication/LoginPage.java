@@ -165,7 +165,7 @@ public class LoginPage extends AppCompatActivity {
             intent = new Intent(LoginPage.this, WelcomePage.class);
         }
 
-        intent.putExtra("userRole", userRole);
+        intent.putExtra("userType", userRole);
         Toast.makeText(LoginPage.this, "Login successful", Toast.LENGTH_LONG).show();
         startActivity(intent);
     }

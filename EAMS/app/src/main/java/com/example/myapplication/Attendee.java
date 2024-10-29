@@ -28,7 +28,7 @@ public class Attendee extends User {
     @NonNull
     @Override
     public String toString() {
-        return "Role: " + getRole() + "\n" +
+        return "Role: " + getUserType() + "\n" +
                 "Email: " + getEmail() + "\n" +
                 "Name: " + getFirstName() + " " + getLastName() + "\n" +
                 "Phone: " + getPhoneNumber() + "\n" +

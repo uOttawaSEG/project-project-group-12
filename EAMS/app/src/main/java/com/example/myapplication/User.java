@@ -89,8 +89,6 @@ public abstract class User {
         this.address = address;
     }
 
-    public void getRole(String role) { this.userType = role;}
-
     public String getStatus() {
         return status;
     }
@@ -99,12 +97,12 @@ public abstract class User {
         this.status = status;
     }
 
-    public String getRole() {
+    public String getUserType() {
         return userType;
     }
 
-    public void setRole(String role) {
-        this.userType = role;
+    public void setUserType(String role) {
+        this.userType = userType;
     }
 
     public String getUid() {

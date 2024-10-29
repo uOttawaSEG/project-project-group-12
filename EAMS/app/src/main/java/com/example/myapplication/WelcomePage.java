@@ -25,7 +25,7 @@ public class WelcomePage extends AppCompatActivity {
         setContentView(R.layout.activity_welcome_page);
 
         //Retrieves name and role of the user from last page
-        String userRole = getIntent().getStringExtra("userRole");
+        String userRole = getIntent().getStringExtra("userType");
 
         //Displays it effectively
         TextView welcome = findViewById(R.id.topText);
