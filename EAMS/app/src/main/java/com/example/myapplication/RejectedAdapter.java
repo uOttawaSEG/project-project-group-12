@@ -23,7 +23,7 @@ public class RejectedAdapter extends RecyclerView.Adapter<RejectedAdapter.ViewHo
         this.rejectedItems = rejectedItems;
         this.listener = listener;
     }
-
+    
 
     // Method to update the data in the adapter and refresh the view
     public void updateData(List<User> newItems) {

@@ -14,6 +14,9 @@ public class RegistrationsPending {
 
     //Static list to hold pending registrations
     private List<User> pendingRegistration ;
+
+
+
     //Listener for item action events
     private OnItemActionListener listener;
 
@@ -38,6 +41,7 @@ public class RegistrationsPending {
             db.child(item.getUid()).child("status").setValue("approved");
             pendingRegistration.remove(item); //Remove the item from the list
             //TODO Notify the listener about the approval
+
         }
     }
 
@@ -65,6 +69,10 @@ public class RegistrationsPending {
 
     public void initListener(){
         this.listener = new OnItemActionListener();
+    }
+
+    public void removeRegistration(User item) {
+        pendingRegistration.remove(item);
     }
 
     //Event Listener to handle actions on registration items

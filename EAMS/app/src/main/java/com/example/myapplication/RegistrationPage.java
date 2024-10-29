@@ -229,8 +229,8 @@ public class RegistrationPage extends AppCompatActivity {
 
                             // Creating AlertDialog
                             AlertDialog.Builder builder = new AlertDialog.Builder(RegistrationPage.this);
-                            builder.setTitle("Registration Successful");
-                            builder.setMessage("Your account is: " + email);
+                            builder.setTitle("The registration request was sent successfully");
+                            builder.setMessage("Please wait for the admin's approval. \nYour account is: " + email);
 
                             // Back to Login Button
                             builder.setPositiveButton("Back to Login", new DialogInterface.OnClickListener() {

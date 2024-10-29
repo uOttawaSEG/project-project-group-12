@@ -179,6 +179,8 @@ public class LoginPage extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(LoginPage.this);
             builder.setTitle("Your registration has been rejected by the Administrator");
             builder.setMessage("Please contact them through this phone number: +1 123-456-7890");
+            builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+            builder.create().show();
         }
         else{
             //the status is confirmed so send the user to WelcomePage
