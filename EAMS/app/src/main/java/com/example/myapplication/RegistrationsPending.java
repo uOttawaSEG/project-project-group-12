@@ -45,6 +45,8 @@ public class RegistrationsPending {
     public  void rejectRegistration(User item) {
         if (pendingRegistration.contains(item)) {
             //TODO rejection db manipulation and connect add elem to RegistrationRejected class  :-0
+            DatabaseReference db = FirebaseDatabase.getInstance().getReference("users");
+            db.child(item.getUid()).child("status").setValue("rejected");
             pendingRegistration.remove(item); //Remove the item from the list
             //TODO Notify the listener about the rejection (if needed)
         }
