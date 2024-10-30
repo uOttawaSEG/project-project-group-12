@@ -89,12 +89,14 @@ public class RegistrationsPending {
             pendingAdapter.updateData(registrationsPending.getPendingRegistrations());
         }
 
-        public void onReject(User user, RegistrationsPending registrationsPending, PendingAdapter pendingAdapter)   //Callback for rejecting an item
+        public void onReject(User user, RegistrationsPending registrationsPending, PendingAdapter pendingAdapter,RegistrationRejected registrationRejected , RejectedAdapter rejectedAdapter)   //Callback for rejecting an item
         {
             //update db references
             registrationsPending.rejectRegistration(user);
             //update UI - aka refresh the list of pending registration
             pendingAdapter.updateData(registrationsPending.getPendingRegistrations());
+            rejectedAdapter.updateData(registrationRejected.getRejectedRegistrations());
+
         }
 
         public  OnItemActionListener(){}

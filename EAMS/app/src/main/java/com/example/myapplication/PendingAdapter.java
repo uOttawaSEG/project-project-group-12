@@ -17,18 +17,20 @@ import java.util.List;
 
 // The PendingAdapter class is responsible for displaying a list of pending registrations in a RecyclerView.
 public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.ViewHolder> {
-    // List to hold the pending registration items
+    private  RegistrationRejected registrationsRejected;
+    //List to hold the pending registration items
     private List<User> pendingItems;
     // Listener to handle approve and reject actions
     private RegistrationsPending.OnItemActionListener listener;
     private RegistrationsPending registrationsPending;
     private RejectedAdapter rejectedAdapter;
 
-    // Constructor to initialize the adapter with pending items and a listener
-    public PendingAdapter(RegistrationsPending registrationsPending, RejectedAdapter rejectedAdapter) {
+    //Constructor to initialize the adapter with pending items and a listener
+    public PendingAdapter(RegistrationsPending registrationsPending, RegistrationRejected registrationRejected, RejectedAdapter rejectedAdapter) {
         this.registrationsPending = registrationsPending;
         this.pendingItems = registrationsPending.getPendingRegistrations();
         this.listener = registrationsPending.getListener();
+        this.registrationsRejected = registrationRejected;
         this.rejectedAdapter = rejectedAdapter;
     }
 
@@ -55,29 +57,9 @@ public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.ViewHold
         // Set the text for the item TextView
         holder.itemText.setText(item.toString());
 
-        // Set click listeners for approve and reject buttons
-        holder.approveButton.setOnClickListener(v -> listener.onApprove(item, registrationsPending, this));
-        holder.rejectButton.setOnClickListener(v -> {
-            String uid = item.getUid();
-            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(uid);
-            userRef.child("status").setValue("rejected").addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    // Remove user from pending list
-                    registrationsPending.removeRegistration(item);
-                    // Update pending UI adapter
-                    updateData(registrationsPending.getPendingRegistrations());
-                    /* Add user to rejected list and update UI
-                    RegistrationRejected.addRejectedRegistration(item);
-                    rejectedAdapter.updateData(RegistrationRejected.getRejectedRegistrations());
-                        */
-
-                    // Show rejection message
-                    Toast.makeText(holder.itemView.getContext(), "User rejected successfully", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(holder.itemView.getContext(), "Failed to reject user", Toast.LENGTH_LONG).show();
-                }
-            });
-        });
+        //Set click listeners for approve and reject buttons
+        holder.approveButton.setOnClickListener(v -> listener.onApprove(item, this.registrationsPending , this));
+        holder.rejectButton.setOnClickListener(v -> listener.onReject(item , this.registrationsPending, this, this.registrationsRejected , this.rejectedAdapter));
     }
 
     // Method to get the total number of items in the list
