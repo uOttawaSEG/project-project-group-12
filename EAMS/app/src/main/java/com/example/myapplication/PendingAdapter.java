@@ -13,6 +13,8 @@ import java.util.List;
 
 //The PendingAdapter class is responsible for displaying a list of pending registrations in a RecyclerView.
 public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.ViewHolder> {
+    private  RegistrationRejected registrationsRejected;
+    private  RejectedAdapter rejectedAdapter;
     //List to hold the pending registration items
     private List<User> pendingItems;
     //Listener to handle approve and reject actions
@@ -21,10 +23,12 @@ public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.ViewHold
     private RegistrationsPending registrationsPending;
 
     //Constructor to initialize the adapter with pending items and a listener
-    public PendingAdapter(RegistrationsPending registrationsPending) {
+    public PendingAdapter(RegistrationsPending registrationsPending, RegistrationRejected registrationRejected, RejectedAdapter rejectedAdapter) {
         this.registrationsPending = registrationsPending;
         this.pendingItems = registrationsPending.getPendingRegistrations();
         this.listener = registrationsPending.getListener();
+        this.registrationsRejected = registrationRejected;
+        this.rejectedAdapter = rejectedAdapter;
     }
 
     //Method to update the data in the adapter and refresh the view
@@ -52,7 +56,7 @@ public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.ViewHold
 
         //Set click listeners for approve and reject buttons
         holder.approveButton.setOnClickListener(v -> listener.onApprove(item, this.registrationsPending , this));
-        holder.rejectButton.setOnClickListener(v -> listener.onReject(item , this.registrationsPending, this));
+        holder.rejectButton.setOnClickListener(v -> listener.onReject(item , this.registrationsPending, this, this.registrationsRejected , this.rejectedAdapter));
     }
 
     //Method to get the total number of items in the list

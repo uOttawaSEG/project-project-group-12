@@ -57,15 +57,6 @@ public class AdminPage extends AppCompatActivity {
     }
 
     private void registrationToUI() {
-        //RecyclerView for pending registrations
-        pendingList = findViewById(R.id.pendingList);
-        pendingList.setLayoutManager(new LinearLayoutManager(this));
-
-        //Initialize adapter
-        pendingAdapter = new PendingAdapter(registrationsPending);
-
-        pendingList.setAdapter(pendingAdapter);
-
 
         // Initialize RecyclerView for rejected items
         rejectedList = findViewById(R.id.rejectedList);
@@ -76,6 +67,16 @@ public class AdminPage extends AppCompatActivity {
 
         // Set the adapter to the RecyclerView for rejected items
         rejectedList.setAdapter(rejectedAdapter);
+
+        //RecyclerView for pending registrations
+        pendingList = findViewById(R.id.pendingList);
+        pendingList.setLayoutManager(new LinearLayoutManager(this));
+
+        //Initialize adapter
+        pendingAdapter = new PendingAdapter(registrationsPending, registrationRejected, rejectedAdapter);
+
+        pendingList.setAdapter(pendingAdapter);
+        pendingList.setAdapter(pendingAdapter);
 
     }
 
@@ -113,6 +114,7 @@ public class AdminPage extends AppCompatActivity {
 
                 }
                 pendingAdapter.updateData(AdminPage.this.registrationsPending.getPendingRegistrations()); // Refresh pending list
+                rejectedAdapter.updateData(AdminPage.this.registrationRejected.getRejectedRegistrations());
                 Toast.makeText(AdminPage.this, "Users loaded successfully", Toast.LENGTH_LONG).show();
             }
 
