@@ -52,7 +52,17 @@ public class AdminPage extends AppCompatActivity {
         loadUsers();
         registrationToUI();
 
+        Button refreshButton = findViewById(R.id.refreshBtn);
+        refreshButton.setOnClickListener(v -> refreshData()); // Call refreshData when clicked
+    }
 
+    private void refreshData() {
+        // Create an intent to restart the AdminPage activity
+        Intent intent = new Intent(this, AdminPage.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        // Finish the current activity to remove it from the back stack
+        finish();
     }
 
     private void registrationToUI() {
@@ -111,12 +121,34 @@ public class AdminPage extends AppCompatActivity {
 
 
                 }
+                rejectedAdapter.updateData(AdminPage.this.registrationRejected.getRejectedRegistrations()); // Refresh rejected list
                 pendingAdapter.updateData(AdminPage.this.registrationsPending.getPendingRegistrations()); // Refresh pending list
                 Toast.makeText(AdminPage.this, "Users loaded successfully", Toast.LENGTH_LONG).show();
             }
 
             private void addUserToRegistrationsRejectedPendingList(DataSnapshot childSnapshot) {
+                String role = childSnapshot.child("userType").getValue(String.class);
+                String uid = childSnapshot.getKey();
 
+                // Extract user data and add to the rejected list
+                User rejectedUser;
+                if ("Attendee".equalsIgnoreCase(role)) {
+                    Attendee attendeeData = childSnapshot.getValue(Attendee.class);
+                    assert attendeeData != null; // Ensure attendee data is not null
+                    attendeeData.setUid(uid);
+                    rejectedUser = attendeeData; // Use the attendee object as a User
+                } else if ("Organizer".equalsIgnoreCase(role)) {
+                    Organizer organizerData = childSnapshot.getValue(Organizer.class);
+                    assert organizerData != null; // Ensure organizer data is not null
+                    organizerData.setUid(uid);
+                    rejectedUser = organizerData; // Use the organizer object as a User
+                } else {
+                    return; // If the role doesn't match, exit the method
+                }
+
+                // Add the rejected user to the RegistrationRejected list
+                AdminPage.this.registrationRejected.addRejectedRegistration(rejectedUser);
+                Log.d("Firebase", "Rejected user added: " + rejectedUser.getFirstName());
             }
 
             private void addUserToRegistrationsPendingList(DataSnapshot childSnapshot) {
