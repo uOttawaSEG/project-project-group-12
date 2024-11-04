@@ -16,14 +16,14 @@
 
 
 
-
+        <activity android:name=".LoginPage" />
 
         <activity android:name=".WelcomePage" />
 
         <activity android:name=".AdminPage" />
 
         <activity
-            android:name=".LoginPage"
+            android:name=".EventRequestPage"
             android:exported="true">
 
             <intent-filter>
