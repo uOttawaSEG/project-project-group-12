@@ -21,11 +21,16 @@ import java.util.List;
 public class PendingAttendeesAdapter extends ArrayAdapter<String> {
     private Context context;
     private List<String> attendees;
+    // So we can move accepted users to accepted list
+    private List<String> acceptedAttendees;
+    private ArrayAdapter<String> acceptedAdapter;
 
-    public PendingAttendeesAdapter(Context context, List<String> attendees) {
+    public PendingAttendeesAdapter(Context context, List<String> attendees, List<String> acceptedAttendees, ArrayAdapter<String> acceptedAdapter) {
         super(context, 0, attendees);
         this.context = context;
         this.attendees = attendees;
+        this.acceptedAttendees = acceptedAttendees;
+        this.acceptedAdapter = acceptedAdapter;
     }
 
     @NonNull
@@ -53,13 +58,23 @@ public class PendingAttendeesAdapter extends ArrayAdapter<String> {
 
         // Set up accept and reject button actions
         acceptButton.setOnClickListener(v -> {
-            // Handle accept logic here
-            // For example, move to accepted list
+
+            // Move to accepted list
+            acceptedAttendees.add(attendeeName);
+            acceptedAdapter.notifyDataSetChanged();
+
+            // Remove the attendee from the list
+            remove(attendeeName);
+
+            // Notify the adapter to refresh the list
+            notifyDataSetChanged();
+
         });
 
         rejectButton.setOnClickListener(v -> {
-            // Handle reject logic here
-            // For example, remove from list
+            remove(attendeeName);
+
+            notifyDataSetChanged();
         });
 
         return convertView;

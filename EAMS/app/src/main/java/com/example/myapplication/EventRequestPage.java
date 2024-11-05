@@ -39,7 +39,7 @@ public class EventRequestPage extends AppCompatActivity {
         Button backButton = findViewById(R.id.backButton);
 
         // Just testing some sample data
-        for(int i = 0; i < 10; i++) {
+        for(int i = 0; i < 2; i++) {
             acceptedAttendees.add("Ren Amamiya");
             pendingAttendees.add("Goro Akechi");
 
@@ -49,7 +49,7 @@ public class EventRequestPage extends AppCompatActivity {
         acceptedAttendeesListView.setAdapter(acceptedAdapter);
 
         // Set up pending attendees adapter
-        pendingAdapter = new PendingAttendeesAdapter(this, pendingAttendees);
+        pendingAdapter = new PendingAttendeesAdapter(this, pendingAttendees, acceptedAttendees, acceptedAdapter);
         pendingAttendeesListView.setAdapter(pendingAdapter);
 
         // Back button functionality to go to ...
