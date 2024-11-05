@@ -7,11 +7,11 @@
 
     <TextView
         android:id="@+id/itemText"
-        android:layout_width="0dp"
+        android:layout_width="395dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textSize="8sp"
-        android:text="Pending Item" />
+        android:text="Pending Item"
+        android:textSize="8sp" />
 
     <Button
         android:id="@+id/approveBtn"

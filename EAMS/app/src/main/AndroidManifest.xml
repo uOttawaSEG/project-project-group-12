@@ -22,6 +22,8 @@
 
         <activity android:name=".AdminPage" />
 
+        <activity android:name=".OrganizerPage" />
+
         <activity
             android:name=".LoginPage"
             android:exported="true">
