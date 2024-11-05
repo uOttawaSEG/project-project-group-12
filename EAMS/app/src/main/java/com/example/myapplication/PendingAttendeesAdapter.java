@@ -1,3 +1,4 @@
+// PendingAttendeesAdapter.java
 package com.example.myapplication;
 
 import android.view.LayoutInflater;
@@ -10,22 +11,17 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import java.util.List;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
 import java.util.List;
 
-// PendingAttendeesAdapter.java
-public class PendingAttendeesAdapter extends ArrayAdapter<String> {
+public class PendingAttendeesAdapter extends ArrayAdapter<Attendee> {
     private Context context;
-    private List<String> attendees;
-    // So we can move accepted users to accepted list
-    private List<String> acceptedAttendees;
-    private ArrayAdapter<String> acceptedAdapter;
+    private List<Attendee> attendees;
+    private List<Attendee> acceptedAttendees;
+    private ArrayAdapter<Attendee> acceptedAdapter;
 
-    public PendingAttendeesAdapter(Context context, List<String> attendees, List<String> acceptedAttendees, ArrayAdapter<String> acceptedAdapter) {
+    public PendingAttendeesAdapter(Context context, List<Attendee> attendees, List<Attendee> acceptedAttendees, ArrayAdapter<Attendee> acceptedAdapter) {
         super(context, 0, attendees);
         this.context = context;
         this.attendees = attendees;
@@ -39,46 +35,35 @@ public class PendingAttendeesAdapter extends ArrayAdapter<String> {
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.pending_attendee_item, parent, false);
         }
-
-        String attendeeName = attendees.get(position);
+        Attendee attendee = attendees.get(position);
         TextView attendeeNameView = convertView.findViewById(R.id.attendeeName);
         Button acceptButton = convertView.findViewById(R.id.acceptButton);
         Button rejectButton = convertView.findViewById(R.id.rejectButton);
 
-        attendeeNameView.setText(attendeeName);
+        // Display attendee's full name
+        attendeeNameView.setText(attendee.getFirstName() + " " + attendee.getLastName());
 
-        // Set up the dialog for when the attendee name is clicked
         attendeeNameView.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setTitle("Attendee Information")
-                    .setMessage("Details for " + attendeeName)
+                    .setMessage("Details for " + attendee.getFirstName() + " " + attendee.getLastName())
                     .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
                     .show();
         });
 
-        // Set up accept and reject button actions
         acceptButton.setOnClickListener(v -> {
-
             // Move to accepted list
-            acceptedAttendees.add(attendeeName);
+            acceptedAttendees.add(attendee);
             acceptedAdapter.notifyDataSetChanged();
-
-            // Remove the attendee from the list
-            remove(attendeeName);
-
-            // Notify the adapter to refresh the list
+            remove(attendee);
             notifyDataSetChanged();
-
         });
 
         rejectButton.setOnClickListener(v -> {
-            remove(attendeeName);
-
+            remove(attendee);
             notifyDataSetChanged();
         });
 
         return convertView;
     }
 }
-
-

@@ -1,3 +1,4 @@
+// EventRequestPage.java
 package com.example.myapplication;
 
 import android.content.Intent;
@@ -14,16 +15,15 @@ import java.util.List;
 
 public class EventRequestPage extends AppCompatActivity {
     private ListView acceptedAttendeesListView, pendingAttendeesListView;
-    private ArrayAdapter<String> acceptedAdapter;
+    private ArrayAdapter<Attendee> acceptedAdapter;
     private PendingAttendeesAdapter pendingAdapter;
-    private List<String> acceptedAttendees = new ArrayList<>();
-    private List<String> pendingAttendees = new ArrayList<>();
+    private List<Attendee> acceptedAttendees = new ArrayList<>();
+    private List<Attendee> pendingAttendees = new ArrayList<>();
 
-    // dialog with attendee information
-    private void showAttendeeDialog(String attendeeName) {
+    private void showAttendeeDialog(Attendee attendee) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Attendee Information")
-                .setMessage("Details for " + attendeeName)
+                .setMessage("Details for " + attendee.getFirstName() + " " + attendee.getLastName())
                 .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
                 .show();
     }
@@ -33,45 +33,36 @@ public class EventRequestPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_requests);
 
-        // Initialize the views
         acceptedAttendeesListView = findViewById(R.id.acceptedAttendeesListView);
         pendingAttendeesListView = findViewById(R.id.pendingAttendeesListView);
         Button backButton = findViewById(R.id.backButton);
 
-        // Just testing some sample data
-        for(int i = 0; i < 2; i++) {
-            acceptedAttendees.add("Ren Amamiya");
-            pendingAttendees.add("Goro Akechi");
-
+        // Add sample data
+        for (int i = 0; i < 2; i++) {
+            acceptedAttendees.add(new Attendee("Ren", "Amamiya", "123-456-7890", "Address 1", "UserType1", "yuh"));
+            pendingAttendees.add(new Attendee("Goro", "Akechi", "098-765-4321", "Address 2", "UserType2", "yuh"));
         }
-        // Set up accepted attendees adapter
+
         acceptedAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, acceptedAttendees);
         acceptedAttendeesListView.setAdapter(acceptedAdapter);
 
-        // Set up pending attendees adapter
         pendingAdapter = new PendingAttendeesAdapter(this, pendingAttendees, acceptedAttendees, acceptedAdapter);
         pendingAttendeesListView.setAdapter(pendingAdapter);
 
-        // Back button functionality to go to ...
         backButton.setOnClickListener(v -> {
-            // Change to go to the required class later
             Intent intent = new Intent(EventRequestPage.this, EventRequestPage.class);
             startActivity(intent);
             finish();
         });
 
-        // OnItemClickListener for accepted attendees
         acceptedAttendeesListView.setOnItemClickListener((parent, view, position, id) -> {
-            String attendeeName = acceptedAttendees.get(position);
-            showAttendeeDialog(attendeeName);
+            Attendee attendee = acceptedAttendees.get(position);
+            showAttendeeDialog(attendee);
         });
 
-        // OnItemClickListener for pending attendees
         pendingAttendeesListView.setOnItemClickListener((parent, view, position, id) -> {
-            String attendeeName = pendingAttendees.get(position);
-            showAttendeeDialog(attendeeName);
+            Attendee attendee = pendingAttendees.get(position);
+            showAttendeeDialog(attendee);
         });
     }
-
 }
-
