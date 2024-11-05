@@ -161,6 +161,8 @@ public class LoginPage extends AppCompatActivity {
         if(Objects.equals(userRole, "Administrator")) {
 
             intent = new Intent(LoginPage.this, AdminPage.class);
+        } else if (Objects.equals(userRole, "Organizer")) {
+            intent = new Intent(LoginPage.this, OrganizerPage.class);
         } else {
             intent = new Intent(LoginPage.this, WelcomePage.class);
         }
