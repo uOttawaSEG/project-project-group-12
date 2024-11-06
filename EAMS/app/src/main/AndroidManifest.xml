@@ -18,6 +18,8 @@
 
         <activity android:name=".EventRequestPage" />
 
+        <activity android:name=".EventCreationPage" />
+
         <activity android:name=".WelcomePage" />
 
         <activity android:name=".AdminPage" />
