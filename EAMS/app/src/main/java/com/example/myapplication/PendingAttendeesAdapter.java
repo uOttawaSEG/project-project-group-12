@@ -41,15 +41,10 @@ public class PendingAttendeesAdapter extends ArrayAdapter<Attendee> {
         Button rejectButton = convertView.findViewById(R.id.rejectButton);
 
         // Display attendee's full name
-        attendeeNameView.setText(attendee.getFirstName() + " " + attendee.getLastName());
+        //attendeeNameView.setText(attendee.getEmail());
+        attendeeNameView.setText("kiminonawa@gmail.com");
 
-        attendeeNameView.setOnClickListener(v -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle("Attendee Information")
-                    .setMessage("Details for " + attendee.getFirstName() + " " + attendee.getLastName())
-                    .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
-                    .show();
-        });
+        attendeeNameView.setOnClickListener(v -> showAttendeeDialog(attendee));
 
         acceptButton.setOnClickListener(v -> {
             // Move to accepted list
@@ -65,5 +60,16 @@ public class PendingAttendeesAdapter extends ArrayAdapter<Attendee> {
         });
 
         return convertView;
+    }
+
+    // Method to display a dialog with attendee information
+    private void showAttendeeDialog(Attendee attendee) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Attendee Information")
+                .setMessage("Details for " + attendee.getFirstName() + " " + attendee.getLastName() + "\n" +
+                        "Phone: " + attendee.getPhoneNumber() + "\n" +
+                        "Address: " + attendee.getAddress())
+                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+                .show();
     }
 }

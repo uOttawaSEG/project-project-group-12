@@ -21,6 +21,7 @@
 
         <!-- Centered Events Request Page Title -->
         <TextView
+            android:id="@+id/eventsRequestTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Events Request Page"
@@ -30,6 +31,7 @@
 
         <!-- Centered Description and Date TextViews -->
         <TextView
+            android:id="@+id/eventsRequestDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Description"
@@ -37,6 +39,7 @@
             android:paddingTop="16dp" />
 
         <TextView
+            android:id="@+id/eventsRequestDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Date"
