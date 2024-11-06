@@ -46,11 +46,16 @@ public class OrganizerPage extends ComponentActivity {
         FloatingActionButton addEventButton = findViewById(R.id.addEventBtn);
         addEventButton.setOnClickListener(v -> addEventToEventList());
     }
-        //add events to list
+        // add events to list
     private void addEventToEventList() {
-        eventList.add("New Event");
-        eventAdapter.notifyItemInserted(eventList.size() - 1);
-        eventListRecyclerView.scrollToPosition(eventList.size() - 1);
+
+        Intent intent = new Intent(OrganizerPage.this, EventCreationPage.class);
+        startActivity(intent);
+
+
+        //eventList.add("New Event");
+        //eventAdapter.notifyItemInserted(eventList.size() - 1);
+        //eventListRecyclerView.scrollToPosition(eventList.size() - 1);
     }
 
 }
