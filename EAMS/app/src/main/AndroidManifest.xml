@@ -24,10 +24,10 @@
 
         <activity android:name=".AdminPage" />
 
-        <activity android:name=".LoginPage" />
+        <activity android:name=".OrganizerPage" />
 
         <activity
-            android:name=".OrganizerPage"
+            android:name=".LoginPage"
             android:exported="true">
 
             <intent-filter>
