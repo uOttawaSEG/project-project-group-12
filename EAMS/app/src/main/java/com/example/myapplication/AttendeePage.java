@@ -23,7 +23,7 @@ public class AttendeePage  extends AppCompatActivity {
         eventListView = findViewById(R.id.eventListOnAttendeePage);
 
         // Create and set the adapter
-        EventAdapter adapter = new EventAdapter(this, allEvents);
+        EventAttendeePageAdapter adapter = new EventAttendeePageAdapter(this, allEvents);
         eventListView.setAdapter(adapter);
     }
 

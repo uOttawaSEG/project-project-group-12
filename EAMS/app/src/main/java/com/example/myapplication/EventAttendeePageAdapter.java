@@ -13,11 +13,11 @@ import androidx.annotation.Nullable;
 
 import java.util.List;
 
-public class EventAdapter extends ArrayAdapter<Event> {
+public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
     private Context context;
     private List<Event> events;
 
-    public EventAdapter(Context context, List<Event> events){
+    public EventAttendeePageAdapter(Context context, List<Event> events){
         super(context,R.layout.activity_attendee_page,events );
         this.context = context;
         this.events = events;
@@ -32,7 +32,7 @@ public class EventAdapter extends ArrayAdapter<Event> {
 
         if (listItem == null) {
             LayoutInflater inflater = LayoutInflater.from(context);
-            listItem = inflater.inflate(R.layout.event_item, parent, false);
+            listItem = inflater.inflate(R.layout.event_attendee_page_item, parent, false);
 
             holder = new ViewHolder();
             //initialise a new video if none was there
