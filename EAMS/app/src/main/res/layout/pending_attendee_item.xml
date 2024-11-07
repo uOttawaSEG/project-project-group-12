@@ -14,14 +14,15 @@
 
     <Button
         android:id="@+id/acceptButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Accept" />
+        android:layout_width="79dp"
+        android:layout_height="39dp"
+
+        android:text="✔" />
 
     <Button
         android:id="@+id/rejectButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Reject" />
+        android:layout_width="79dp"
+        android:layout_height="39dp"
+        android:text="X" />
 
 </LinearLayout>

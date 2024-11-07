@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -27,6 +28,7 @@ public class EventCreationPage extends AppCompatActivity {
     private Button pickStartTimeButton;
     private Button pickEndTimeButton;
     private Button createEventButton;
+    private Button backToPage;
 
 
     @Override
@@ -52,8 +54,13 @@ public class EventCreationPage extends AppCompatActivity {
         pickEndTimeButton = findViewById(R.id.pickEndTimeButton);
 
         createEventButton = findViewById(R.id.createEventButton);
-
+        backToPage = findViewById((R.id.backButton2));
         //listener for date and time picker
+
+        backToPage.setOnClickListener(v -> {
+            Intent intent = new Intent(EventCreationPage.this, OrganizerPage.class);
+            startActivity(intent);
+        });
 
         pickStartDateButton.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
