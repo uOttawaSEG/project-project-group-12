@@ -54,7 +54,7 @@ public class OrganizerPage extends ComponentActivity {
         //startActivity(intent);
 
 
-        eventList.add(new Event("New event", "an event", "160 place", new Date(2024, 4, 15,12, 30),  new Date(2024, 4, 15,13, 30)));
+        eventList.add(new Event("New event", "an event", "160 place", new Date(2024, 3, 15,12, 30),  new Date(2024, 4, 15,13, 30)));
         eventAdapter.notifyItemInserted(eventList.size() - 1);
         eventListRecyclerView.scrollToPosition(eventList.size() - 1);
     }
