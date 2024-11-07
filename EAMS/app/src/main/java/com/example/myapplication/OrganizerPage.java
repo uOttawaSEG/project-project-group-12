@@ -7,6 +7,7 @@ import android.widget.Button;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import androidx.activity.ComponentActivity;
 import androidx.activity.EdgeToEdge;
@@ -18,7 +19,7 @@ public class OrganizerPage extends ComponentActivity {
 
     private RecyclerView eventListRecyclerView;
     private EventAdapter eventAdapter;
-    private List<String> eventList;
+    private List<Event> eventList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +29,7 @@ public class OrganizerPage extends ComponentActivity {
 
         //  initialize eventList and RecyclerView
         eventList = new ArrayList<>();
-        eventAdapter = new EventAdapter(eventList);
+        eventAdapter = new EventAdapter(this, eventList);
 
         eventListRecyclerView = findViewById(R.id.eventList);
         eventListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -49,13 +50,13 @@ public class OrganizerPage extends ComponentActivity {
         // add events to list
     private void addEventToEventList() {
 
-        Intent intent = new Intent(OrganizerPage.this, EventCreationPage.class);
-        startActivity(intent);
+        //Intent intent = new Intent(OrganizerPage.this, EventCreationPage.class);
+        //startActivity(intent);
 
 
-        //eventList.add("New Event");
-        //eventAdapter.notifyItemInserted(eventList.size() - 1);
-        //eventListRecyclerView.scrollToPosition(eventList.size() - 1);
+        eventList.add(new Event("New event", "an event", "160 place", new Date(2024, 4, 15,12, 30),  new Date(2024, 4, 15,13, 30)));
+        eventAdapter.notifyItemInserted(eventList.size() - 1);
+        eventListRecyclerView.scrollToPosition(eventList.size() - 1);
     }
 
 }

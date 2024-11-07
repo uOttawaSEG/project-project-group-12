@@ -36,9 +36,15 @@ public class EventRequestPage extends AppCompatActivity {
         dateTextView = findViewById(R.id.eventsRequestDate);
 
 
-        headingTextView.setText("Change the event name here");
-        descriptionTextView.setText("Change the event description here");
-        dateTextView.setText("ex. November 19th 2:30-4:00");
+        Intent intent = getIntent();
+        String title = intent.getStringExtra("event_title");
+        String description = intent.getStringExtra("event_description");
+        String date = intent.getStringExtra("event_date");
+
+
+        headingTextView.setText(title);
+        descriptionTextView.setText(description);
+        dateTextView.setText(date);
 
         // Add sample data
         for (int i = 0; i < 2; i++) {
@@ -53,8 +59,8 @@ public class EventRequestPage extends AppCompatActivity {
         pendingAttendeesListView.setAdapter(pendingAdapter);
 
         backButton.setOnClickListener(v -> {
-            Intent intent = new Intent(EventRequestPage.this, EventRequestPage.class);
-            startActivity(intent);
+            Intent backIntent = new Intent(EventRequestPage.this, OrganizerPage.class);
+            startActivity(backIntent);
             finish();
         });
     }
