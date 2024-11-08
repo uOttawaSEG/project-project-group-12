@@ -11,6 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
 
     private List<Event> eventList;
@@ -52,6 +55,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             editBtn = itemView.findViewById(R.id.editBtn);
             infoBtn = itemView.findViewById(R.id.infoBtn);
 
+
+            // To send info to Request Page
             infoBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -61,7 +66,21 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                         Intent intent = new Intent(context, EventRequestPage.class);
                         intent.putExtra("event_title", event.getTitle());
                         intent.putExtra("event_description", event.getDescription() + " at " + event.getEventAddress());
-                        intent.putExtra("event_date", event.getStartTime().toString() + " : " + event.getEndTime().toString());
+
+                        // Define the date format for the month and day of the week
+                        SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.ENGLISH); // "MMMM" gives full month name
+                        SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.ENGLISH);   // "EEEE" gives full day name
+                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH); // "HH:mm" for hours and minutes
+
+                        // Get the formatted strings
+                        String month = monthFormat.format(event.getStartTime());
+                        String dayOfWeek = dayFormat.format(event.getStartTime());
+                        String startTime = timeFormat.format(event.getStartTime());
+                        String endTime = timeFormat.format(event.getEndTime());
+
+                        // Put the formatted strings in
+                        intent.putExtra("event_date", dayOfWeek + ", " + month + " " + event.getStartTime().getDate() + " " +
+                                startTime + " - " + endTime);
                         context.startActivity(intent);
                     }
                 }
