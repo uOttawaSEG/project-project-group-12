@@ -93,6 +93,7 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/pastEventList"
         android:layout_width="352dp"
         android:layout_height="154dp"
         android:layout_marginStart="32dp"

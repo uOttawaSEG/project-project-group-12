@@ -14,6 +14,7 @@ import android.app.TimePickerDialog;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -29,6 +30,8 @@ public class EventCreationPage extends AppCompatActivity {
     private Button pickEndTimeButton;
     private Button createEventButton;
     private Button backToPage;
+    private Calendar startCalendar = Calendar.getInstance();
+    private Calendar endCalendar = Calendar.getInstance();
 
 
     @Override
@@ -71,12 +74,15 @@ public class EventCreationPage extends AppCompatActivity {
             int day = calendar.get(Calendar.DAY_OF_MONTH);
 
 
-            //creation and display of start date pickr
+            //creation and display of start date picker
             DatePickerDialog datePickerDialog = new DatePickerDialog(
                     EventCreationPage.this,
                     (view, selectedYear, selectedMonth, selectedDay) -> {
+                        startCalendar.set(Calendar.YEAR, selectedYear);
+                        startCalendar.set(Calendar.MONTH, selectedMonth);
+                        startCalendar.set(Calendar.DAY_OF_MONTH, selectedDay);
                         String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear; //+1 because months start with 0.
-                        pickStartDateButton.setText(selectedDate); //set the text of the button with the selected date so the user can easily see what dat ehe picked
+                        pickStartDateButton.setText("Start date: " + selectedDate); //set the text of the button with the selected date so the user can easily see what dat ehe picked
                     }, year, month, day);
             datePickerDialog.show(); //show the date picker
         });
@@ -91,12 +97,15 @@ public class EventCreationPage extends AppCompatActivity {
             int day = calendar.get(Calendar.DAY_OF_MONTH);
 
 
-            //creation and display of end date pickr
+            //creation and display of end date picker
             DatePickerDialog datePickerDialog = new DatePickerDialog(
                     EventCreationPage.this,
                     (view, selectedYear, selectedMonth, selectedDay) -> {
+                        endCalendar.set(Calendar.YEAR, selectedYear);
+                        endCalendar.set(Calendar.MONTH, selectedMonth);
+                        endCalendar.set(Calendar.DAY_OF_MONTH, selectedDay);
                         String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear; //+1 because months start with 0.
-                        pickEndDateButton.setText("Start Date: " + selectedDate); //set the text of the button with the selected date so the user can easily see what dat ehe picked
+                        pickEndDateButton.setText("End Date: " + selectedDate); //set the text of the button with the selected date so the user can easily see what dat ehe picked
                     }, year, month, day);
             datePickerDialog.show(); //show the date picker
         });
@@ -114,8 +123,10 @@ public class EventCreationPage extends AppCompatActivity {
             TimePickerDialog timePickerDialog = new TimePickerDialog(
                     EventCreationPage.this,
                     (view, selectedHour, selectedMinute) -> {
-                        String selectedTime = selectedHour + ":" + (selectedMinute < 10 ? "0" + selectedMinute : selectedMinute);
-                        pickStartTimeButton.setText(selectedTime); //set the text of the button with the selected time so the user can easily see what time he picked
+                        startCalendar.set(Calendar.HOUR_OF_DAY, selectedHour);
+                        startCalendar.set(Calendar.MINUTE, selectedMinute);
+                        String selectedTime = selectedHour + ":" + (selectedMinute < 30 ? "0" + selectedMinute : selectedMinute);
+                        pickStartTimeButton.setText("Start Time: " + selectedTime); //set the text of the button with the selected time so the user can easily see what time he picked
                     },
                     hour, minute, true);
             timePickerDialog.show(); //to show the time picker
@@ -133,12 +144,16 @@ public class EventCreationPage extends AppCompatActivity {
             TimePickerDialog timePickerDialog = new TimePickerDialog(
                     EventCreationPage.this,
                     (view, selectedHour, selectedMinute) -> {
-                        String selectedTime = selectedHour + ":" + (selectedMinute < 10 ? "0" + selectedMinute : selectedMinute);
-                        pickEndTimeButton.setText(selectedTime); //set the text of the button with the selected time so the user can easily see what time he picked
+
+                        endCalendar.set(Calendar.HOUR_OF_DAY, selectedHour);
+                        endCalendar.set(Calendar.MINUTE, selectedMinute);
+                        String selectedTime = selectedHour + ":" + (selectedMinute < 30 ? "0"+ selectedMinute : selectedMinute);
+                        pickEndTimeButton.setText("End time: " + selectedTime); //set the text of the button with the selected time so the user can easily see what time he picked
                     },
                     hour, minute, true);
             timePickerDialog.show(); //to show the time picker
         });
+
 
 
 
@@ -154,6 +169,41 @@ public class EventCreationPage extends AppCompatActivity {
             String startTime = pickStartTimeButton.getText().toString();
             String endTime = pickEndTimeButton.getText().toString();
 
+
+            // Check if user fill in all filed.
+            if (title.isEmpty() || description.isEmpty() || location.isEmpty() ||
+                    startDate.equals("Pick Start Date") || endDate.equals("Pick End Date") ||
+                    startTime.equals("Pick Start Time") || endTime.equals("Pick End Time")) {
+                Toast.makeText(EventCreationPage.this, "You must fill all filed", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (startCalendar.get(Calendar.MINUTE) != 0 && startCalendar.get(Calendar.MINUTE) != 30) {
+                Toast.makeText(EventCreationPage.this, "Start time minutes must be 0 or 30", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (endCalendar.get(Calendar.MINUTE) != 0 && endCalendar.get(Calendar.MINUTE) != 30) {
+                Toast.makeText(EventCreationPage.this, "End time minutes must be 0 or 30", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Calendar currentCalendar = Calendar.getInstance();
+
+            // Check: Start time must be after current time
+            if (startCalendar.compareTo(currentCalendar) <= 0) {
+                Toast.makeText(EventCreationPage.this, "Start time must be after current time", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Check: End time cant be before the start time
+            if (endCalendar.compareTo(startCalendar) <= 0) {
+                Toast.makeText(EventCreationPage.this, "End time cant be before the start time", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+
+
+
             Log.i("Event Creation Page", "Title: " + title);
             Log.i("Event Creation Page", "Description: " + description);
             Log.i("Event Creation Page", "Location: " + location);
@@ -165,6 +215,19 @@ public class EventCreationPage extends AppCompatActivity {
             //to do: code for sending info gathered to firebase
 
 
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("title", title);
+            resultIntent.putExtra("description", description);
+            resultIntent.putExtra("location", location);
+            resultIntent.putExtra("startDate", startDate);
+            resultIntent.putExtra("endDate", endDate);
+            resultIntent.putExtra("startTime", startTime);
+            resultIntent.putExtra("endTime", endTime);
+
+            // send data to OrganizerPage for now, should be send to db actually
+            setResult(RESULT_OK, resultIntent);
+            Toast.makeText(EventCreationPage.this, "Event Created Successfully", Toast.LENGTH_SHORT).show();
+            finish();
         });
 
 

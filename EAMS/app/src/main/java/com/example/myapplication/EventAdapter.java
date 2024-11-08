@@ -48,7 +48,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
             eventName = itemView.findViewById(R.id.eventName);
-            organizerName = itemView.findViewById(R.id.organizerName);
+            organizerName = itemView.findViewById(R.id.startTime);
             editBtn = itemView.findViewById(R.id.editBtn);
             infoBtn = itemView.findViewById(R.id.infoBtn);
 

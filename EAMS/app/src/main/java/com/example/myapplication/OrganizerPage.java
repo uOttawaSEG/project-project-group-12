@@ -45,7 +45,10 @@ public class OrganizerPage extends ComponentActivity {
 
         // Michael you can change the button to addingEvent button from here
         FloatingActionButton addEventButton = findViewById(R.id.addEventBtn);
-        addEventButton.setOnClickListener(v -> addEventToEventList());
+        addEventButton.setOnClickListener(v -> {
+            Intent intent = new Intent(OrganizerPage.this, EventCreationPage.class);
+            startActivity(intent);
+        });
     }
         // add events to list
     private void addEventToEventList() {

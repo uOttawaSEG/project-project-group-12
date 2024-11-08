@@ -27,10 +27,10 @@
                 android:text=" Event name" />
 
             <TextView
-                android:id="@+id/organizerName"
+                android:id="@+id/startTime"
                 android:layout_width="match_parent"
                 android:layout_height="37dp"
-                android:text=" Organizer name" />
+                android:text="Time to Start" />
         </LinearLayout>
 
         <Button
