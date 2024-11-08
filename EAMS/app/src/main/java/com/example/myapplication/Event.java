@@ -2,21 +2,29 @@ package com.example.myapplication;
 
 import java.util.Date;
 
+
 public class Event {
-    private String title, description, eventAddress;
+    private String eventId, title, description, eventAddress;
     private Date startTime, endTime;
 
 
 
-    public Event(String title, String description , String eventAddress, Date startTime , Date endTime){
+    public Event(String title, String description , String eventAddress, Date startTime , Date endTime, String eventId){
         this.title = title;
         this.description = description;
         this.eventAddress = eventAddress;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.eventId = eventId;
     }
 
+    public String getEventId() {
+        return eventId;
+    }
 
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
 
 
 

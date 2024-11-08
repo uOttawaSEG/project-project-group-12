@@ -164,13 +164,14 @@ public class LoginPage extends AppCompatActivity {
         } else if (Objects.equals(userRole, "Organizer")) {
             intent = new Intent(LoginPage.this, OrganizerPage.class);
         } else {
-            intent = new Intent(LoginPage.this, Attendee.class);
+            intent = new Intent(LoginPage.this, WelcomePage.class);
         }
 
         intent.putExtra("userType", userRole);
         Toast.makeText(LoginPage.this, "Login successful", Toast.LENGTH_LONG).show();
         startActivity(intent);
     }
+
 
     private void checkRegistrationStatus(String userRole,String status){
         if(Objects.equals(status, "pending")){

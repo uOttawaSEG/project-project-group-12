@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
@@ -14,12 +16,18 @@ import androidx.activity.EdgeToEdge;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class OrganizerPage extends ComponentActivity {
 
     private RecyclerView eventListRecyclerView;
     private EventAdapter eventAdapter;
     private List<Event> eventList;
+    private DatabaseReference eventsDatabaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +43,25 @@ public class OrganizerPage extends ComponentActivity {
         eventListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         eventListRecyclerView.setAdapter(eventAdapter);
 
+        eventsDatabaseReference = FirebaseDatabase.getInstance().getReference("events");
+        eventsDatabaseReference.addValueEventListener(new ValueEventListener() {
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            eventList.clear();
+            for (DataSnapshot eventSnapshot : dataSnapshot.getChildren()) {
+                Event event = eventSnapshot.getValue(Event.class);
+                if (event != null) {
+                    eventList.add(event);
+                }
+            }
+            eventAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+            // Log error if data retrieval fails
+            System.err.println("Failed to read events: " + databaseError.toException());
+        }
+    });
         // log out button
         Button backButton = findViewById(R.id.OPbackBtn);
         backButton.setOnClickListener(v -> {
@@ -43,7 +70,7 @@ public class OrganizerPage extends ComponentActivity {
             finish();
         });
 
-        // Michael you can change the button to addingEvent button from here
+        //button to event creation
         FloatingActionButton addEventButton = findViewById(R.id.addEventBtn);
         addEventButton.setOnClickListener(v -> {
             Intent intent = new Intent(OrganizerPage.this, EventCreationPage.class);
@@ -51,15 +78,7 @@ public class OrganizerPage extends ComponentActivity {
         });
     }
         // add events to list
-    private void addEventToEventList() {
-
-        //Intent intent = new Intent(OrganizerPage.this, EventCreationPage.class);
-        //startActivity(intent);
 
 
-        eventList.add(new Event("New event", "an event", "160 place", new Date(2024, 3, 15,12, 30),  new Date(2024, 4, 15,13, 30)));
-        eventAdapter.notifyItemInserted(eventList.size() - 1);
-        eventListRecyclerView.scrollToPosition(eventList.size() - 1);
-    }
 
 }

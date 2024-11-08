@@ -17,6 +17,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.Calendar;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class EventCreationPage extends AppCompatActivity {
 
@@ -32,6 +34,8 @@ public class EventCreationPage extends AppCompatActivity {
     private Button backToPage;
     private Calendar startCalendar = Calendar.getInstance();
     private Calendar endCalendar = Calendar.getInstance();
+
+
 
 
     @Override
@@ -163,7 +167,7 @@ public class EventCreationPage extends AppCompatActivity {
             //get all the infos ready to send to firebase
             String title = eventTitle.getText().toString();
             String description = eventDescription.getText().toString();
-            String location = eventLocation.getText().toString();
+            String eventAddress = eventLocation.getText().toString();
             String startDate = pickStartDateButton.getText().toString();
             String endDate = pickEndDateButton.getText().toString();
             String startTime = pickStartTimeButton.getText().toString();
@@ -171,7 +175,7 @@ public class EventCreationPage extends AppCompatActivity {
 
 
             // Check if user fill in all filed.
-            if (title.isEmpty() || description.isEmpty() || location.isEmpty() ||
+            if (title.isEmpty() || description.isEmpty() || eventAddress.isEmpty() ||
                     startDate.equals("Pick Start Date") || endDate.equals("Pick End Date") ||
                     startTime.equals("Pick Start Time") || endTime.equals("Pick End Time")) {
                 Toast.makeText(EventCreationPage.this, "You must fill all filed", Toast.LENGTH_SHORT).show();
@@ -204,30 +208,26 @@ public class EventCreationPage extends AppCompatActivity {
 
 
 
-            Log.i("Event Creation Page", "Title: " + title);
+            /*Log.i("Event Creation Page", "Title: " + title);
             Log.i("Event Creation Page", "Description: " + description);
-            Log.i("Event Creation Page", "Location: " + location);
+            Log.i("Event Creation Page", "eventAddress: " + eventAddress);
             Log.i("Event Creation Page", "Start Date: " + startDate);
             Log.i("Event Creation Page", "End Date: " + endDate);
             Log.i("Event Creation Page", "Start Time: " + startTime);
-            Log.i("Event Creation Page", "End Time: " + endTime);
+            Log.i("Event Creation Page", "End Time: " + endTime);*/
 
             //to do: code for sending info gathered to firebase
 
 
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra("title", title);
-            resultIntent.putExtra("description", description);
-            resultIntent.putExtra("location", location);
-            resultIntent.putExtra("startDate", startDate);
-            resultIntent.putExtra("endDate", endDate);
-            resultIntent.putExtra("startTime", startTime);
-            resultIntent.putExtra("endTime", endTime);
-
-            // send data to OrganizerPage for now, should be send to db actually
-            setResult(RESULT_OK, resultIntent);
-            Toast.makeText(EventCreationPage.this, "Event Created Successfully", Toast.LENGTH_SHORT).show();
-            finish();
+            // send data to db
+            DatabaseReference eventsDatabaseReference = FirebaseDatabase.getInstance().getReference("events");
+            String eventId = eventsDatabaseReference.push().getKey();
+            if (eventId != null) {
+                Event event = new Event(title, description, eventAddress, startCalendar.getTime(), endCalendar.getTime(), eventId);
+                eventsDatabaseReference.child(eventId).setValue(event);
+                Toast.makeText(EventCreationPage.this, "Event Created Successfully", Toast.LENGTH_SHORT).show();
+                finish();
+            }
         });
 
 
