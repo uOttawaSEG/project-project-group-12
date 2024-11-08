@@ -16,13 +16,16 @@
         android:id="@+id/acceptButton"
         android:layout_width="79dp"
         android:layout_height="39dp"
-
+        android:textColor="@android:color/white"
+        android:backgroundTint="@android:color/darker_gray"
         android:text="✔" />
 
     <Button
         android:id="@+id/rejectButton"
         android:layout_width="79dp"
         android:layout_height="39dp"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@android:color/darker_gray"
         android:text="X" />
 
 </LinearLayout>

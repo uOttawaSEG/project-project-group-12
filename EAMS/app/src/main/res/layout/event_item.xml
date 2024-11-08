@@ -37,12 +37,16 @@
             android:id="@+id/editBtn"
             android:layout_width="79dp"
             android:layout_height="39dp"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@android:color/darker_gray"
             android:text="Edit" />
 
         <Button
             android:id="@+id/infoBtn"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@android:color/darker_gray"
             android:text="Info" />
     </LinearLayout>
 

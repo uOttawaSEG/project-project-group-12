@@ -44,6 +44,8 @@
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_gravity="center"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@android:color/darker_gray"
             android:text="Pick Start Date" />
 
         <Button
@@ -51,6 +53,8 @@
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_gravity="center"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@android:color/darker_gray"
             android:text="Pick Start Time" />
 
         <TextView
@@ -65,6 +69,8 @@
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_gravity="center"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@android:color/darker_gray"
             android:text="Pick End Date" />
 
         <Button
@@ -72,6 +78,8 @@
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_gravity="center"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@android:color/darker_gray"
             android:text="Pick End Time" />
 
         <Button
@@ -80,6 +88,8 @@
             android:layout_height="135dp"
             android:layout_gravity="center"
             android:text="Create Event"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@android:color/darker_gray"
             android:background="@drawable/event_creation_btn"
             />
 
@@ -88,6 +98,8 @@
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_gravity="center"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@android:color/darker_gray"
             android:text="Go back"
             />
 
