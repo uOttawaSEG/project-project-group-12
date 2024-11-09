@@ -1,11 +1,14 @@
 package com.example.myapplication;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 public class Event {
     private String eventId, title, description, eventAddress;
     private Date startTime, endTime;
+    private List<Attendee> pendingAttendeesList, acceptedAttendeesList;
 
 
 
@@ -16,6 +19,8 @@ public class Event {
         this.startTime = startTime;
         this.endTime = endTime;
         this.eventId = eventId;
+        pendingAttendeesList = new ArrayList<>();
+        acceptedAttendeesList = new ArrayList<>();
     }
 
     public String getEventId() {
@@ -71,4 +76,8 @@ public class Event {
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
     }
+
+    public List<Attendee> getPendingAttendeesList(){ return pendingAttendeesList;}
+
+    public List<Attendee> getAcceptedAttendeesList() {return acceptedAttendeesList;}
 }
