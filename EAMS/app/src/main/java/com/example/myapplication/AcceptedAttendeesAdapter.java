@@ -52,4 +52,8 @@ public class AcceptedAttendeesAdapter extends ArrayAdapter<Attendee> {
                 .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
                 .show();
     }
+
+    public List<Attendee> getAcceptedAttendees(){
+        return acceptedAttendees;
+    }
 }
