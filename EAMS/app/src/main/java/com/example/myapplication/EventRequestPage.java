@@ -58,8 +58,8 @@ public class EventRequestPage extends AppCompatActivity {
 
                     //fetch the lists from DB
                     GenericTypeIndicator<ArrayList<Attendee>> typeIndicator = new GenericTypeIndicator<ArrayList<Attendee>>() {};
-                    pendingAttendees.addAll(dataSnapshot.child("pendingAttendees").getValue(typeIndicator));
-                    acceptedAttendees.addAll(dataSnapshot.child("acceptedAttendees").getValue(typeIndicator));
+                    pendingAttendees.addAll(dataSnapshot.child("pendingAttendeesList").getValue(typeIndicator));
+                    acceptedAttendees.addAll(dataSnapshot.child("acceptedAttendeesList").getValue(typeIndicator));
 
                 } else {
                     Log.e("Firebase", "Event data not found for ID: " + eventID);
@@ -86,7 +86,6 @@ public class EventRequestPage extends AppCompatActivity {
         backButton.setOnClickListener(v -> {
             //update changes to Db when finishing operations
             updateAttendeesInFirebase(databaseReference);
-
             Intent backIntent = new Intent(EventRequestPage.this, OrganizerPage.class);
             startActivity(backIntent);
             finish();
@@ -96,7 +95,9 @@ public class EventRequestPage extends AppCompatActivity {
         Button approveAll = findViewById(R.id.approveAll);
         approveAll.setOnClickListener(v -> {
             acceptedAttendees.addAll(pendingAttendees);
+            acceptedAdapter.getAcceptedAttendees().addAll(pendingAttendees);
             pendingAdapter.clear();
+            pendingAdapter.getPendingAttendees().clear();
             acceptedAdapter.notifyDataSetChanged();
             pendingAdapter.notifyDataSetChanged();
 
@@ -104,7 +105,7 @@ public class EventRequestPage extends AppCompatActivity {
     }
     public void updateAttendeesInFirebase(DatabaseReference databaseReference){
         //save updated pendingAttendees list
-        databaseReference.child("pendingAttendees").setValue(pendingAdapter.getPendingAttendees())
+        databaseReference.child("pendingAttendeesList").setValue(pendingAdapter.getPendingAttendees())
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Log.d("Firebase", "Pending attendees updated successfully.");
@@ -114,7 +115,7 @@ public class EventRequestPage extends AppCompatActivity {
                 });
 
         //save updated acceptedAttendees list
-        databaseReference.child("acceptedAttendees").setValue(acceptedAdapter.getAcceptedAttendees())
+        databaseReference.child("acceptedAttendeesList").setValue(acceptedAdapter.getAcceptedAttendees())
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Log.d("Firebase", "Accepted attendees updated successfully.");
@@ -123,5 +124,5 @@ public class EventRequestPage extends AppCompatActivity {
                     }
                 });
     }
-    }
+}
 
