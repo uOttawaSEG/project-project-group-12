@@ -63,5 +63,16 @@ public class EventRequestPage extends AppCompatActivity {
             startActivity(backIntent);
             finish();
         });
+
+        //Approve all button
+        Button approveAll = findViewById(R.id.approveAll);
+        approveAll.setOnClickListener(v -> {
+            acceptedAttendees.addAll(pendingAttendees);
+            pendingAdapter.clear();
+            acceptedAdapter.notifyDataSetChanged();
+            pendingAdapter.notifyDataSetChanged();
+
+
+        });
     }
 }

@@ -41,8 +41,8 @@ public class PendingAttendeesAdapter extends ArrayAdapter<Attendee> {
         Button rejectButton = convertView.findViewById(R.id.rejectButton);
 
         // Display attendee's full name
-        //attendeeNameView.setText(attendee.getEmail());
-        attendeeNameView.setText("kiminonawa@gmail.com");
+        String fullName = attendee.getFirstName()+ " " +attendee.getLastName();
+        attendeeNameView.setText(fullName);
 
         attendeeNameView.setOnClickListener(v -> showAttendeeDialog(attendee));
 
