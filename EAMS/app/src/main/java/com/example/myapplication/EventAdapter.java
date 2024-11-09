@@ -128,8 +128,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                         int position = getAdapterPosition();
 
                         deleteBtn.setOnClickListener(v1 -> {
-                            eventList.remove(position);
-                            notifyDataSetChanged();
+                            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("events").child(eventList.get(position).getEventId());
+                            databaseReference.removeValue();
                         });
 
                         updateBtn.setOnClickListener(new View.OnClickListener() {
@@ -141,9 +141,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                                 intent.putExtra("event_location",  eventList.get(position).getEventAddress());
                                 intent.putExtra("startTime",  eventList.get(position).getStartTime());
                                 intent.putExtra("endTime",  eventList.get(position).getEndTime());
-
-                                eventList.remove(position);
-                                notifyDataSetChanged();
+                                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("events").child(eventList.get(position).getEventId());
+                                databaseReference.removeValue();
                                 context.startActivity(intent);
                             }
                         });
