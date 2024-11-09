@@ -11,7 +11,6 @@ import androidx.core.view.WindowInsetsCompat;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -48,13 +47,13 @@ public class EventCreationPage extends AppCompatActivity {
             return insets;
         });
 
+        //checking if fetching from update
+        String title = "", description="", location="";
         Intent intent1 = getIntent();
         if (intent1.getStringExtra("event_title") != null) {
-            String title = intent1.getStringExtra("event_title");
-            String description = intent1.getStringExtra("event_description");
-            String location = intent1.getStringExtra("event_location");
-            String startTime = intent1.getStringExtra("startTime");
-            String endtTime = intent1.getStringExtra("endTime");
+            title = intent1.getStringExtra("event_title");
+            description = intent1.getStringExtra("event_description");
+            location = intent1.getStringExtra("event_location");
         }
 
 
@@ -70,7 +69,14 @@ public class EventCreationPage extends AppCompatActivity {
 
             createEventButton = findViewById(R.id.createEventButton);
             backToPage = findViewById((R.id.backButton2));
-            //listener for date and time picker
+
+            //pre-fill if fetching data to update:
+            if(!title.equals("")){
+                eventTitle.setText(title);
+                eventDescription.setText(description);
+                eventLocation.setText(location);
+
+            }
 
             backToPage.setOnClickListener(v -> {
                 Intent intent = new Intent(EventCreationPage.this, OrganizerPage.class);
@@ -170,19 +176,19 @@ public class EventCreationPage extends AppCompatActivity {
             createEventButton.setOnClickListener(v -> {
 
                 //get all the infos ready to send to firebase
-                String title = eventTitle.getText().toString();
-                String description = eventDescription.getText().toString();
-                String eventAddress = eventLocation.getText().toString();
+                String finalTitle = eventTitle.getText().toString();
+                String finalDescription = eventDescription.getText().toString();
+                String finalEventAddress = eventLocation.getText().toString();
                 String startDate = pickStartDateButton.getText().toString();
                 String endDate = pickEndDateButton.getText().toString();
-                String startTime = pickStartTimeButton.getText().toString();
-                String endTime = pickEndTimeButton.getText().toString();
+                String finalStartTime = pickStartTimeButton.getText().toString();
+                String finalEndTime = pickEndTimeButton.getText().toString();
 
 
                 // Check if user fill in all filed.
-                if (title.isEmpty() || description.isEmpty() || eventAddress.isEmpty() ||
+                if (finalTitle.isEmpty() || finalDescription.isEmpty() || finalEventAddress.isEmpty() ||
                         startDate.equals("Pick Start Date") || endDate.equals("Pick End Date") ||
-                        startTime.equals("Pick Start Time") || endTime.equals("Pick End Time")) {
+                        finalStartTime.equals("Pick Start Time") || finalEndTime.equals("Pick End Time")) {
                     Toast.makeText(EventCreationPage.this, "You must fill all filed", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -228,7 +234,7 @@ public class EventCreationPage extends AppCompatActivity {
                 DatabaseReference eventsDatabaseReference = FirebaseDatabase.getInstance().getReference("events");
                 String eventId = eventsDatabaseReference.push().getKey();
                 if (eventId != null) {
-                    Event event = new Event(title, description, eventAddress, startCalendar.getTime(), endCalendar.getTime(), eventId);
+                    Event event = new Event(finalTitle, finalDescription, finalEventAddress, startCalendar.getTime(), endCalendar.getTime(), eventId);
                     eventsDatabaseReference.child(eventId).setValue(event);
                     Toast.makeText(EventCreationPage.this, "Event Created Successfully", Toast.LENGTH_SHORT).show();
                     finish();
