@@ -36,8 +36,6 @@ public class EventCreationPage extends AppCompatActivity {
     private Calendar endCalendar = Calendar.getInstance();
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,160 +48,167 @@ public class EventCreationPage extends AppCompatActivity {
             return insets;
         });
 
-        eventTitle = findViewById(R.id.eventTitle);
-        eventDescription = findViewById(R.id.eventDescription);
-        eventLocation = findViewById(R.id.eventLocation);
-
-        pickStartDateButton = findViewById(R.id.pickStartDateButton);
-        pickEndDateButton = findViewById(R.id.pickEndDateButton);
-
-        pickStartTimeButton = findViewById(R.id.pickStartTimeButton);
-        pickEndTimeButton = findViewById(R.id.pickEndTimeButton);
-
-        createEventButton = findViewById(R.id.createEventButton);
-        backToPage = findViewById((R.id.backButton2));
-        //listener for date and time picker
-
-        backToPage.setOnClickListener(v -> {
-            Intent intent = new Intent(EventCreationPage.this, OrganizerPage.class);
-            startActivity(intent);
-        });
-
-        pickStartDateButton.setOnClickListener(v -> {
-            Calendar calendar = Calendar.getInstance();
-
-            //initializing the start date picker with the current date
-            int year = calendar.get(Calendar.YEAR);
-            int month = calendar.get(Calendar.MONTH);
-            int day = calendar.get(Calendar.DAY_OF_MONTH);
+        Intent intent1 = getIntent();
+        if (intent1.getStringExtra("event_title") != null) {
+            String title = intent1.getStringExtra("event_title");
+            String description = intent1.getStringExtra("event_description");
+            String location = intent1.getStringExtra("event_location");
+            String startTime = intent1.getStringExtra("startTime");
+            String endtTime = intent1.getStringExtra("endTime");
+        }
 
 
-            //creation and display of start date picker
-            DatePickerDialog datePickerDialog = new DatePickerDialog(
-                    EventCreationPage.this,
-                    (view, selectedYear, selectedMonth, selectedDay) -> {
-                        startCalendar.set(Calendar.YEAR, selectedYear);
-                        startCalendar.set(Calendar.MONTH, selectedMonth);
-                        startCalendar.set(Calendar.DAY_OF_MONTH, selectedDay);
-                        String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear; //+1 because months start with 0.
-                        pickStartDateButton.setText("Start date: " + selectedDate); //set the text of the button with the selected date so the user can easily see what dat ehe picked
-                    }, year, month, day);
-            datePickerDialog.show(); //show the date picker
-        });
+            eventTitle = findViewById(R.id.eventTitle);
+            eventDescription = findViewById(R.id.eventDescription);
+            eventLocation = findViewById(R.id.eventLocation);
+
+            pickStartDateButton = findViewById(R.id.pickStartDateButton);
+            pickEndDateButton = findViewById(R.id.pickEndDateButton);
+
+            pickStartTimeButton = findViewById(R.id.pickStartTimeButton);
+            pickEndTimeButton = findViewById(R.id.pickEndTimeButton);
+
+            createEventButton = findViewById(R.id.createEventButton);
+            backToPage = findViewById((R.id.backButton2));
+            //listener for date and time picker
+
+            backToPage.setOnClickListener(v -> {
+                Intent intent = new Intent(EventCreationPage.this, OrganizerPage.class);
+                startActivity(intent);
+            });
+
+            pickStartDateButton.setOnClickListener(v -> {
+                Calendar calendar = Calendar.getInstance();
+
+                //initializing the start date picker with the current date
+                int year = calendar.get(Calendar.YEAR);
+                int month = calendar.get(Calendar.MONTH);
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
 
 
-        pickEndDateButton.setOnClickListener(v -> {
-            Calendar calendar = Calendar.getInstance();
-
-            //initializing the end date picker with the current date
-            int year = calendar.get(Calendar.YEAR);
-            int month = calendar.get(Calendar.MONTH);
-            int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-
-            //creation and display of end date picker
-            DatePickerDialog datePickerDialog = new DatePickerDialog(
-                    EventCreationPage.this,
-                    (view, selectedYear, selectedMonth, selectedDay) -> {
-                        endCalendar.set(Calendar.YEAR, selectedYear);
-                        endCalendar.set(Calendar.MONTH, selectedMonth);
-                        endCalendar.set(Calendar.DAY_OF_MONTH, selectedDay);
-                        String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear; //+1 because months start with 0.
-                        pickEndDateButton.setText("End Date: " + selectedDate); //set the text of the button with the selected date so the user can easily see what dat ehe picked
-                    }, year, month, day);
-            datePickerDialog.show(); //show the date picker
-        });
+                //creation and display of start date picker
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        EventCreationPage.this,
+                        (view, selectedYear, selectedMonth, selectedDay) -> {
+                            startCalendar.set(Calendar.YEAR, selectedYear);
+                            startCalendar.set(Calendar.MONTH, selectedMonth);
+                            startCalendar.set(Calendar.DAY_OF_MONTH, selectedDay);
+                            String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear; //+1 because months start with 0.
+                            pickStartDateButton.setText("Start date: " + selectedDate); //set the text of the button with the selected date so the user can easily see what dat ehe picked
+                        }, year, month, day);
+                datePickerDialog.show(); //show the date picker
+            });
 
 
+            pickEndDateButton.setOnClickListener(v -> {
+                Calendar calendar = Calendar.getInstance();
 
-        pickStartTimeButton.setOnClickListener(v -> {
-            Calendar calendar = Calendar.getInstance();
-
-            //initializing the start time picker with the current time
-            int hour = calendar.get(Calendar.HOUR_OF_DAY);
-            int minute = calendar.get(Calendar.MINUTE);
-
-            //creation and display of time picker
-            TimePickerDialog timePickerDialog = new TimePickerDialog(
-                    EventCreationPage.this,
-                    (view, selectedHour, selectedMinute) -> {
-                        startCalendar.set(Calendar.HOUR_OF_DAY, selectedHour);
-                        startCalendar.set(Calendar.MINUTE, selectedMinute);
-                        String selectedTime = selectedHour + ":" + (selectedMinute < 30 ? "0" + selectedMinute : selectedMinute);
-                        pickStartTimeButton.setText("Start Time: " + selectedTime); //set the text of the button with the selected time so the user can easily see what time he picked
-                    },
-                    hour, minute, true);
-            timePickerDialog.show(); //to show the time picker
-        });
+                //initializing the end date picker with the current date
+                int year = calendar.get(Calendar.YEAR);
+                int month = calendar.get(Calendar.MONTH);
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
 
 
-        pickEndTimeButton.setOnClickListener(v -> {
-            Calendar calendar = Calendar.getInstance();
-
-            //initializing the end time picker with the current time
-            int hour = calendar.get(Calendar.HOUR_OF_DAY);
-            int minute = calendar.get(Calendar.MINUTE);
-
-            //creation and display of time picker
-            TimePickerDialog timePickerDialog = new TimePickerDialog(
-                    EventCreationPage.this,
-                    (view, selectedHour, selectedMinute) -> {
-
-                        endCalendar.set(Calendar.HOUR_OF_DAY, selectedHour);
-                        endCalendar.set(Calendar.MINUTE, selectedMinute);
-                        String selectedTime = selectedHour + ":" + (selectedMinute < 30 ? "0"+ selectedMinute : selectedMinute);
-                        pickEndTimeButton.setText("End time: " + selectedTime); //set the text of the button with the selected time so the user can easily see what time he picked
-                    },
-                    hour, minute, true);
-            timePickerDialog.show(); //to show the time picker
-        });
+                //creation and display of end date picker
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        EventCreationPage.this,
+                        (view, selectedYear, selectedMonth, selectedDay) -> {
+                            endCalendar.set(Calendar.YEAR, selectedYear);
+                            endCalendar.set(Calendar.MONTH, selectedMonth);
+                            endCalendar.set(Calendar.DAY_OF_MONTH, selectedDay);
+                            String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear; //+1 because months start with 0.
+                            pickEndDateButton.setText("End Date: " + selectedDate); //set the text of the button with the selected date so the user can easily see what dat ehe picked
+                        }, year, month, day);
+                datePickerDialog.show(); //show the date picker
+            });
 
 
+            pickStartTimeButton.setOnClickListener(v -> {
+                Calendar calendar = Calendar.getInstance();
+
+                //initializing the start time picker with the current time
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                int minute = calendar.get(Calendar.MINUTE);
+
+                //creation and display of time picker
+                TimePickerDialog timePickerDialog = new TimePickerDialog(
+                        EventCreationPage.this,
+                        (view, selectedHour, selectedMinute) -> {
+                            startCalendar.set(Calendar.HOUR_OF_DAY, selectedHour);
+                            startCalendar.set(Calendar.MINUTE, selectedMinute);
+                            String selectedTime = selectedHour + ":" + (selectedMinute < 30 ? "0" + selectedMinute : selectedMinute);
+                            pickStartTimeButton.setText("Start Time: " + selectedTime); //set the text of the button with the selected time so the user can easily see what time he picked
+                        },
+                        hour, minute, true);
+                timePickerDialog.show(); //to show the time picker
+            });
 
 
-        //listener for the create button
-        createEventButton.setOnClickListener(v -> {
+            pickEndTimeButton.setOnClickListener(v -> {
+                Calendar calendar = Calendar.getInstance();
 
-            //get all the infos ready to send to firebase
-            String title = eventTitle.getText().toString();
-            String description = eventDescription.getText().toString();
-            String eventAddress = eventLocation.getText().toString();
-            String startDate = pickStartDateButton.getText().toString();
-            String endDate = pickEndDateButton.getText().toString();
-            String startTime = pickStartTimeButton.getText().toString();
-            String endTime = pickEndTimeButton.getText().toString();
+                //initializing the end time picker with the current time
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                int minute = calendar.get(Calendar.MINUTE);
+
+                //creation and display of time picker
+                TimePickerDialog timePickerDialog = new TimePickerDialog(
+                        EventCreationPage.this,
+                        (view, selectedHour, selectedMinute) -> {
+
+                            endCalendar.set(Calendar.HOUR_OF_DAY, selectedHour);
+                            endCalendar.set(Calendar.MINUTE, selectedMinute);
+                            String selectedTime = selectedHour + ":" + (selectedMinute < 30 ? "0" + selectedMinute : selectedMinute);
+                            pickEndTimeButton.setText("End time: " + selectedTime); //set the text of the button with the selected time so the user can easily see what time he picked
+                        },
+                        hour, minute, true);
+                timePickerDialog.show(); //to show the time picker
+            });
 
 
-            // Check if user fill in all filed.
-            if (title.isEmpty() || description.isEmpty() || eventAddress.isEmpty() ||
-                    startDate.equals("Pick Start Date") || endDate.equals("Pick End Date") ||
-                    startTime.equals("Pick Start Time") || endTime.equals("Pick End Time")) {
-                Toast.makeText(EventCreationPage.this, "You must fill all filed", Toast.LENGTH_SHORT).show();
-                return;
-            }
+            //listener for the create button
+            createEventButton.setOnClickListener(v -> {
 
-            if (startCalendar.get(Calendar.MINUTE) != 0 && startCalendar.get(Calendar.MINUTE) != 30) {
-                Toast.makeText(EventCreationPage.this, "Start time minutes must be 0 or 30", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (endCalendar.get(Calendar.MINUTE) != 0 && endCalendar.get(Calendar.MINUTE) != 30) {
-                Toast.makeText(EventCreationPage.this, "End time minutes must be 0 or 30", Toast.LENGTH_SHORT).show();
-                return;
-            }
+                //get all the infos ready to send to firebase
+                String title = eventTitle.getText().toString();
+                String description = eventDescription.getText().toString();
+                String eventAddress = eventLocation.getText().toString();
+                String startDate = pickStartDateButton.getText().toString();
+                String endDate = pickEndDateButton.getText().toString();
+                String startTime = pickStartTimeButton.getText().toString();
+                String endTime = pickEndTimeButton.getText().toString();
 
-            Calendar currentCalendar = Calendar.getInstance();
 
-            // Check: Start time must be after current time
-            if (startCalendar.compareTo(currentCalendar) <= 0) {
-                Toast.makeText(EventCreationPage.this, "Start time must be after current time", Toast.LENGTH_SHORT).show();
-                return;
-            }
+                // Check if user fill in all filed.
+                if (title.isEmpty() || description.isEmpty() || eventAddress.isEmpty() ||
+                        startDate.equals("Pick Start Date") || endDate.equals("Pick End Date") ||
+                        startTime.equals("Pick Start Time") || endTime.equals("Pick End Time")) {
+                    Toast.makeText(EventCreationPage.this, "You must fill all filed", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-            // Check: End time cant be before the start time
-            if (endCalendar.compareTo(startCalendar) <= 0) {
-                Toast.makeText(EventCreationPage.this, "End time cant be before the start time", Toast.LENGTH_SHORT).show();
-                return;
-            }
+                if (startCalendar.get(Calendar.MINUTE) != 0 && startCalendar.get(Calendar.MINUTE) != 30) {
+                    Toast.makeText(EventCreationPage.this, "Start time minutes must be 0 or 30", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (endCalendar.get(Calendar.MINUTE) != 0 && endCalendar.get(Calendar.MINUTE) != 30) {
+                    Toast.makeText(EventCreationPage.this, "End time minutes must be 0 or 30", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Calendar currentCalendar = Calendar.getInstance();
+
+                // Check: Start time must be after current time
+                if (startCalendar.compareTo(currentCalendar) <= 0) {
+                    Toast.makeText(EventCreationPage.this, "Start time must be after current time", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Check: End time cant be before the start time
+                if (endCalendar.compareTo(startCalendar) <= 0) {
+                    Toast.makeText(EventCreationPage.this, "End time cant be before the start time", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
 
 
@@ -216,20 +221,20 @@ public class EventCreationPage extends AppCompatActivity {
             Log.i("Event Creation Page", "Start Time: " + startTime);
             Log.i("Event Creation Page", "End Time: " + endTime);*/
 
-            //to do: code for sending info gathered to firebase
+                //to do: code for sending info gathered to firebase
 
 
-            // send data to db
-            DatabaseReference eventsDatabaseReference = FirebaseDatabase.getInstance().getReference("events");
-            String eventId = eventsDatabaseReference.push().getKey();
-            if (eventId != null) {
-                Event event = new Event(title, description, eventAddress, startCalendar.getTime(), endCalendar.getTime(), eventId);
-                eventsDatabaseReference.child(eventId).setValue(event);
-                Toast.makeText(EventCreationPage.this, "Event Created Successfully", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        });
+                // send data to db
+                DatabaseReference eventsDatabaseReference = FirebaseDatabase.getInstance().getReference("events");
+                String eventId = eventsDatabaseReference.push().getKey();
+                if (eventId != null) {
+                    Event event = new Event(title, description, eventAddress, startCalendar.getTime(), endCalendar.getTime(), eventId);
+                    eventsDatabaseReference.child(eventId).setValue(event);
+                    Toast.makeText(EventCreationPage.this, "Event Created Successfully", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            });
 
 
+        }
     }
-}
