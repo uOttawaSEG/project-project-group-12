@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -53,17 +54,22 @@ public class EventRequestPage extends AppCompatActivity {
                 // Fetching the data was successful
                 DataSnapshot dataSnapshot = task.getResult();
                 if (dataSnapshot.exists()) {
+                    //fetching the main attributes of event
                     String title = dataSnapshot.child("title").getValue(String.class);
                     String address = dataSnapshot.child("eventAddress").getValue(String.class);
                     String description = dataSnapshot.child("description").getValue(String.class);
                     Date startTime = dataSnapshot.child("startTime").getValue(Date.class);
                     Date endTime = dataSnapshot.child("endTime").getValue(Date.class);
-                    ArrayList<Attendee> pendingAttendeesList = (ArrayList<Attendee>) dataSnapshot.child("pendingAttendees").getValue(ArrayList<>.class);
-                    ArrayList<Attendee> acceptedAttendeesList = (ArrayList<Attendee>) dataSnapshot.child("acceptedAttendees").getValue();
-                    event = new Event(title, description, address, startTime, endTime, eventID);
+
+                    //fetch the list from DB aswell
+                    GenericTypeIndicator<ArrayList<Attendee>> typeIndicator = new GenericTypeIndicator<ArrayList<Attendee>>() {};
+                    ArrayList<Attendee> pendingAttendeesList = (ArrayList<Attendee>) dataSnapshot.child("pendingAttendees").getValue(typeIndicator);
+                    ArrayList<Attendee> acceptedAttendeesList = (ArrayList<Attendee>) dataSnapshot.child("acceptedAttendees").getValue(typeIndicator);
+
+                    //recreating the event instance
+                    event = new Event(title, description, address, startTime, endTime, eventID, pendingAttendeesList, acceptedAttendeesList);
                 } else {
                     Log.e("Firebase", "Event data not found for ID: " + eventID);
-
                 }
             } else {
                 // Handle failure
