@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -27,6 +29,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     private List<Event> eventList;
     private Context context;
     private DatabaseReference eventsDatabaseReference;
+    //Had to make it an instance variable for the fadein/fadeout of update/delete buttons
+    boolean buttonsVisible = false;
+
 
     public EventAdapter(Context context, List<Event> eventList) {
         this.context = context;
@@ -123,29 +128,37 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                 editBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        fadeInView(deleteBtn);
-                        fadeInView(updateBtn);
-                        int position = getAdapterPosition();
+                        if(buttonsVisible){
+                            fadeOutView(deleteBtn);
+                            fadeOutView(updateBtn);
+                        }
+                        else {
+                            fadeInView(deleteBtn);
+                            fadeInView(updateBtn);
+                            int position = getAdapterPosition();
 
-                        deleteBtn.setOnClickListener(v1 -> {
-                            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("events").child(eventList.get(position).getEventId());
-                            databaseReference.removeValue();
-                        });
-
-                        updateBtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent = new Intent(context, EventCreationPage.class);
-                                intent.putExtra("event_title", eventList.get(position).getTitle());
-                                intent.putExtra("event_description", eventList.get(position).getDescription());
-                                intent.putExtra("event_location",  eventList.get(position).getEventAddress());
-                                intent.putExtra("startTime",  eventList.get(position).getStartTime());
-                                intent.putExtra("endTime",  eventList.get(position).getEndTime());
+                            deleteBtn.setOnClickListener(v1 -> {
                                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("events").child(eventList.get(position).getEventId());
                                 databaseReference.removeValue();
-                                context.startActivity(intent);
-                            }
-                        });
+                            });
+
+                            updateBtn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(context, EventCreationPage.class);
+                                    intent.putExtra("event_title", eventList.get(position).getTitle());
+                                    intent.putExtra("event_description", eventList.get(position).getDescription());
+                                    intent.putExtra("event_location", eventList.get(position).getEventAddress());
+                                    intent.putExtra("startTime", eventList.get(position).getStartTime());
+                                    intent.putExtra("endTime", eventList.get(position).getEndTime());
+                                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("events").child(eventList.get(position).getEventId());
+                                    databaseReference.removeValue();
+                                    context.startActivity(intent);
+                                }
+                            });
+                        }
+                        //switches to the other state
+                        buttonsVisible = !buttonsVisible;
                     }
                 });
             }
@@ -165,6 +178,18 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                         .alpha(1f)
                         .setDuration(300)
                         .setListener(null);
+            }
+
+            private void fadeOutView(Button randomField){
+                randomField.animate()
+                        .alpha(0f)
+                        .setDuration(300)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                randomField.setVisibility(View.GONE);
+                            }
+                        });
             }
         }
     }
