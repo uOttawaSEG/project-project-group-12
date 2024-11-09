@@ -3,6 +3,7 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -10,7 +11,12 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class EventRequestPage extends AppCompatActivity {
@@ -20,6 +26,7 @@ public class EventRequestPage extends AppCompatActivity {
     private List<Attendee> acceptedAttendees = new ArrayList<>();
     private List<Attendee> pendingAttendees = new ArrayList<>();
     private TextView headingTextView, descriptionTextView, dateTextView;
+    private Event event;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +44,35 @@ public class EventRequestPage extends AppCompatActivity {
 
 
         Intent intent = getIntent();
-        String title = intent.getStringExtra("event_title");
-        String description = intent.getStringExtra("event_description");
         String date = intent.getStringExtra("event_date");
+        //recreating the event instance
+        String eventID = intent.getStringExtra("event");
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("events");
+        databaseReference.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                // Fetching the data was successful
+                DataSnapshot dataSnapshot = task.getResult();
+                if (dataSnapshot.exists()) {
+                    String title = dataSnapshot.child("title").getValue(String.class);
+                    String address = dataSnapshot.child("eventAddress").getValue(String.class);
+                    String description = dataSnapshot.child("description").getValue(String.class);
+                    Date startTime = dataSnapshot.child("startTime").getValue(Date.class);
+                    Date endTime = dataSnapshot.child("endTime").getValue(Date.class);
+                    ArrayList<Attendee> pendingAttendeesList = (ArrayList<Attendee>) dataSnapshot.child("pendingAttendees").getValue(ArrayList<>.class);
+                    ArrayList<Attendee> acceptedAttendeesList = (ArrayList<Attendee>) dataSnapshot.child("acceptedAttendees").getValue();
+                    event = new Event(title, description, address, startTime, endTime, eventID);
+                } else {
+                    Log.e("Firebase", "Event data not found for ID: " + eventID);
 
+                }
+            } else {
+                // Handle failure
+                Log.e("Firebase", "Error getting data", task.getException());
+            }
+        });
 
-        headingTextView.setText(title);
-        descriptionTextView.setText(description);
+        headingTextView.setText(event.getTitle());
+        descriptionTextView.setText(event.getDescription());
         dateTextView.setText(date);
 
         // Add sample data

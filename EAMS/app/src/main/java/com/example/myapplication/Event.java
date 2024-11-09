@@ -22,6 +22,17 @@ public class Event {
         pendingAttendeesList = new ArrayList<>();
         acceptedAttendeesList = new ArrayList<>();
     }
+    public Event(String title, String description , String eventAddress, Date startTime , Date endTime, String eventId, ArrayList<Attendee> pendingAttendeesList, ArrayList<Attendee> acceptedAttendeesList){
+        this.title = title;
+        this.description = description;
+        this.eventAddress = eventAddress;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.eventId = eventId;
+        this.pendingAttendeesList = pendingAttendeesList;
+        this.acceptedAttendeesList = acceptedAttendeesList;
+    }
+
 
     public String getEventId() {
         return eventId;
