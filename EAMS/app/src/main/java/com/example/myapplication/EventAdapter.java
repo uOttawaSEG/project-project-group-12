@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -75,8 +76,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         public class EventViewHolder extends RecyclerView.ViewHolder {
             private TextView eventName;
             private TextView eventStartTime;
-            private Button editBtn;
-            private Button infoBtn;
+            private Button editBtn, infoBtn, updateBtn, deleteBtn;
 
             public EventViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -84,6 +84,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                 eventStartTime = itemView.findViewById(R.id.startTime);
                 editBtn = itemView.findViewById(R.id.editBtn);
                 infoBtn = itemView.findViewById(R.id.infoBtn);
+                updateBtn = itemView.findViewById(R.id.updateBtn);
+                deleteBtn = itemView.findViewById(R.id.deleteBtn);
+
 
 
                 // To send info to Request Page
@@ -115,6 +118,31 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                         }
                     }
                 });
+
+                //Edit button
+                editBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        fadeInView(deleteBtn);
+                        fadeInView(updateBtn);
+                        int position = getAdapterPosition();
+
+                        deleteBtn.setOnClickListener(v1 -> {
+                            eventList.remove(position);
+                            notifyDataSetChanged();
+                        });
+
+                        updateBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(context, EventCreationPage.class);
+                                eventList.remove(position);
+                                notifyDataSetChanged();
+                                context.startActivity(intent);
+                            }
+                        });
+                    }
+                });
             }
 
 
@@ -124,6 +152,14 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                 SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM dd, yyyy HH:mm", Locale.ENGLISH);
                 String fullStartDateTime = dateFormat.format(event.getStartTime());
                 eventStartTime.setText(fullStartDateTime);
+            }
+            private void fadeInView(Button randomField){
+                randomField.setVisibility(View.VISIBLE);
+                randomField.setAlpha(0f);
+                randomField.animate()
+                        .alpha(1f)
+                        .setDuration(300)
+                        .setListener(null);
             }
         }
     }
