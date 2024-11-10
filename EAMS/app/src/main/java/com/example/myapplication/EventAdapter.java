@@ -106,7 +106,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                             Intent intent = new Intent(context, EventRequestPage.class);
                             intent.putExtra("eventID", event.getEventId());
                             intent.putExtra("title", event.getTitle());
-                            intent.putExtra("description", event.getTitle());
+                            intent.putExtra("description", event.getDescription() + " Location: " + event.getEventAddress());
                             intent.putExtra("uid", uid);
 
                             // Define the date format for the month and day of the week
@@ -114,19 +114,31 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                             SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.ENGLISH);   // "EEEE" gives full day name
                             SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH); // "HH:mm" for hours and minutes
 
-                            // Get the formatted strings
-                            String month = monthFormat.format(event.getStartTime());
-                            String dayOfWeek = dayFormat.format(event.getStartTime());
+                            // Get the formatted strings for start time
+                            String monthStart = monthFormat.format(event.getStartTime());
+                            String dayOfWeekStart = dayFormat.format(event.getStartTime());
                             String startTime = timeFormat.format(event.getStartTime());
+
+                            // Get the formatted strings for end time
+                            String monthEnd = monthFormat.format(event.getEndTime());
+                            String dayOfWeekEnd = dayFormat.format(event.getEndTime());
                             String endTime = timeFormat.format(event.getEndTime());
 
-                            // Put the formatted strings in
-                            intent.putExtra("event_date", dayOfWeek + ", " + month + " " + event.getStartTime().getDate() + " " +
-                                    startTime + " - " + endTime);
+                            // Check if the start and end date are the same
+                            if (dayOfWeekStart.equals(dayOfWeekEnd) && monthStart.equals(monthEnd) && event.getStartTime().getDate() == event.getEndTime().getDate()) {
+                                // If they are the same day, just show start time - end time
+                                intent.putExtra("event_date", dayOfWeekStart + ", " + monthStart + " " + event.getStartTime().getDate() + " " + startTime + " - " + endTime);
+                            } else {
+                                // If they are different days, show both start and end
+                                intent.putExtra("event_date", dayOfWeekStart + ", " + monthStart + " " + event.getStartTime().getDate() + " " +
+                                        startTime + " - " + dayOfWeekEnd + ", " + monthEnd + " " + event.getEndTime().getDate() + " " + endTime);
+                            }
                             context.startActivity(intent);
                         }
                     }
                 });
+
+
 
                 //Edit button
                 editBtn.setOnClickListener(new View.OnClickListener() {
