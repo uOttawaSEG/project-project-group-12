@@ -1,17 +1,31 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
-import java.util.Date;
 
 public class AttendeePage extends AppCompatActivity {
     private ArrayList<Event> allEvents;
     private ListView eventListView;
+    private DatabaseReference eventsDatabaseReference;
+    private DatabaseReference attendeesDatabaseReference;
+    private EventAttendeePageAdapter adapter;
+    private Attendee attendee; // Variable to hold the Attendee object
+    private Button logOutBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,23 +33,89 @@ public class AttendeePage extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_attendee_page);
 
+        // Retrieve the uid from the Intent
+        String uid = getIntent().getStringExtra("uid");
+
         allEvents = new ArrayList<>();
-
-        // Create a test event and add it to the list
-        Event testEvent = new Event(
-                "Sample Event",
-                "This is a sample event description.",
-                "123 Event St.",
-                new Date(),
-                new Date(System.currentTimeMillis() + 3600000),
-                "event1"
-        );
-        allEvents.add(testEvent);
-
         eventListView = findViewById(R.id.eventListOnAttendeePage);
 
-        // Create and set the adapter
-        EventAttendeePageAdapter adapter = new EventAttendeePageAdapter(this, allEvents);
+
+
+        // Initialize references to Firebase database nodes
+        eventsDatabaseReference = FirebaseDatabase.getInstance().getReference("events");
+        attendeesDatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(uid);
+
+        // Fetch and store attendee information
+        fetchAttendeeInfo();
+
+        // Create and set the adapter, passing the Attendee object
+        adapter = new EventAttendeePageAdapter(this, allEvents, attendee);
         eventListView.setAdapter(adapter);
+
+        // Fetch and display events
+        fetchEvents();
+
+        // Initialize the Log Out button
+        logOutBtn = findViewById(R.id.logOutBtn2);
+
+        // Set up a listener for the button click
+        logOutBtn.setOnClickListener(v -> {
+            // Optional: Perform any logout operation (e.g., Firebase sign-out)
+            // For example, if using Firebase:
+            // FirebaseAuth.getInstance().signOut();
+
+            // Navigate back to the LoginPage
+            Intent intent = new Intent(AttendeePage.this, LoginPage.class);
+            startActivity(intent);
+
+            // Optionally finish the current activity to remove it from the stack
+            finish();
+        });
+    }
+
+    private void fetchAttendeeInfo() {
+        attendeesDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    attendee = snapshot.getValue(Attendee.class);
+                    if (attendee != null) {
+                        // Display Toast with the attendee information
+                        String attendeeInfo = "Name: " + attendee.getFirstName() + " " + attendee.getLastName() +
+                                "\nEmail: " + attendee.getEmail() +
+                                "\nPhone: " + attendee.getPhoneNumber() +
+                                "\nAddress: " + attendee.getAddress();
+
+                        Toast.makeText(AttendeePage.this, attendeeInfo, Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle possible errors
+            }
+        });
+    }
+
+    private void fetchEvents() {
+        eventsDatabaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                allEvents.clear();
+                for (DataSnapshot eventSnapshot : dataSnapshot.getChildren()) {
+                    Event event = eventSnapshot.getValue(Event.class);
+                    if (event != null) {
+                        allEvents.add(event);
+                    }
+                }
+                adapter.notifyDataSetChanged(); // Refresh the ListView
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle possible errors
+            }
+        });
     }
 }

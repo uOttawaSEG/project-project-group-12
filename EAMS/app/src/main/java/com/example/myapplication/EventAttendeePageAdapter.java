@@ -16,11 +16,13 @@ import java.util.List;
 public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
     private Context context;
     private List<Event> events;
+    private Attendee attendee;
 
-    public EventAttendeePageAdapter(Context context, List<Event> events){
-        super(context,R.layout.activity_attendee_page,events );
+    public EventAttendeePageAdapter(Context context, List<Event> events, Attendee attendee) {
+        super(context, R.layout.activity_attendee_page, events);
         this.context = context;
         this.events = events;
+        this.attendee = attendee; // Store the Attendee object
     }
 
 
@@ -56,6 +58,14 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
         holder.startTimeTextView.setText(event.getStartTime().toString());
         //TODO join view add event listener for button
 
+        // Set the Join button's click listener
+        holder.JoinView.setOnClickListener(v -> {
+            // Remove the event from the list
+            events.remove(position);
+
+            // Notify the adapter that the data has changed, so it updates the UI
+            notifyDataSetChanged();
+        });
 
         return listItem;
     }

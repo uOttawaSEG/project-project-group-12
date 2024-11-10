@@ -139,11 +139,11 @@ public class LoginPage extends AppCompatActivity {
                     String userRole = task.getResult().child("userType").getValue(String.class);
 
                     if(Objects.equals(userRole, "Administrator")) {
-                        navigateToWelcomePage(userRole);
+                        navigateToWelcomePage(userRole, null);
                     }
                     else{
                         String status = task.getResult().child("status").getValue(String.class);
-                        checkRegistrationStatus(userRole, status);
+                        checkRegistrationStatus(userRole, status, user.getUid());
                     }
                 } else {
                     Log.e("firebase", "user role not found", task.getException());
@@ -155,16 +155,17 @@ public class LoginPage extends AppCompatActivity {
 
 
 
-    private void navigateToWelcomePage(String userRole) {
+    private void navigateToWelcomePage(String userRole, String uid) {
         Intent intent;
 
-        if(Objects.equals(userRole, "Administrator")) {
-
+        if (Objects.equals(userRole, "Administrator")) {
             intent = new Intent(LoginPage.this, AdminPage.class);
         } else if (Objects.equals(userRole, "Organizer")) {
             intent = new Intent(LoginPage.this, OrganizerPage.class);
+            intent.putExtra("uid", uid); // Send UID to OrganizerPage
         } else {
             intent = new Intent(LoginPage.this, AttendeePage.class);
+            intent.putExtra("uid", uid); // Send UID to AttendeePage
         }
 
         intent.putExtra("userType", userRole);
@@ -173,21 +174,17 @@ public class LoginPage extends AppCompatActivity {
     }
 
 
-    private void checkRegistrationStatus(String userRole,String status){
-        if(Objects.equals(status, "pending")){
+    private void checkRegistrationStatus(String userRole, String status, String uid) {
+        if (Objects.equals(status, "pending")) {
             Toast.makeText(LoginPage.this, "Your registration is still pending.", Toast.LENGTH_LONG).show();
-        }
-        else if(Objects.equals(status, "rejected")) {
-            //used an AlertDialog to give the user enough time to see the phone number of the admin
+        } else if (Objects.equals(status, "rejected")) {
             AlertDialog.Builder builder = new AlertDialog.Builder(LoginPage.this);
             builder.setTitle("Your registration has been rejected by the Administrator");
             builder.setMessage("Please contact them through this phone number: +1 123-456-7890");
             builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
             builder.create().show();
-        }
-        else{
-            //the status is confirmed so send the user to WelcomePage
-            navigateToWelcomePage(userRole);
+        } else {
+            navigateToWelcomePage(userRole, uid);
         }
     }
 }
