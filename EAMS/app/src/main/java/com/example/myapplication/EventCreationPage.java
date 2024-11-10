@@ -15,7 +15,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -234,7 +237,19 @@ public class EventCreationPage extends AppCompatActivity {
                 DatabaseReference eventsDatabaseReference = FirebaseDatabase.getInstance().getReference("events");
                 String eventId = eventsDatabaseReference.push().getKey();
                 if (eventId != null) {
-                    Event event = new Event(finalTitle, finalDescription, finalEventAddress, startCalendar.getTime(), endCalendar.getTime(), eventId);
+                    //sample data
+                    Attendee attendee1 = new Attendee("please", "help", "456789", "please", "Attendee", "approved");
+                    Attendee attendee2 = new Attendee("actually", "helpme", "456789", "please", "Attendee", "approved");
+                    List<Attendee> pendingAttendeesList = new ArrayList<>();
+                    List<Attendee> acceptedAttendeesList = new ArrayList<>();
+
+                    for(int i=0; i<2; i++){
+                        pendingAttendeesList.add(attendee1);
+                        acceptedAttendeesList.add(attendee2);
+                    }
+
+                    Event event = new Event(finalTitle, finalDescription, finalEventAddress, startCalendar.getTime(), endCalendar.getTime(), eventId, (ArrayList<Attendee>) pendingAttendeesList, (ArrayList<Attendee>) acceptedAttendeesList);
+
                     eventsDatabaseReference.child(eventId).setValue(event);
                     Toast.makeText(EventCreationPage.this, "Event Created Successfully", Toast.LENGTH_SHORT).show();
                     finish();

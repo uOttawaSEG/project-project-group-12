@@ -23,15 +23,9 @@ public class Event {
         //create 2 empty arraylists
         pendingAttendeesList = new ArrayList<>();
         acceptedAttendeesList = new ArrayList<>();
-        //sample data to see if it works for now:
-        Attendee attendee1 = new Attendee("please", "help", "456789", "please", "Attendee", "approved");
-        Attendee attendee2 = new Attendee("actually", "helpme", "456789", "please", "Attendee", "approved");
-        for(int i=0; i<2; i++){
-            pendingAttendeesList.add(attendee1);
-            acceptedAttendeesList.add(attendee2);
-        }
     }
 
+    //if we ever need to create an event with an already populated list
     public Event(String title, String description , String eventAddress, Date startTime , Date endTime, String eventId, ArrayList<Attendee> pendingAttendeesList, ArrayList<Attendee> acceptedAttendeesList){
         this.title = title;
         this.description = description;
@@ -39,8 +33,8 @@ public class Event {
         this.startTime = startTime;
         this.endTime = endTime;
         this.eventId = eventId;
-        this.pendingAttendeesList = pendingAttendeesList;
-        this.acceptedAttendeesList = acceptedAttendeesList;
+        this.pendingAttendeesList = new ArrayList<>(pendingAttendeesList);
+        this.acceptedAttendeesList = new ArrayList<>(acceptedAttendeesList);
     }
 
 
