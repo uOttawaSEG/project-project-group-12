@@ -50,11 +50,13 @@ public class PendingAttendeesAdapter extends ArrayAdapter<Attendee> {
             // Move to accepted list
             acceptedAttendees.add(attendee);
             acceptedAdapter.notifyDataSetChanged();
+            attendees.remove(attendee);
             remove(attendee);
             notifyDataSetChanged();
         });
 
         rejectButton.setOnClickListener(v -> {
+            attendees.remove(attendee);
             remove(attendee);
             notifyDataSetChanged();
         });
@@ -72,4 +74,9 @@ public class PendingAttendeesAdapter extends ArrayAdapter<Attendee> {
                 .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
                 .show();
     }
+
+    public List<Attendee> getPendingAttendees(){
+        return attendees;
+    }
+
 }

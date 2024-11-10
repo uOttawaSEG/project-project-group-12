@@ -102,8 +102,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                         if (position != RecyclerView.NO_POSITION) {
                             Event event = eventList.get(position);
                             Intent intent = new Intent(context, EventRequestPage.class);
-                            intent.putExtra("event_title", event.getTitle());
-                            intent.putExtra("event_description", event.getDescription() + " at " + event.getEventAddress());
+                            intent.putExtra("eventID", event.getEventId());
+                            intent.putExtra("title", event.getTitle());
+                            intent.putExtra("description", event.getTitle());
 
                             // Define the date format for the month and day of the week
                             SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.ENGLISH); // "MMMM" gives full month name
