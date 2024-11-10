@@ -60,15 +60,9 @@ public class AttendeePage extends AppCompatActivity {
 
         // Set up a listener for the button click
         logOutBtn.setOnClickListener(v -> {
-            // Optional: Perform any logout operation (e.g., Firebase sign-out)
-            // For example, if using Firebase:
-            // FirebaseAuth.getInstance().signOut();
-
             // Navigate back to the LoginPage
             Intent intent = new Intent(AttendeePage.this, LoginPage.class);
             startActivity(intent);
-
-            // Optionally finish the current activity to remove it from the stack
             finish();
         });
     }
