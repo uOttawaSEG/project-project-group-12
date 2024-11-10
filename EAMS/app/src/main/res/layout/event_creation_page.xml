@@ -35,9 +35,8 @@
             android:id="@+id/title1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Pick a Start Date &amp; Time ⁽⁽٩(๑˃̶͈̀ ᗨ ˂̶͈́)۶⁾⁾"
-            android:gravity="center"/>
-
+            android:gravity="center"
+            android:text="Pick a Start Date &amp; Time ⁽⁽٩(๑˃̶͈̀ ᗨ ˂̶͈́)۶⁾⁾" />
 
         <Button
             android:id="@+id/pickStartDateButton"
@@ -90,8 +89,15 @@
             android:text="Create Event"
             android:textColor="@android:color/white"
             android:backgroundTint="@android:color/darker_gray"
-            android:background="@drawable/event_creation_btn"
-            />
+            android:background="@drawable/event_creation_btn" />
+
+        <Switch
+            android:id="@+id/autoAcceptSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Auto Accept"
+            android:checked="false"/>
 
         <Button
             android:id="@+id/backButton2"
@@ -100,11 +106,8 @@
             android:layout_gravity="center"
             android:textColor="@android:color/white"
             android:backgroundTint="@android:color/darker_gray"
-            android:text="Go back"
-            />
-
+            android:text="Go back" />
 
     </LinearLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

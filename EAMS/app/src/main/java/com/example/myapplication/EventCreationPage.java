@@ -13,6 +13,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -38,6 +39,10 @@ public class EventCreationPage extends AppCompatActivity {
     private Calendar endCalendar = Calendar.getInstance();
     private String uid;
 
+    //for auto accept
+    private String autoAccept = "Off"; // default to "Off"
+    private Switch autoAcceptSwitch;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +50,14 @@ public class EventCreationPage extends AppCompatActivity {
         setContentView(R.layout.event_creation_page);
 
         uid = getIntent().getStringExtra("uid");
+
+        // Find and initialize the switch
+        autoAcceptSwitch = findViewById(R.id.autoAcceptSwitch);
+
+        // Set listener to update autoAccept based on the switch state
+        autoAcceptSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            autoAccept = isChecked ? "On" : "Off";
+        });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -254,7 +267,7 @@ public class EventCreationPage extends AppCompatActivity {
                         acceptedAttendeesList.add(attendee2);
                     }
 
-                    Event event = new Event(finalTitle, finalDescription, finalEventAddress, startCalendar.getTime(), endCalendar.getTime(), eventId, (ArrayList<Attendee>) pendingAttendeesList, (ArrayList<Attendee>) acceptedAttendeesList);
+                    Event event = new Event(finalTitle, finalDescription, finalEventAddress, startCalendar.getTime(), endCalendar.getTime(), eventId, (ArrayList<Attendee>) pendingAttendeesList, (ArrayList<Attendee>) acceptedAttendeesList, autoAccept);
                     eventsDatabaseReference.child(eventId).setValue(event);
 
                     Toast.makeText(EventCreationPage.this, "Event Created Successfully", Toast.LENGTH_SHORT).show();

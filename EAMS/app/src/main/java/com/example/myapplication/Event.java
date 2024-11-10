@@ -6,32 +6,34 @@ import java.util.List;
 
 
 public class Event {
-    private String eventId, title, description, eventAddress;
+    private String eventId, title, description, eventAddress, autoAccept;
     private Date startTime, endTime;
     private List<Attendee> pendingAttendeesList, acceptedAttendeesList;
 
 
 
-    public Event(String title, String description , String eventAddress, Date startTime , Date endTime, String eventId){
+    public Event(String title, String description , String eventAddress, Date startTime , Date endTime, String eventId, String autoAccept){
         this.title = title;
         this.description = description;
         this.eventAddress = eventAddress;
         this.startTime = startTime;
         this.endTime = endTime;
         this.eventId = eventId;
+        this.autoAccept = autoAccept;
         //create 2 empty arraylists
         pendingAttendeesList = new ArrayList<>();
         acceptedAttendeesList = new ArrayList<>();
     }
 
     //if we ever need to create an event with an already populated list
-    public Event(String title, String description , String eventAddress, Date startTime , Date endTime, String eventId, ArrayList<Attendee> pendingAttendeesList, ArrayList<Attendee> acceptedAttendeesList){
+    public Event(String title, String description , String eventAddress, Date startTime , Date endTime, String eventId, ArrayList<Attendee> pendingAttendeesList, ArrayList<Attendee> acceptedAttendeesList, String autoAccept){
         this.title = title;
         this.description = description;
         this.eventAddress = eventAddress;
         this.startTime = startTime;
         this.endTime = endTime;
         this.eventId = eventId;
+        this.autoAccept = autoAccept;
         this.pendingAttendeesList = pendingAttendeesList;
         this.acceptedAttendeesList = acceptedAttendeesList;
     }
@@ -94,4 +96,12 @@ public class Event {
     public List<Attendee> getPendingAttendeesList(){ return pendingAttendeesList;}
 
     public List<Attendee> getAcceptedAttendeesList() {return acceptedAttendeesList;}
+
+    public String getAutoAccept() {
+        return autoAccept;
+    }
+
+    public void setAutoAccept(String autoAccept) {
+        this.autoAccept = autoAccept;
+    }
 }
