@@ -254,12 +254,6 @@ public class EventCreationPage extends AppCompatActivity {
                     Event event = new Event(finalTitle, finalDescription, finalEventAddress, startCalendar.getTime(), endCalendar.getTime(), eventId, (ArrayList<Attendee>) pendingAttendeesList, (ArrayList<Attendee>) acceptedAttendeesList);
                     eventsDatabaseReference.child(eventId).setValue(event);
 
-                    //lists are empty in DB for some reason so refills them with actual values
-                    for(int i=0; i<2; i++){
-                        eventsDatabaseReference.child(eventId).child("pendingAttendeesList").child(String.valueOf(i)).setValue(attendee1);
-                        eventsDatabaseReference.child(eventId).child("acceptedAttendeesList").child(String.valueOf(i)).setValue(attendee2);
-                    }
-
                     Toast.makeText(EventCreationPage.this, "Event Created Successfully", Toast.LENGTH_SHORT).show();
                     finish();
                 }
