@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+//NOT USED YET
 public class EventRegistration {
     private String status;
 

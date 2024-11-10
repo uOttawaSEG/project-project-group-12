@@ -1,15 +1,22 @@
-package com.example.myapplication;
+package com.example.myapplication;// EventAttendeePageAdapter.java
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.example.myapplication.Attendee;
+import com.example.myapplication.Event;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
@@ -17,14 +24,15 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
     private Context context;
     private List<Event> events;
     private Attendee attendee;
+    private String uid;
 
-    public EventAttendeePageAdapter(Context context, List<Event> events, Attendee attendee) {
+    public EventAttendeePageAdapter(Context context, List<Event> events, Attendee attendee, String uid) {
         super(context, R.layout.activity_attendee_page, events);
         this.context = context;
         this.events = events;
-        this.attendee = attendee; // Store the Attendee object
+        this.attendee = attendee;
+        this.uid = uid;// Store the Attendee object
     }
-
 
     @NonNull
     @Override
@@ -37,7 +45,6 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
             listItem = inflater.inflate(R.layout.event_attendee_page_item, parent, false);
 
             holder = new ViewHolder();
-            //initialise a new video if none was there
             holder.eventTitleTextView = listItem.findViewById(R.id.eventTitleTextView);
             holder.descriptionTextView = listItem.findViewById(R.id.eventDescriptionTextView);
             holder.addressEventTextView = listItem.findViewById(R.id.addressEventTextVIew);
@@ -51,19 +58,15 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
         }
 
         Event event = events.get(position);
-        //populate view with event attributes
         holder.descriptionTextView.setText(event.getDescription());
         holder.eventTitleTextView.setText(event.getTitle());
         holder.addressEventTextView.setText(event.getEventAddress());
         holder.startTimeTextView.setText(event.getStartTime().toString());
-        //TODO join view add event listener for button
 
         // Set the Join button's click listener
         holder.JoinView.setOnClickListener(v -> {
-            // Remove the event from the list
+            addToListBasedOnAutoAccept(event);
             events.remove(position);
-
-            // Notify the adapter that the data has changed, so it updates the UI
             notifyDataSetChanged();
         });
 
@@ -71,7 +74,19 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
     }
 
 
+    private void addToListBasedOnAutoAccept(Event event) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("events").child(event.getEventId());
 
+        if ("On".equals(event.getAutoAccept())) {
+            // Log the action and add attendee to the accepted list in Firebase
+            Log.d("EventAttendeePageAdapter", "Auto accept is ON. Adding attendee to accepted list. Event ID: " + event.getEventId());
+            databaseReference.child("acceptedAttendeesList").push().setValue(new Attendee("pl333ease", "help", "456789", "please", "Attendee", "approved"));
+            // Log the action and add attendee to the pending list in Firebase
+            Log.d("EventAttendeePageAdapter", "Auto accept is OFF. Adding attendee to pending list. Event ID: " + event.getEventId());
+            databaseReference.child("pendingAttendeesList").push().setValue(new Attendee("pl333ease", "help", "456789", "please", "Attendee", "approved"));
+        }
+
+    }
 
     private static class ViewHolder {
         TextView eventTitleTextView, descriptionTextView, addressEventTextView, startTimeTextView;

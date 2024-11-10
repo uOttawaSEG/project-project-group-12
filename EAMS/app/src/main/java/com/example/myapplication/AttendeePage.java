@@ -49,7 +49,7 @@ public class AttendeePage extends AppCompatActivity {
         fetchAttendeeInfo();
 
         // Create and set the adapter, passing the Attendee object
-        adapter = new EventAttendeePageAdapter(this, allEvents, attendee);
+        adapter = new EventAttendeePageAdapter(this, allEvents, attendee, uid);
         eventListView.setAdapter(adapter);
 
         // Fetch and display events
