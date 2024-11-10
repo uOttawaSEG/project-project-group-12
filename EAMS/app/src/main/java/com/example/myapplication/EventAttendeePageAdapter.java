@@ -86,7 +86,7 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
                 Log.d("EventAttendeePageAdapter", "Auto accept is OFF. Adding attendee to pending list. Event ID: " + event.getEventId());
                 databaseReference.child("pendingAttendeesList").push().setValue(attendee);
         }
-        }
+
 
     }
 
