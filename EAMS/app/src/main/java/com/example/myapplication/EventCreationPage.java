@@ -256,8 +256,8 @@ public class EventCreationPage extends AppCompatActivity {
 
                     //lists are empty in DB for some reason so refills them with actual values
                     for(int i=0; i<2; i++){
-                        eventsDatabaseReference.child(eventId).child("pendingAttendeesList").child(String.valueOf(i)).setValue(pendingAttendeesList.get(i));
-                        eventsDatabaseReference.child(eventId).child("acceptedAttendeesList").child(String.valueOf(i)).setValue(acceptedAttendeesList.get(i));
+                        eventsDatabaseReference.child(eventId).child("pendingAttendeesList").child(String.valueOf(i)).setValue(attendee1);
+                        eventsDatabaseReference.child(eventId).child("acceptedAttendeesList").child(String.valueOf(i)).setValue(attendee2);
                     }
 
                     Toast.makeText(EventCreationPage.this, "Event Created Successfully", Toast.LENGTH_SHORT).show();
