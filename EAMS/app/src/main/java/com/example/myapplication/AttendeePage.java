@@ -87,7 +87,7 @@ public class AttendeePage extends AppCompatActivity {
     }
 
     private void fetchEvents() {
-        eventsDatabaseReference.addValueEventListener(new ValueEventListener() {
+        eventsDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 allEvents.clear();
@@ -109,4 +109,5 @@ public class AttendeePage extends AppCompatActivity {
             }
         });
     }
+
 }
