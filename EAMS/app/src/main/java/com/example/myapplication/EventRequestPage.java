@@ -42,6 +42,12 @@ public class EventRequestPage extends AppCompatActivity {
         descriptionTextView = findViewById(R.id.eventsRequestDescription);
         dateTextView = findViewById(R.id.eventsRequestDate);
 
+        acceptedAdapter = new AcceptedAttendeesAdapter(this, acceptedAttendees);
+        acceptedAttendeesListView.setAdapter(acceptedAdapter);
+
+        pendingAdapter = new PendingAttendeesAdapter(this, pendingAttendees, acceptedAttendees, acceptedAdapter);
+        pendingAttendeesListView.setAdapter(pendingAdapter);
+
         //fetching event data from EventAdapter
         Intent intent = getIntent();
         String date = intent.getStringExtra("event_date");
@@ -79,6 +85,8 @@ public class EventRequestPage extends AppCompatActivity {
 
                         // Add the attendee to the list
                         pendingAttendees.add(attendee);
+                        pendingAdapter.notifyDataSetChanged();
+
                     }
                 } else {
                     Log.e("Firebase", "Event data not found for ID: " + eventID);
@@ -117,6 +125,7 @@ public class EventRequestPage extends AppCompatActivity {
 
                         // Add the attendee to the list
                         acceptedAttendees.add(attendee);
+                        acceptedAdapter.notifyDataSetChanged();
                     }
                 } else {
                     Log.e("Firebase", "Event data not found for ID: " + eventID);
@@ -127,22 +136,9 @@ public class EventRequestPage extends AppCompatActivity {
             }
         });
 
-
-
-
-
         headingTextView.setText(title);
         descriptionTextView.setText(description);
         dateTextView.setText(date);
-
-
-
-        acceptedAdapter = new AcceptedAttendeesAdapter(this, acceptedAttendees);
-        acceptedAttendeesListView.setAdapter(acceptedAdapter);
-
-        pendingAdapter = new PendingAttendeesAdapter(this, pendingAttendees, acceptedAttendees, acceptedAdapter);
-        pendingAttendeesListView.setAdapter(pendingAdapter);
-
 
         backButton.setOnClickListener(v -> {
             //update changes to Db when finishing operations
@@ -157,8 +153,10 @@ public class EventRequestPage extends AppCompatActivity {
         approveAll.setOnClickListener(v -> {
             acceptedAttendees.addAll(pendingAttendees);
             acceptedAdapter.getAcceptedAttendees().addAll(pendingAttendees);
+
             pendingAdapter.clear();
             pendingAdapter.getPendingAttendees().clear();
+
             acceptedAdapter.notifyDataSetChanged();
             pendingAdapter.notifyDataSetChanged();
 
