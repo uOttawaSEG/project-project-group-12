@@ -33,8 +33,8 @@ public class Event {
         this.startTime = startTime;
         this.endTime = endTime;
         this.eventId = eventId;
-        this.pendingAttendeesList = new ArrayList<>(pendingAttendeesList);
-        this.acceptedAttendeesList = new ArrayList<>(acceptedAttendeesList);
+        this.pendingAttendeesList = pendingAttendeesList;
+        this.acceptedAttendeesList = acceptedAttendeesList;
     }
 
 
