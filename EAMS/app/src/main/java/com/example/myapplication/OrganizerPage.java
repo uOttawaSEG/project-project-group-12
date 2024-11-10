@@ -25,9 +25,9 @@ import com.google.firebase.database.ValueEventListener;
 
 public class OrganizerPage extends ComponentActivity {
 
-    private RecyclerView eventListRecyclerView;
-    private EventAdapter eventAdapter;
-    private List<Event> eventList;
+    private RecyclerView eventListRecyclerView, pastEventListRecyclerView;
+    private EventAdapter eventAdapter, pastEventAdapter;
+    private List<Event> eventList, pastEventList;
     private DatabaseReference eventsDatabaseReference;
     private String uid;
 
@@ -39,35 +39,51 @@ public class OrganizerPage extends ComponentActivity {
 
         // Retrieve UID from the Intent
         uid = getIntent().getStringExtra("uid");
+        Toast.makeText(OrganizerPage.this, "UID: " + uid, Toast.LENGTH_LONG).show();
 
-        //  initialize eventList and RecyclerView
+        // Initialize event lists and RecyclerViews
         eventList = new ArrayList<>();
+        pastEventList = new ArrayList<>();
         eventAdapter = new EventAdapter(this, eventList, uid);
+        pastEventAdapter = new EventAdapter(this, pastEventList, uid);
 
         eventListRecyclerView = findViewById(R.id.eventList);
         eventListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         eventListRecyclerView.setAdapter(eventAdapter);
 
+        pastEventListRecyclerView = findViewById(R.id.pastEventList);
+        pastEventListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        pastEventListRecyclerView.setAdapter(pastEventAdapter);
+
         eventsDatabaseReference = FirebaseDatabase.getInstance().getReference("events");
         eventsDatabaseReference.addValueEventListener(new ValueEventListener() {
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            eventList.clear();
-            for (DataSnapshot eventSnapshot : dataSnapshot.getChildren()) {
-                Event event = eventSnapshot.getValue(Event.class);
-                if (event != null) {
-                    eventList.add(event);
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                eventList.clear();
+                pastEventList.clear();
+                for (DataSnapshot eventSnapshot : dataSnapshot.getChildren()) {
+                    Event event = eventSnapshot.getValue(Event.class);
+                    if (event != null) {
+                        if (event.getEndTime().before(new Date())) {
+                            // Add to past events if end time is before current time
+                            pastEventList.add(event);
+                        } else {
+                            // Add to upcoming events
+                            eventList.add(event);
+                        }
+                    }
                 }
+                eventAdapter.notifyDataSetChanged();
+                pastEventAdapter.notifyDataSetChanged();
             }
-            eventAdapter.notifyDataSetChanged();
-        }
 
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-            // Log error if data retrieval fails
-            System.err.println("Failed to read events: " + databaseError.toException());
-        }
-    });
-        // log out button
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Log error if data retrieval fails
+                System.err.println("Failed to read events: " + databaseError.toException());
+            }
+        });
+
+        // Log out button
         Button backButton = findViewById(R.id.OPbackBtn);
         backButton.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
@@ -75,7 +91,7 @@ public class OrganizerPage extends ComponentActivity {
             finish();
         });
 
-        //button to event creation
+        // Button to event creation
         FloatingActionButton addEventButton = findViewById(R.id.addEventBtn);
         addEventButton.setOnClickListener(v -> {
             Intent intent = new Intent(OrganizerPage.this, EventCreationPage.class);
@@ -83,6 +99,4 @@ public class OrganizerPage extends ComponentActivity {
             startActivity(intent);
         });
     }
-        // add events to list
-
 }
