@@ -256,16 +256,10 @@ public class EventCreationPage extends AppCompatActivity {
 
 
 
-                    //sample data for lists
-                    Attendee attendee1 = new Attendee("please", "help", "456789", "please", "Attendee", "approved");
-                    Attendee attendee2 = new Attendee("actually", "helpme", "456789", "please", "Attendee", "approved");
                     List<Attendee> pendingAttendeesList = new ArrayList<>();
                     List<Attendee> acceptedAttendeesList = new ArrayList<>();
 
-                    for(int i=0; i<2; i++){
-                        pendingAttendeesList.add(attendee1);
-                        acceptedAttendeesList.add(attendee2);
-                    }
+
 
                     Event event = new Event(finalTitle, finalDescription, finalEventAddress, startCalendar.getTime(), endCalendar.getTime(), eventId, (ArrayList<Attendee>) pendingAttendeesList, (ArrayList<Attendee>) acceptedAttendeesList, autoAccept, uid);
                     eventsDatabaseReference.child(eventId).setValue(event);
