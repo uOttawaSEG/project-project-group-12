@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,6 +29,7 @@ public class OrganizerPage extends ComponentActivity {
     private EventAdapter eventAdapter;
     private List<Event> eventList;
     private DatabaseReference eventsDatabaseReference;
+    private String uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +37,13 @@ public class OrganizerPage extends ComponentActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.organizer_page);
 
+        // Retrieve UID from the Intent
+        uid = getIntent().getStringExtra("uid");
+        Toast.makeText(OrganizerPage.this, "UID: " + uid, Toast.LENGTH_LONG).show();
+
         //  initialize eventList and RecyclerView
         eventList = new ArrayList<>();
-        eventAdapter = new EventAdapter(this, eventList);
+        eventAdapter = new EventAdapter(this, eventList, uid);
 
         eventListRecyclerView = findViewById(R.id.eventList);
         eventListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -74,11 +80,10 @@ public class OrganizerPage extends ComponentActivity {
         FloatingActionButton addEventButton = findViewById(R.id.addEventBtn);
         addEventButton.setOnClickListener(v -> {
             Intent intent = new Intent(OrganizerPage.this, EventCreationPage.class);
+            intent.putExtra("uid", uid);
             startActivity(intent);
         });
     }
         // add events to list
-
-
 
 }

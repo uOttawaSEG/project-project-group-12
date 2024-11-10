@@ -31,11 +31,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     private DatabaseReference eventsDatabaseReference;
     //Had to make it an instance variable for the fadein/fadeout of update/delete buttons
     boolean buttonsVisible = false;
+    private String uid;
 
 
-    public EventAdapter(Context context, List<Event> eventList) {
+    public EventAdapter(Context context, List<Event> eventList, String uid) {
         this.context = context;
         this.eventList = eventList;
+        this.uid = uid;
         this.eventsDatabaseReference = FirebaseDatabase.getInstance().getReference("events");
 
         // Listen and update event list
@@ -105,6 +107,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                             intent.putExtra("eventID", event.getEventId());
                             intent.putExtra("title", event.getTitle());
                             intent.putExtra("description", event.getTitle());
+                            intent.putExtra("uid", uid);
 
                             // Define the date format for the month and day of the week
                             SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.ENGLISH); // "MMMM" gives full month name

@@ -36,13 +36,15 @@ public class EventCreationPage extends AppCompatActivity {
     private Button backToPage;
     private Calendar startCalendar = Calendar.getInstance();
     private Calendar endCalendar = Calendar.getInstance();
-
+    private String uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.event_creation_page);
+
+        uid = getIntent().getStringExtra("uid");
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -83,6 +85,7 @@ public class EventCreationPage extends AppCompatActivity {
 
             backToPage.setOnClickListener(v -> {
                 Intent intent = new Intent(EventCreationPage.this, OrganizerPage.class);
+                intent.putExtra("uid", uid);
                 startActivity(intent);
             });
 
@@ -255,6 +258,12 @@ public class EventCreationPage extends AppCompatActivity {
                     eventsDatabaseReference.child(eventId).setValue(event);
 
                     Toast.makeText(EventCreationPage.this, "Event Created Successfully", Toast.LENGTH_SHORT).show();
+
+                    //send uid back
+                    Intent intent = new Intent(EventCreationPage.this, OrganizerPage.class);
+                    intent.putExtra("uid", uid);
+                    startActivity(intent);
+
                     finish();
                 }
             });

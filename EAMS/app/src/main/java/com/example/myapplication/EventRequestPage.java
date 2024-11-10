@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -27,11 +28,16 @@ public class EventRequestPage extends AppCompatActivity {
     private List<Attendee> acceptedAttendees = new ArrayList<>();
     private List<Attendee> pendingAttendees = new ArrayList<>();
     private TextView headingTextView, descriptionTextView, dateTextView;
+    private String uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_requests);
+
+
+        // Retrieve UID from the Intent
+        uid = getIntent().getStringExtra("uid");
 
         acceptedAttendeesListView = findViewById(R.id.acceptedAttendeesListView);
         pendingAttendeesListView = findViewById(R.id.pendingAttendeesListView);
@@ -147,8 +153,9 @@ public class EventRequestPage extends AppCompatActivity {
         backButton.setOnClickListener(v -> {
             //update changes to Db when finishing operations
             updateAttendeesInFirebase(databaseReference);
-            Intent backIntent = new Intent(EventRequestPage.this, OrganizerPage.class);
-            startActivity(backIntent);
+            Intent intent2 = new Intent(EventRequestPage.this, OrganizerPage.class);
+            intent2.putExtra("uid", uid);
+            startActivity(intent2);
             finish();
         });
 
