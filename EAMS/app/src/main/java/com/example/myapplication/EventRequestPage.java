@@ -50,17 +50,36 @@ public class EventRequestPage extends AppCompatActivity {
         String description = intent.getStringExtra("description");
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("events").child(eventID);
-        databaseReference.get().addOnCompleteListener(task -> {
+
+        // Fetch the list of attendees first
+        databaseReference.child("pendingAttendeesList").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 // Fetching the data was successful
                 DataSnapshot dataSnapshot = task.getResult();
                 if (dataSnapshot.exists()) {
+                    // Declaring variables
+                    Attendee attendee;
+                    String firstName, lastName, phoneNumber, address, userType, status;
 
-                    //fetch the lists from DB
-                    GenericTypeIndicator<ArrayList<Attendee>> typeIndicator = new GenericTypeIndicator<ArrayList<Attendee>>() {};
-                    pendingAttendees.addAll(dataSnapshot.child("pendingAttendeesList").getValue(typeIndicator));
-                    acceptedAttendees.addAll(dataSnapshot.child("acceptedAttendeesList").getValue(typeIndicator));
+                    // Clear the list to avoid adding duplicates
+                    pendingAttendees.clear();
 
+                    // Iterate over each attendee in the list
+                    for (DataSnapshot attendeeSnapshot : dataSnapshot.getChildren()) {
+                        // Get the attendee's information from Firebase
+                        firstName = attendeeSnapshot.child("firstName").getValue(String.class);
+                        lastName = attendeeSnapshot.child("lastName").getValue(String.class);
+                        phoneNumber = attendeeSnapshot.child("phoneNumber").getValue(String.class);
+                        address = attendeeSnapshot.child("address").getValue(String.class);
+                        userType = attendeeSnapshot.child("userType").getValue(String.class);
+                        status = attendeeSnapshot.child("status").getValue(String.class);
+
+                        // Create an Attendee object
+                        attendee = new Attendee(firstName, lastName, phoneNumber, address, userType, status);
+
+                        // Add the attendee to the list
+                        pendingAttendees.add(attendee);
+                    }
                 } else {
                     Log.e("Firebase", "Event data not found for ID: " + eventID);
                 }
@@ -69,6 +88,48 @@ public class EventRequestPage extends AppCompatActivity {
                 Log.e("Firebase", "Error getting data", task.getException());
             }
         });
+
+        // Now fetching data for accepted attendees list
+        databaseReference.child("acceptedAttendeesList").get().addOnCompleteListener(task1 -> {
+            if (task1.isSuccessful()) {
+                // Fetching the data was successful
+                DataSnapshot dataSnapshot = task1.getResult();
+                if (dataSnapshot.exists()) {
+                    // Declaring variables
+                    Attendee attendee;
+                    String firstName, lastName, phoneNumber, address, userType, status;
+
+                    // Clear the list to avoid adding duplicates
+                    acceptedAttendees.clear();
+
+                    // Iterate over each attendee in the list
+                    for (DataSnapshot attendeeSnapshot : dataSnapshot.getChildren()) {
+                        // Get the attendee's information from Firebase
+                        firstName = attendeeSnapshot.child("firstName").getValue(String.class);
+                        lastName = attendeeSnapshot.child("lastName").getValue(String.class);
+                        phoneNumber = attendeeSnapshot.child("phoneNumber").getValue(String.class);
+                        address = attendeeSnapshot.child("address").getValue(String.class);
+                        userType = attendeeSnapshot.child("userType").getValue(String.class);
+                        status = attendeeSnapshot.child("status").getValue(String.class);
+
+                        // Create an Attendee object
+                        attendee = new Attendee(firstName, lastName, phoneNumber, address, userType, status);
+
+                        // Add the attendee to the list
+                        acceptedAttendees.add(attendee);
+                    }
+                } else {
+                    Log.e("Firebase", "Event data not found for ID: " + eventID);
+                }
+            } else {
+                // Handle failure
+                Log.e("Firebase", "Error getting data", task1.getException());
+            }
+        });
+
+
+
+
 
         headingTextView.setText(title);
         descriptionTextView.setText(description);
@@ -103,6 +164,7 @@ public class EventRequestPage extends AppCompatActivity {
 
         });
     }
+
     public void updateAttendeesInFirebase(DatabaseReference databaseReference){
         //save updated pendingAttendees list
         databaseReference.child("pendingAttendeesList").setValue(pendingAdapter.getPendingAttendees())
@@ -125,4 +187,3 @@ public class EventRequestPage extends AppCompatActivity {
                 });
     }
 }
-
