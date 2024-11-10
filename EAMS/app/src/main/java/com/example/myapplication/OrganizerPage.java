@@ -39,7 +39,6 @@ public class OrganizerPage extends ComponentActivity {
 
         // Retrieve UID from the Intent
         uid = getIntent().getStringExtra("uid");
-        Toast.makeText(OrganizerPage.this, "UID: " + uid, Toast.LENGTH_LONG).show();
 
         //  initialize eventList and RecyclerView
         eventList = new ArrayList<>();
