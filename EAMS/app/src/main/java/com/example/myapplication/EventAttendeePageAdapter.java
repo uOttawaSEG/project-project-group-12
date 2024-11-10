@@ -80,10 +80,11 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
         if ("On".equals(event.getAutoAccept())) {
             // Log the action and add attendee to the accepted list in Firebase
             Log.d("EventAttendeePageAdapter", "Auto accept is ON. Adding attendee to accepted list. Event ID: " + event.getEventId());
-            databaseReference.child("acceptedAttendeesList").push().setValue(new Attendee("pl333ease", "help", "456789", "please", "Attendee", "approved"));
+            databaseReference.child("acceptedAttendeesList").push().setValue(attendee);
             // Log the action and add attendee to the pending list in Firebase
-            Log.d("EventAttendeePageAdapter", "Auto accept is OFF. Adding attendee to pending list. Event ID: " + event.getEventId());
-            databaseReference.child("pendingAttendeesList").push().setValue(new Attendee("pl333ease", "help", "456789", "please", "Attendee", "approved"));
+        } else {
+                Log.d("EventAttendeePageAdapter", "Auto accept is OFF. Adding attendee to pending list. Event ID: " + event.getEventId());
+                databaseReference.child("pendingAttendeesList").push().setValue(attendee);
         }
 
     }

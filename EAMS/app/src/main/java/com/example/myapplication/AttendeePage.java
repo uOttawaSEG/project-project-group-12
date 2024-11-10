@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -39,21 +38,41 @@ public class AttendeePage extends AppCompatActivity {
         allEvents = new ArrayList<>();
         eventListView = findViewById(R.id.eventListOnAttendeePage);
 
-
-
         // Initialize references to Firebase database nodes
         eventsDatabaseReference = FirebaseDatabase.getInstance().getReference("events");
         attendeesDatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(uid);
 
-        // Fetch and store attendee information
-        fetchAttendeeInfo();
+        // Add a listener for the attendee data
+        attendeesDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    // Assuming the data structure in Firebase is such that each attendee is stored under a unique ID.
+                    // For example: /users/<UID>/Attendee
+                    String firstName = snapshot.child("firstName").getValue(String.class);
+                    String lastName = snapshot.child("lastName").getValue(String.class);
+                    String phoneNumber = snapshot.child("phoneNumber").getValue(String.class);
+                    String address = snapshot.child("address").getValue(String.class);
+                    String userType = snapshot.child("userType").getValue(String.class);
+                    String status = snapshot.child("status").getValue(String.class);
 
-        // Create and set the adapter, passing the Attendee object
-        adapter = new EventAttendeePageAdapter(this, allEvents, attendee, uid);
-        eventListView.setAdapter(adapter);
+                    // Create a new Attendee object
+                    attendee = new Attendee(firstName, lastName, phoneNumber, address, userType, status);
 
-        // Fetch and display events
-        fetchEvents();
+                    // Initialize the adapter after attendee data is fetched
+                    adapter = new EventAttendeePageAdapter(AttendeePage.this, allEvents, attendee, uid);
+                    eventListView.setAdapter(adapter);
+
+                    // Fetch and display events after the adapter is set
+                    fetchEvents();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle possible errors
+            }
+        });
 
         // Initialize the Log Out button
         logOutBtn = findViewById(R.id.logOutBtn2);
@@ -64,31 +83,6 @@ public class AttendeePage extends AppCompatActivity {
             Intent intent = new Intent(AttendeePage.this, LoginPage.class);
             startActivity(intent);
             finish();
-        });
-    }
-
-    private void fetchAttendeeInfo() {
-        attendeesDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    attendee = snapshot.getValue(Attendee.class);
-                    if (attendee != null) {
-                        // Display Toast with the attendee information
-                        String attendeeInfo = "Name: " + attendee.getFirstName() + " " + attendee.getLastName() +
-                                "\nEmail: " + attendee.getEmail() +
-                                "\nPhone: " + attendee.getPhoneNumber() +
-                                "\nAddress: " + attendee.getAddress();
-
-                        Toast.makeText(AttendeePage.this, attendeeInfo, Toast.LENGTH_LONG).show();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Handle possible errors
-            }
         });
     }
 
@@ -103,7 +97,10 @@ public class AttendeePage extends AppCompatActivity {
                         allEvents.add(event);
                     }
                 }
-                adapter.notifyDataSetChanged(); // Refresh the ListView
+                // Refresh the ListView after fetching the events
+                if (adapter != null) {
+                    adapter.notifyDataSetChanged();
+                }
             }
 
             @Override
