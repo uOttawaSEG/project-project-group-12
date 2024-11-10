@@ -114,7 +114,8 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
                             eventFromDb.getEventId(),
                             (ArrayList<Attendee>) pendingAttendeesList,
                             (ArrayList<Attendee>) acceptedAttendeesList,
-                            eventFromDb.getAutoAccept()
+                            eventFromDb.getAutoAccept(),
+                            eventFromDb.getOrganizerUId()
                     );
 
                     // Update the event in the database

@@ -11,7 +11,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
@@ -80,10 +83,16 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             return eventList.size();
         }
 
+
+        public String getUidEvent() {
+        return uid;
+    }
+
         public class EventViewHolder extends RecyclerView.ViewHolder {
             private TextView eventName;
             private TextView eventStartTime;
             private Button editBtn, infoBtn, updateBtn, deleteBtn;
+
 
             public EventViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -107,7 +116,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                             intent.putExtra("eventID", event.getEventId());
                             intent.putExtra("title", event.getTitle());
                             intent.putExtra("description", event.getDescription() + " Location: " + event.getEventAddress());
-                            intent.putExtra("uid", uid);
+                            intent.putExtra("uid", getUidEvent());
 
                             // Define the date format for the month and day of the week
                             SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.ENGLISH); // "MMMM" gives full month name
@@ -154,8 +163,31 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                             int position = getAdapterPosition();
 
                             deleteBtn.setOnClickListener(v1 -> {
-                                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("events").child(eventList.get(position).getEventId());
-                                databaseReference.removeValue();
+                                // Get the event ID
+                                String eventId = eventList.get(position).getEventId();
+                                DatabaseReference eventReference = FirebaseDatabase.getInstance().getReference("events").child(eventId);
+
+                                // Fetch the organizerId stored for the event
+                                eventReference.child("organizerUId").get().addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        // Retrieve the organizerId from the event
+                                        String organizerId = task.getResult().getValue(String.class);
+
+                                        // Compare the organizerId with the current user's UID (getOrganizerId)
+                                        if (organizerId != null && organizerId.equals(getUidEvent())) {
+                                            // If the user is the organizer, remove the event
+                                            eventReference.removeValue();
+
+                                        } else {
+                                            // If the user is not the organizer, show a builder with an error message
+                                            new AlertDialog.Builder(v1.getContext())
+                                                    .setTitle("Error")
+                                                    .setMessage("You can't delete events you didn't create.")
+                                                    .setPositiveButton("OK", null)
+                                                    .show();
+                                        }
+                                    }
+                                });
                             });
 
                             updateBtn.setOnClickListener(new View.OnClickListener() {

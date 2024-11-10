@@ -267,7 +267,7 @@ public class EventCreationPage extends AppCompatActivity {
                         acceptedAttendeesList.add(attendee2);
                     }
 
-                    Event event = new Event(finalTitle, finalDescription, finalEventAddress, startCalendar.getTime(), endCalendar.getTime(), eventId, (ArrayList<Attendee>) pendingAttendeesList, (ArrayList<Attendee>) acceptedAttendeesList, autoAccept);
+                    Event event = new Event(finalTitle, finalDescription, finalEventAddress, startCalendar.getTime(), endCalendar.getTime(), eventId, (ArrayList<Attendee>) pendingAttendeesList, (ArrayList<Attendee>) acceptedAttendeesList, autoAccept, uid);
                     eventsDatabaseReference.child(eventId).setValue(event);
 
                     Toast.makeText(EventCreationPage.this, "Event Created Successfully", Toast.LENGTH_SHORT).show();
