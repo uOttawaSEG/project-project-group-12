@@ -34,7 +34,7 @@ public class AcceptedAttendeesAdapter extends ArrayAdapter<Attendee> {
         Attendee attendee = acceptedAttendees.get(position);
         TextView attendeeTextView = convertView.findViewById(android.R.id.text1);
         //nameTextView.setText(attendee.getEmail());
-        attendeeTextView.setText("yourname@gmail.com");
+        attendeeTextView.setText(attendee.getLastName() + attendee.getFirstName());
 
         // Set up click listener to show dialog when the attendee's name is clicked
         attendeeTextView.setOnClickListener(v -> showAttendeeDialog(attendee));
