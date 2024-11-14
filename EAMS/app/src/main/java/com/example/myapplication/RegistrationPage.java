@@ -261,73 +261,59 @@ public class RegistrationPage extends AppCompatActivity {
     }
 
 
+
     private boolean checkAllFields() {
         boolean allFieldsValid = true;
 
-
-        //first name must contain 2 letters
-        if (firstNameField.getText().toString().trim().length() < 2) {
+        if (!RegistrationValidator.isValidFirstName(firstNameField.getText().toString())) {
             firstNameField.setError("First name must be at least 2 characters");
             allFieldsValid = false;
         }
 
-        // lastname must contain 2 letters
-        if (lastNameField.getText().toString().trim().length() < 2) {
+        if (!RegistrationValidator.isValidLastName(lastNameField.getText().toString())) {
             lastNameField.setError("Last name must be at least 2 characters");
             allFieldsValid = false;
         }
 
-
-        // email must contain @
-        String emailInput = emailField.getText().toString();
-        if (!emailInput.contains("@")) {
+        if (!RegistrationValidator.isValidEmail(emailField.getText().toString())) {
             emailField.setError("Valid email is required");
             allFieldsValid = false;
         }
 
-        // password must contain 1 letter or 1 number
-        String passwordInput = passwordField.getText().toString();
-        if (passwordInput.length() < 8 || !passwordInput.matches(".*[a-zA-Z0-9].*")) {
+        if (!RegistrationValidator.isValidPassword(passwordField.getText().toString())) {
             passwordField.setError("Password must be at least 8 characters long and contain a letter or number");
             allFieldsValid = false;
         }
 
-
-        // double check password
-        String confirmPasswordInput = confirmPasswordField.getText().toString();
-
-        if (!confirmPasswordInput.equals(passwordInput)) {
+        if (!RegistrationValidator.isPasswordMatching(passwordField.getText().toString(), confirmPasswordField.getText().toString())) {
             confirmPasswordField.setError("Two passwords are not the same");
             allFieldsValid = false;
         }
 
-        // phone number must be pure numbers
-        String phoneInput = phoneNumberField.getText().toString();
-        if (phoneInput.isEmpty() || !phoneInput.matches(".*[0-9].*")) {
+        if (!RegistrationValidator.isValidPhoneNumber(phoneNumberField.getText().toString())) {
             phoneNumberField.setError("Please enter numbers");
             allFieldsValid = false;
         }
 
-        // check address input is empty or not
-        if (addressField.getText().toString().trim().isEmpty()) {
+        if (!RegistrationValidator.isValidAddress(addressField.getText().toString())) {
             addressField.setError("Address is required");
             allFieldsValid = false;
         }
 
-        //check if user selected a identity
-        if (radioGroupField.getCheckedRadioButtonId() == -1) {
-            Toast.makeText(RegistrationPage.this, "Please select registering as Attendee or Organizer", Toast.LENGTH_SHORT).show();
+        if (!RegistrationValidator.isRadioGroupSelected(radioGroupField.getCheckedRadioButtonId())) {
+            Toast.makeText(this, "Please select registering as Attendee or Organizer", Toast.LENGTH_SHORT).show();
             allFieldsValid = false;
         }
 
-        if(((RadioButton)findViewById(radioGroupField.getCheckedRadioButtonId())).getText().toString().equals("Organizer") && organizationNameField.getText().toString().trim().isEmpty()){
+        if (((RadioButton) findViewById(radioGroupField.getCheckedRadioButtonId())).getText().toString().equals("Organizer")
+                && !RegistrationValidator.isValidOrganizationName(organizationNameField.getText().toString())) {
             organizationNameField.setError("Organization name is required");
             allFieldsValid = false;
         }
 
-
         return allFieldsValid;
     }
+
 
     //creating the two methods to fadeIn/fadeOut the organizationNameField
     private void fadeInView(EditText randomField){

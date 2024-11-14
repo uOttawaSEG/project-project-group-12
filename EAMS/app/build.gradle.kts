@@ -37,6 +37,15 @@ dependencies {
     implementation(libs.firebase.database.ktx)
     implementation(libs.google.firebase.auth)
 
+    testImplementation(libs.junit)
+    testImplementation(libs.ext.junit)
+    testImplementation(libs.espresso.core)//for JUnit tests
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.espresso.core)
+
+    androidTestImplementation(libs.androidx.test.core)
+    androidTestImplementation(libs.androidx.test.rules)
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -47,6 +56,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
 }
 
 apply(plugin = "com.google.gms.google-services")
