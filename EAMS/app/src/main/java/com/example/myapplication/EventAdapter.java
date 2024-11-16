@@ -16,6 +16,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import java.text.SimpleDateFormat;
@@ -173,22 +175,61 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                                         // Retrieve the organizerId from the event
                                         String organizerId = task.getResult().getValue(String.class);
 
-                                        // Compare the organizerId with the current user's UID (getOrganizerId)
-                                        if (organizerId != null && organizerId.equals(getUidEvent())) {
-                                            // If the user is the organizer, remove the event
-                                            eventReference.removeValue();
-
-                                        } else {
-                                            // If the user is not the organizer, show a builder with an error message
+                                        // Check if the user is the organizer
+                                        if (organizerId == null || !organizerId.equals(getUidEvent())) {
+                                            // If the user is not the organizer, show an error message
                                             new AlertDialog.Builder(v1.getContext())
                                                     .setTitle("Error")
                                                     .setMessage("You can't delete events you didn't create.")
                                                     .setPositiveButton("OK", null)
                                                     .show();
+                                            return; // Exit the listener early to prevent further checks
                                         }
+
+                                        // If the user is the organizer, fetch the full event details
+                                        eventReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                // Retrieve the event from the database
+                                                Event eventFromDb = dataSnapshot.getValue(Event.class);
+
+                                                if (eventFromDb != null) {
+                                                    // Retrieve attendee lists or initialize them as empty lists
+                                                    List<Attendee> pendingAttendeesList = eventFromDb.getPendingAttendeesList() != null
+                                                            ? eventFromDb.getPendingAttendeesList()
+                                                            : new ArrayList<>();
+                                                    List<Attendee> acceptedAttendeesList = eventFromDb.getAcceptedAttendeesList() != null
+                                                            ? eventFromDb.getAcceptedAttendeesList()
+                                                            : new ArrayList<>();
+
+                                                    // Check if either list contains elements
+                                                    if (!pendingAttendeesList.isEmpty() || !acceptedAttendeesList.isEmpty()) {
+                                                        new AlertDialog.Builder(v1.getContext())
+                                                                .setTitle("Error")
+                                                                .setMessage("You can't delete an event with attendees in it.")
+                                                                .setPositiveButton("OK", null)
+                                                                .show();
+                                                    } else {
+                                                        // Remove the event if no attendees exist
+                                                        eventReference.removeValue();
+                                                    }
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+                                                // Handle database error
+                                                new AlertDialog.Builder(v1.getContext())
+                                                        .setTitle("Error")
+                                                        .setMessage("Failed to retrieve event details. Please try again.")
+                                                        .setPositiveButton("OK", null)
+                                                        .show();
+                                            }
+                                        });
                                     }
                                 });
                             });
+
 
                             updateBtn.setOnClickListener(new View.OnClickListener() {
                                 @Override
