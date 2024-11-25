@@ -6,4 +6,9 @@
     </style>
 
     <style name="Theme.MyApplication" parent="Base.Theme.MyApplication" />
+
+    <style name="CustomSearchView" parent="Widget.AppCompat.SearchView">
+        <item name="searchIcon">@drawable/ic_custom_search</item>
+        <item name="android:textColor">#000000</item> <!-- Text color of input -->
+    </style>
 </resources>

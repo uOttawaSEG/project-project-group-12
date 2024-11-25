@@ -16,11 +16,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <SearchView
+        android:id="@+id/searchView"
+        style="@style/CustomSearchView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:elevation="8dp"
+        android:padding="8dp"
+        android:queryHint="Search events..."
+        app:iconifiedByDefault="false"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="16dp" />
+
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="90dp"
         android:text="Welcome Attendee"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -32,8 +45,8 @@
         android:id="@+id/eventListOnAttendeePage"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
         app:layout_constraintTop_toBottomOf="@id/textView"
         app:layout_constraintBottom_toTopOf="@id/logOutBtn2"
         app:layout_constraintHeight_percent="0.7"
