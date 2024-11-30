@@ -29,13 +29,16 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
     private List<Event> events;
     private Attendee attendee;
     private String uid;
+    private List<Event> appliedEvents = new ArrayList<>();
+    private List<Event> notAppliedEvents = new ArrayList<>();
 
+    // 构造函数
     public EventAttendeePageAdapter(Context context, List<Event> events, Attendee attendee, String uid) {
         super(context, R.layout.activity_attendee_page, events);
         this.context = context;
         this.events = events;
         this.attendee = attendee;
-        this.uid = uid; // Store the Attendee object
+        this.uid = uid;
     }
 
     @NonNull
@@ -54,57 +57,100 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
             holder.addressEventTextView = listItem.findViewById(R.id.addressEventTextVIew);
             holder.startTimeTextView = listItem.findViewById(R.id.startTime);
             holder.JoinView = listItem.findViewById(R.id.JoinEvent);
+            holder.LeaveEvent = listItem.findViewById(R.id.LeaveEvent);
+            holder.statusTextView = listItem.findViewById(R.id.EventStatus);
 
             listItem.setTag(holder);
-
         } else {
             holder = (ViewHolder) listItem.getTag();
         }
 
+        // 获取当前事件
         Event event = events.get(position);
+
         holder.descriptionTextView.setText(event.getDescription());
         holder.eventTitleTextView.setText(event.getTitle());
         holder.addressEventTextView.setText(event.getEventAddress());
         holder.startTimeTextView.setText(event.getStartTime().toString());
+        holder.statusTextView.setText("Status: " + event.getStatus());
 
-        // Set the Join button's click listener
+        // show join or leave
+        if ("Not Applied".equals(event.getStatus())) {
+            holder.LeaveEvent.setVisibility(View.GONE);
+            holder.JoinView.setVisibility(View.VISIBLE);
+        } else {
+            holder.JoinView.setVisibility(View.GONE);
+            holder.LeaveEvent.setVisibility(View.VISIBLE);
+        }
+
+        // join btn
         holder.JoinView.setOnClickListener(v -> {
-            addToListBasedOnAutoAccept(event);
-            events.remove(position);
-            notifyDataSetChanged();
+            if ("Not Applied".equals(event.getStatus())) {
+                event.setStatus("Pending");
+                updateEventStatusInFirebase(event);
+
+                addToListBasedOnAutoAccept(event);
+
+                notAppliedEvents.remove(event);
+                appliedEvents.add(event);
+
+                // refresh
+                notifyDataSetChanged();
+
+                Toast.makeText(context, "You have applied for the event!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // leave btn
+        holder.LeaveEvent.setOnClickListener(v -> {
+            long currentTime = System.currentTimeMillis();
+            long eventStartTime = event.getStartTime().getTime();
+
+            // cant leave within 24h
+            if (eventStartTime - currentTime <= 24 * 60 * 60 * 1000) {
+                Toast.makeText(context, "Cannot leave the event within 24 hours of the start time.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if ("Pending".equals(event.getStatus())) {
+                leaveEvent(event);
+                appliedEvents.remove(event);
+                notAppliedEvents.add(event);
+
+
+                notifyDataSetChanged();
+
+                Toast.makeText(context, "You have left the event.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "Leaving the event failed.", Toast.LENGTH_SHORT).show();
+            }
         });
 
         return listItem;
     }
 
+
     private void addToListBasedOnAutoAccept(Event event) {
         DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference("events").child(event.getEventId());
 
-        // Fetch the current event data to get the existing lists of attendees
         eventRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // Retrieve the event from the database
                 Event eventFromDb = dataSnapshot.getValue(Event.class);
                 if (eventFromDb != null) {
-                    // Create temporary lists if the event was not retrieved
                     List<Attendee> pendingAttendeesList = eventFromDb.getPendingAttendeesList() != null ? eventFromDb.getPendingAttendeesList() : new ArrayList<>();
                     List<Attendee> acceptedAttendeesList = eventFromDb.getAcceptedAttendeesList() != null ? eventFromDb.getAcceptedAttendeesList() : new ArrayList<>();
 
-                    // Check the auto-accept status and add the attendee accordingly
                     if ("On".equals(event.getAutoAccept())) {
-                        // Log the action and add attendee to the accepted list in Firebase
-                        Log.d("EventAttendeePageAdapter", "Auto accept is ON. Adding attendee to accepted list. Event ID: " + event.getEventId());
-                        acceptedAttendeesList.add(attendee);  // Add the second attendee to the accepted list
+                        acceptedAttendeesList.add(attendee);
+                        event.setStatus("Approved");
                         Toast.makeText(context, "You have been added to the accepted list!", Toast.LENGTH_SHORT).show();
                     } else {
-                        // Add attendee to the pending list in Firebase
-                        Log.d("EventAttendeePageAdapter", "Auto accept is OFF. Adding attendee to pending list. Event ID: " + event.getEventId());
-                        pendingAttendeesList.add(attendee);  // Add the first attendee to the pending list
+                        pendingAttendeesList.add(attendee);
+                        event.setStatus("Pending");
                         Toast.makeText(context, "Your registration is pending!", Toast.LENGTH_SHORT).show();
                     }
 
-                    // Reconstruct the event object with updated lists
                     Event updatedEvent = new Event(
                             eventFromDb.getTitle(),
                             eventFromDb.getDescription(),
@@ -118,31 +164,75 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
                             eventFromDb.getOrganizerUId()
                     );
 
-                    // Update the event in the database
                     eventRef.setValue(updatedEvent).addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            // Event updated successfully
-                            Log.d("EventAttendeePageAdapter", "Event updated successfully. Event ID: " + event.getEventId());
+                            Log.d("EventAttendeePageAdapter", "Event updated successfully.");
                         } else {
-                            // Handle the failure of updating the event
-                            Log.d("EventAttendeePageAdapter", "Failed to update event. Event ID: " + event.getEventId());
+                            Log.d("EventAttendeePageAdapter", "Failed to update event.");
                         }
                     });
-                } else {
-                    Log.d("EventAttendeePageAdapter", "Event not found. Event ID: " + event.getEventId());
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.d("EventAttendeePageAdapter", "Failed to fetch event data: " + databaseError.getMessage());
+                Log.e("Firebase", "Failed to fetch event data: " + databaseError.getMessage());
             }
         });
     }
 
+    //
+    private void leaveEvent(Event event) {
+        DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference("events").child(event.getEventId());
+
+        eventRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Event eventFromDb = dataSnapshot.getValue(Event.class);
+                if (eventFromDb != null) {
+                    if ("Pending".equals(event.getStatus())) {
+                        List<Attendee> pendingAttendeesList = eventFromDb.getPendingAttendeesList();
+                        if (pendingAttendeesList != null && pendingAttendeesList.contains(attendee)) {
+                            pendingAttendeesList.remove(attendee);
+                            eventRef.child("pendingAttendeesList").setValue(pendingAttendeesList);
+                        }
+                    } else if ("Approved".equals(event.getStatus())) {
+                        List<Attendee> acceptedAttendeesList = eventFromDb.getAcceptedAttendeesList();
+                        if (acceptedAttendeesList != null && acceptedAttendeesList.contains(attendee)) {
+                            acceptedAttendeesList.remove(attendee);
+                            eventRef.child("acceptedAttendeesList").setValue(acceptedAttendeesList);
+                        }
+                    }
+
+                    event.setStatus("Not Applied");
+                    updateEventStatusInFirebase(event);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("Firebase", "Failed to fetch event data: " + databaseError.getMessage());
+            }
+        });
+    }
+
+    // update to Firebase
+    private void updateEventStatusInFirebase(Event event) {
+        DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference("events").child(event.getEventId());
+        eventRef.child("status").setValue(event.getStatus())
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("Firebase", "Event status updated to: " + event.getStatus());
+                    } else {
+                        Log.e("Firebase", "Failed to update event status", task.getException());
+                    }
+                });
+    }
 
     private static class ViewHolder {
-        TextView eventTitleTextView, descriptionTextView, addressEventTextView, startTimeTextView;
-        Button JoinView;
+        TextView eventTitleTextView, descriptionTextView, addressEventTextView, startTimeTextView, statusTextView;
+        Button JoinView, LeaveEvent;
     }
 }
+
+

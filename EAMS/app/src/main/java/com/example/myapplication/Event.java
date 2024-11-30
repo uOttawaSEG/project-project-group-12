@@ -9,8 +9,15 @@ public class Event {
     private String eventId, title, description, eventAddress, autoAccept, organizerUId;
     private Date startTime, endTime;
     private List<Attendee> pendingAttendeesList, acceptedAttendeesList;
+    private String status;
 
+    public String getStatus() {
+        return status;
+    }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public Event(String title, String description , String eventAddress, Date startTime , Date endTime, String eventId, String autoAccept, String organizerUId){
         this.title = title;
@@ -24,6 +31,7 @@ public class Event {
         //create 2 empty arraylists
         pendingAttendeesList = new ArrayList<>();
         acceptedAttendeesList = new ArrayList<>();
+        this.status = "Not Applied";
     }
 
     //if we ever need to create an event with an already populated list
@@ -36,8 +44,8 @@ public class Event {
         this.eventId = eventId;
         this.autoAccept = autoAccept;
         this.organizerUId = organizerUId;
-        this.pendingAttendeesList = pendingAttendeesList;
-        this.acceptedAttendeesList = acceptedAttendeesList;
+        this.acceptedAttendeesList = acceptedAttendeesList != null ? acceptedAttendeesList : new ArrayList<>();
+        this.pendingAttendeesList = pendingAttendeesList != null ? pendingAttendeesList : new ArrayList<>();
     }
 
 
