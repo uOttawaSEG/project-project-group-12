@@ -73,9 +73,6 @@ public class EventListActivity extends AppCompatActivity {
 
                     //does the call to fetch event snow or else the attendee object is null
                     fetchEventsForAttendee(eventIds);
-
-                    // Test by showing the Attendee's toString() in a Toast
-                    Toast.makeText(EventListActivity.this, attendee.toString(), Toast.LENGTH_LONG).show();
                 }
             }
 
