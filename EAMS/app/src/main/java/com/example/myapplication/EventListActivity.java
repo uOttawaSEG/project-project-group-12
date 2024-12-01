@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Button;
@@ -86,14 +87,33 @@ public class EventListActivity extends AppCompatActivity {
 
         // Initialize the event list (you should replace this with actual data)
         mEventList = new ArrayList<>();
+        final int[] eventsFetched = {0};
+        List<String> eventIds = attendee.getEventIds();
 
-        // Example data
-        mEventList.add(new Event("Event 1", "Description of Event 1", "Address 1", new Date(), new Date(), "1", "autoAccept", "organizerUId"));
-        mEventList.add(new Event("Event 2", "Description of Event 2", "Address 2", new Date(), new Date(), "2", "autoAccept", "organizerUId"));
+        DatabaseReference eventsDatabaseReference = FirebaseDatabase.getInstance().getReference("events");
 
-        // Set up the adapter and ListView
-        mEventAdapter = new MyEventAdapter(this, mEventList);
-        mEventListView = findViewById(R.id.event_list_view_my);
-        mEventListView.setAdapter(mEventAdapter);
+        for (String eventId : eventIds) {
+            eventsDatabaseReference.child(eventId).get().addOnSuccessListener(dataSnapshot -> {
+                if (dataSnapshot.exists()) {
+                    Event event = dataSnapshot.getValue(Event.class);
+                    if (event != null) {
+                        mEventList.add(event);
+                    }
+                }
+
+                eventsFetched[0]++;
+
+                //checks for initialization once all synchronous calls are done
+                if (eventsFetched[0] == eventIds.size()) {
+                    mEventAdapter = new MyEventAdapter(this, mEventList);
+                    mEventListView = findViewById(R.id.event_list_view_my);
+                    mEventListView.setAdapter(mEventAdapter);
+                    mEventAdapter.notifyDataSetChanged(); // Ensure the adapter updates with the fetched data
+                }
+            }).addOnFailureListener(e -> {
+                // Handle error during fetch
+                Log.e("Firebase", "Error fetching event data", e);
+            });
+        }
     }
 }
