@@ -103,7 +103,7 @@ public class EventListActivity extends AppCompatActivity {
 
                 eventsFetched[0]++;
 
-                //checks for initialization once all synchronous calls are done
+                //initializes the adapter inside the loop (but only once in the end) because of asynchronous firebase calls
                 if (eventsFetched[0] == eventIds.size()) {
                     mEventAdapter = new MyEventAdapter(this, mEventList);
                     mEventListView = findViewById(R.id.event_list_view_my);
