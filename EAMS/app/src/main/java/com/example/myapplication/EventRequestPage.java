@@ -87,7 +87,8 @@ public class EventRequestPage extends AppCompatActivity {
                         status = attendeeSnapshot.child("status").getValue(String.class);
 
                         // Create an Attendee object
-                        attendee = new Attendee(firstName, lastName, phoneNumber, address, userType, status);
+                        List<String> eventIds = new ArrayList<>();
+                        attendee = new Attendee(firstName, lastName, phoneNumber, address, userType, status, (ArrayList<String>) eventIds);
 
                         // Add the attendee to the list
                         pendingAttendees.add(attendee);
@@ -127,7 +128,8 @@ public class EventRequestPage extends AppCompatActivity {
                         status = attendeeSnapshot.child("status").getValue(String.class);
 
                         // Create an Attendee object
-                        attendee = new Attendee(firstName, lastName, phoneNumber, address, userType, status);
+                        List<String> eventIds = new ArrayList<>();
+                        attendee = new Attendee(firstName, lastName, phoneNumber, address, userType, status, (ArrayList<String>) eventIds);
 
                         // Add the attendee to the list
                         acceptedAttendees.add(attendee);

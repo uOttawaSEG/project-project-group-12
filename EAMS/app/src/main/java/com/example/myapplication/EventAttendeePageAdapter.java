@@ -10,11 +10,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import android.widget.Filter;
+
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.myapplication.Attendee;
-import com.example.myapplication.Event;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,6 +27,8 @@ import java.util.List;
 
 public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
     private Context context;
+    private List<Event> originalEvents; //represents the original set of events
+    private List<Event> filteredEvents; //represents the filtered set of events
     private List<Event> events;
     private Attendee attendee;
     private String uid;
@@ -33,10 +36,19 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
     public EventAttendeePageAdapter(Context context, List<Event> events, Attendee attendee, String uid) {
         super(context, R.layout.activity_attendee_page, events);
         this.context = context;
-        this.events = events;
+        this.originalEvents = new ArrayList<>(events); //make a copy of the original list for filtering
+        this.filteredEvents = events; //this is the filtered list
         this.attendee = attendee;
         this.uid = uid; // Store the Attendee object
     }
+
+/*    public int getCount() {
+        return filteredEvents.size();
+    }
+
+    public Event getItem(int position){
+        return filteredEvents.get(position);
+    }*/
 
     @NonNull
     @Override
@@ -51,7 +63,7 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
             holder = new ViewHolder();
             holder.eventTitleTextView = listItem.findViewById(R.id.eventTitleTextView);
             holder.descriptionTextView = listItem.findViewById(R.id.eventDescriptionTextView);
-            holder.addressEventTextView = listItem.findViewById(R.id.addressEventTextVIew);
+            holder.addressEventTextView = listItem.findViewById(R.id.addressEventTextView);
             holder.startTimeTextView = listItem.findViewById(R.id.startTime);
             holder.JoinView = listItem.findViewById(R.id.JoinEvent);
 
@@ -61,7 +73,7 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
             holder = (ViewHolder) listItem.getTag();
         }
 
-        Event event = events.get(position);
+        Event event = filteredEvents.get(position);
         holder.descriptionTextView.setText(event.getDescription());
         holder.eventTitleTextView.setText(event.getTitle());
         holder.addressEventTextView.setText(event.getEventAddress());
@@ -70,15 +82,56 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
         // Set the Join button's click listener
         holder.JoinView.setOnClickListener(v -> {
             addToListBasedOnAutoAccept(event);
-            events.remove(position);
+            filteredEvents.remove(position);
+            originalEvents.remove(event);
             notifyDataSetChanged();
         });
 
         return listItem;
     }
 
+
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                List<Event> filteredResults = new ArrayList<>();
+                if (constraint == null || constraint.length() == 0) {
+                    filteredResults.addAll(originalEvents); //if there are no constraints show all the events
+                } else {
+                    String filterPattern = constraint.toString().toLowerCase().trim();
+                    for (Event event : originalEvents) {
+                        if (event.getTitle().toLowerCase().contains(filterPattern) || event.getDescription().toLowerCase().contains(filterPattern)) {
+                            filteredResults.add(event); //add events that match the filter pattern
+                        }
+                    }
+                }
+
+                Log.d("EventFilter", "Filtered " + filteredResults.size() + " events matching the pattern: " + constraint); //debug
+
+                //put the results in a type of FilterResults and return it, becuz performFiltering method expects a FilterResults object to be returned as specified in API
+                FilterResults results = new FilterResults();
+                results.values = filteredResults;
+                return results;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                filteredEvents.clear();
+                filteredEvents.addAll((List) results.values); //update filtered list with the results
+                notifyDataSetChanged(); //notify the adapter to update the ListView
+            }
+        };
+    }
+
+    private static class ViewHolder {
+        TextView eventTitleTextView, descriptionTextView, addressEventTextView, startTimeTextView;
+        Button JoinView;
+    }
+
     private void addToListBasedOnAutoAccept(Event event) {
         DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference("events").child(event.getEventId());
+        DatabaseReference attendeeRef = FirebaseDatabase.getInstance().getReference("users").child(uid);
 
         // Fetch the current event data to get the existing lists of attendees
         eventRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -97,11 +150,17 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
                         Log.d("EventAttendeePageAdapter", "Auto accept is ON. Adding attendee to accepted list. Event ID: " + event.getEventId());
                         acceptedAttendeesList.add(attendee);  // Add the second attendee to the accepted list
                         Toast.makeText(context, "You have been added to the accepted list!", Toast.LENGTH_SHORT).show();
+
+
+                        attendee.addEventId(event.getEventId());
+
                     } else {
                         // Add attendee to the pending list in Firebase
                         Log.d("EventAttendeePageAdapter", "Auto accept is OFF. Adding attendee to pending list. Event ID: " + event.getEventId());
                         pendingAttendeesList.add(attendee);  // Add the first attendee to the pending list
                         Toast.makeText(context, "Your registration is pending!", Toast.LENGTH_SHORT).show();
+
+                        attendee.addEventId(event.getEventId());
                     }
 
                     // Reconstruct the event object with updated lists
@@ -128,6 +187,35 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
                             Log.d("EventAttendeePageAdapter", "Failed to update event. Event ID: " + event.getEventId());
                         }
                     });
+
+                    // Now update the Attendee object in the "users" node
+                    attendeeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            // Retrieve the Attendee from the database
+                            Attendee currentAttendee = dataSnapshot.getValue(Attendee.class);
+                            if (currentAttendee != null) {
+                                // Update the eventIds list of the Attendee
+                                currentAttendee.addEventId(event.getEventId());
+
+                                // Update the Attendee object in the database
+                                attendeeRef.setValue(currentAttendee).addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        Log.d("EventAttendeePageAdapter", "Attendee updated successfully with event ID.");
+                                    } else {
+                                        Log.d("EventAttendeePageAdapter", "Failed to update Attendee with event ID.");
+                                    }
+                                });
+                            } else {
+                                Log.d("EventAttendeePageAdapter", "Attendee not found. UID: " + uid);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Log.d("EventAttendeePageAdapter", "Failed to fetch Attendee data: " + databaseError.getMessage());
+                        }
+                    });
                 } else {
                     Log.d("EventAttendeePageAdapter", "Event not found. Event ID: " + event.getEventId());
                 }
@@ -140,9 +228,4 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
         });
     }
 
-
-    private static class ViewHolder {
-        TextView eventTitleTextView, descriptionTextView, addressEventTextView, startTimeTextView;
-        Button JoinView;
-    }
 }

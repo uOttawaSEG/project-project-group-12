@@ -1,28 +1,65 @@
 package com.example.myapplication;
 
 import androidx.annotation.NonNull;
+import java.util.ArrayList;
 
 /**
  * The Attendee class is a subclass of User and represents an attendee.
- * It does not add any additional fields to the base User class.
  */
 public class Attendee extends User {
+    private ArrayList<String> eventIds;
 
     /**
-     * Constructs a new Attendee with the given details.
+     * Constructs a new Attendee with the given details, including a list of event IDs.
      *
      * @param firstName the attendee's first name
      * @param lastName the attendee's last name
      * @param phoneNumber the attendee's phone number
      * @param address the attendee's address
+     * @param userType the attendee's user type
+     * @param status the attendee's status
+     * @param eventIds the list of event IDs associated with the attendee
      */
-
-    public Attendee(String firstName, String lastName, String phoneNumber, String address, String userType, String status) {
-        super(firstName, lastName, phoneNumber, address, userType, status); //Call parent class constructor
+    public Attendee(String firstName, String lastName, String phoneNumber, String address, String userType, String status, ArrayList<String> eventIds) {
+        super(firstName, lastName, phoneNumber, address, userType, status); // Call parent class constructor
+        this.eventIds = eventIds != null ? eventIds : new ArrayList<>(); // Initialize with the provided list or an empty one
     }
+
+    /**
+     * Default constructor for Firebase.
+     */
     public Attendee() {
         super();
-        // For firebase
+        this.eventIds = new ArrayList<>(); // Initialize with an empty ArrayList
+    }
+
+    /**
+     * Gets the list of event IDs.
+     *
+     * @return the list of event IDs
+     */
+    public ArrayList<String> getEventIds() {
+        return eventIds;
+    }
+
+    /**
+     * Adds an event ID to the list.
+     *
+     * @param eventId the event ID to add
+     */
+    public void addEventId(String eventId) {
+        if (!eventIds.contains(eventId)) {
+            eventIds.add(eventId);
+        }
+    }
+
+    /**
+     * Removes an event ID from the list.
+     *
+     * @param eventId the event ID to remove
+     */
+    public void removeEventId(String eventId) {
+        eventIds.remove(eventId);
     }
 
     @NonNull
@@ -32,7 +69,7 @@ public class Attendee extends User {
                 "Email: " + getEmail() + "\n" +
                 "Name: " + getFirstName() + " " + getLastName() + "\n" +
                 "Phone: " + getPhoneNumber() + "\n" +
-                "Address: " + getAddress();
+                "Address: " + getAddress() + "\n" +
+                "Event IDs: " + eventIds;
     }
-
 }
