@@ -71,10 +71,12 @@ public class EventListActivity extends AppCompatActivity {
                     // Create a new Attendee object
                     attendee = new Attendee(firstName, lastName, phoneNumber, address, userType, status, (ArrayList<String>) eventIds);
 
+                    //does the call to fetch event snow or else the attendee object is null
+                    fetchEventsForAttendee(eventIds);
+
                     // Test by showing the Attendee's toString() in a Toast
                     Toast.makeText(EventListActivity.this, attendee.toString(), Toast.LENGTH_LONG).show();
                 }
-
             }
 
             @Override
@@ -83,12 +85,10 @@ public class EventListActivity extends AppCompatActivity {
             }
         });
 
-
-
-        // Initialize the event list (you should replace this with actual data)
+    }
+    private void fetchEventsForAttendee(List<String> eventIds) {
         mEventList = new ArrayList<>();
         final int[] eventsFetched = {0};
-        List<String> eventIds = attendee.getEventIds();
 
         DatabaseReference eventsDatabaseReference = FirebaseDatabase.getInstance().getReference("events");
 
@@ -105,7 +105,7 @@ public class EventListActivity extends AppCompatActivity {
 
                 //initializes the adapter inside the loop (but only once in the end) because of asynchronous firebase calls
                 if (eventsFetched[0] == eventIds.size()) {
-                    mEventAdapter = new MyEventAdapter(this, mEventList);
+                    mEventAdapter = new MyEventAdapter(EventListActivity.this, mEventList);
                     mEventListView = findViewById(R.id.event_list_view_my);
                     mEventListView.setAdapter(mEventAdapter);
                     mEventAdapter.notifyDataSetChanged(); // Ensure the adapter updates with the fetched data
