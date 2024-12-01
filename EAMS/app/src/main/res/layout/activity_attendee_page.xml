@@ -57,13 +57,27 @@
         android:id="@+id/logOutBtn2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/darker_gray"
         android:text="Log Out"
         android:textColor="@android:color/white"
-        android:backgroundTint="@android:color/darker_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.693"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/eventListOnAttendeePage"
         app:layout_constraintVertical_bias="0.9" />
+
+    <Button
+        android:id="@+id/toMyEvents"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/darker_gray"
+        android:text="My Events"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.309"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/eventListOnAttendeePage" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

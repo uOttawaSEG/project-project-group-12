@@ -16,13 +16,14 @@
 
 
 
+
         <activity android:name=".EventRequestPage" />
+
+        <activity android:name=".EventListActivity" />
 
         <activity android:name=".EventCreationPage" />
 
         <activity android:name=".AttendeePage" />
-
-        <activity android:name=".WelcomePage" />
 
         <activity android:name=".AdminPage" />
 

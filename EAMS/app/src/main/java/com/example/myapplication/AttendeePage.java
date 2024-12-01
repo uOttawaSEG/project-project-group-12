@@ -31,7 +31,7 @@ public class AttendeePage extends AppCompatActivity {
     private DatabaseReference attendeesDatabaseReference;
     private EventAttendeePageAdapter adapter;
     private Attendee attendee; // Variable to hold the Attendee object
-    private Button logOutBtn;
+    private Button logOutBtn, myEvents;
     private String uid;
 
     @Override
@@ -97,6 +97,16 @@ public class AttendeePage extends AppCompatActivity {
 
         // Initialize the Log Out button
         logOutBtn = findViewById(R.id.logOutBtn2);
+
+        myEvents = findViewById(R.id.toMyEvents);
+
+        myEvents.setOnClickListener(v -> {
+            // Navigate back to the LoginPage
+            Intent intent = new Intent(AttendeePage.this, EventListActivity.class);
+            intent.putExtra("uid", uid);
+            startActivity(intent);
+            finish();
+        });
 
         // Set up a listener for the button click
         logOutBtn.setOnClickListener(v -> {

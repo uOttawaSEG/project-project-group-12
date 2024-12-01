@@ -1,0 +1,35 @@
+<!-- res/layout/activity_event_list_my.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- Header with Back Button and Title -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <Button
+            android:id="@+id/back_button_my"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back" />
+
+        <TextView
+            android:id="@+id/header_text_my"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Your Events"
+            android:textSize="20sp"
+            android:gravity="center" />
+    </LinearLayout>
+
+    <!-- ListView to display events -->
+    <ListView
+        android:id="@+id/event_list_view_my"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>
