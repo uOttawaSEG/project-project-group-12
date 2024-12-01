@@ -31,6 +31,8 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import androidx.appcompat.app.AlertDialog;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class RegistrationPage extends AppCompatActivity {
@@ -218,7 +220,8 @@ public class RegistrationPage extends AppCompatActivity {
                             String userType = ((RadioButton)findViewById(radioGroupField.getCheckedRadioButtonId())).getText().toString().toLowerCase();
 
                             if ( userType.equals("attendee")){
-                                Attendee userInfo = new Attendee(firstName,lastName,phoneNumber,address,"Attendee","pending");
+                                List<String> eventIds = new ArrayList<>();
+                                Attendee userInfo = new Attendee(firstName,lastName,phoneNumber,address,"Attendee","pending", (ArrayList<String>) eventIds);
                                 userInfo.setEmail(email);//should be able to query firebase auth to get email of user
                                 mDatabase.child("users").child(userId).setValue(userInfo);
                             } else {

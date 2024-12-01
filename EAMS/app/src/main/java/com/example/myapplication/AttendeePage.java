@@ -16,11 +16,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import android.widget.SearchView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AttendeePage extends AppCompatActivity {
     private ArrayList<Event> allEvents;
@@ -67,9 +69,14 @@ public class AttendeePage extends AppCompatActivity {
                     String address = snapshot.child("address").getValue(String.class);
                     String userType = snapshot.child("userType").getValue(String.class);
                     String status = snapshot.child("status").getValue(String.class);
-
+                    // Use GenericTypeIndicator to extract a list
+                    GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {};
+                    List<String> eventIds = snapshot.child("eventIds").getValue(t);
+                    if (eventIds == null) {
+                        eventIds = new ArrayList<>(); // Initialize as an empty list if it doesn't exist
+                    }
                     // Create a new Attendee object
-                    attendee = new Attendee(firstName, lastName, phoneNumber, address, userType, status);
+                    attendee = new Attendee(firstName, lastName, phoneNumber, address, userType, status, (ArrayList<String>) eventIds);
 
                     // Initialize the adapter after attendee data is fetched
                     adapter = new EventAttendeePageAdapter(AttendeePage.this, allEvents, attendee, uid);
