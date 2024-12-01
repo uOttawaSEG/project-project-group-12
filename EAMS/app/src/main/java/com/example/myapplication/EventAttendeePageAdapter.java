@@ -25,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
@@ -102,8 +103,8 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
                     if (t.isSuccessful()) {
                         DataSnapshot dataSnapshot = t.getResult();
                         if (dataSnapshot.exists()) {
-                            long startTime1 = dataSnapshot.child("startTime").getValue(Long.class);
-                            long endTime1 = dataSnapshot.child("endTime").getValue(Long.class);
+                            long startTime1 = dataSnapshot.child("startTime").getValue(Date.class).getTime();
+                            long endTime1 = dataSnapshot.child("endTime").getValue(Date.class).getTime();
                             long startTime2 = event.getStartTime().getTime();
                             long endTime2 = event.getEndTime().getTime();
 
