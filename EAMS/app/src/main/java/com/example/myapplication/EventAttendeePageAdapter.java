@@ -16,6 +16,8 @@ import android.widget.Filter;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -81,10 +83,55 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
 
         // Set the Join button's click listener
         holder.JoinView.setOnClickListener(v -> {
-            addToListBasedOnAutoAccept(event);
-            filteredEvents.remove(position);
-            originalEvents.remove(event);
-            notifyDataSetChanged();
+            //flag to check for conflicts
+            final boolean[] conflicted = {false};
+
+            List<Task<DataSnapshot>> tasks = new ArrayList<>();
+
+            DatabaseReference events = FirebaseDatabase.getInstance().getReference("events");
+
+            //loop through each event and get the event data from DB
+            for (String eventID : attendee.getEventIds()) {
+                Task<DataSnapshot> task = events.child(eventID).get();
+                tasks.add(task);
+            }
+
+            Tasks.whenAllComplete(tasks).addOnCompleteListener(taskList -> {
+                //check if there is any conflict
+                for (Task<DataSnapshot> t : tasks) {
+                    if (t.isSuccessful()) {
+                        DataSnapshot dataSnapshot = t.getResult();
+                        if (dataSnapshot.exists()) {
+                            long startTime1 = dataSnapshot.child("startTime").getValue(Long.class);
+                            long endTime1 = dataSnapshot.child("endTime").getValue(Long.class);
+                            long startTime2 = event.getStartTime().getTime();
+                            long endTime2 = event.getEndTime().getTime();
+
+                            //update flag if conflict
+                            if (startTime1 < endTime2 && startTime2 < endTime1) {
+                                conflicted[0] = true;
+                                break;  //conflict found so break
+                            }
+                        }
+                    }
+                }
+
+                //checks for conflict
+                if (conflicted[0]) {
+                    Toast.makeText(context, "This event conflicts with another of your joined events.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                //no conflicts so proceed to join
+                addToListBasedOnAutoAccept(event);
+                filteredEvents.remove(position);
+                originalEvents.remove(event);
+
+                //add eventId to attendee list
+                attendee.addEventId(event.getEventId());
+
+                notifyDataSetChanged();
+            });
         });
 
         return listItem;
