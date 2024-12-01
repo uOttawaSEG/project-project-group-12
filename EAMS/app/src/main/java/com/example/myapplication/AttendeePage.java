@@ -22,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 import android.widget.SearchView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AttendeePage extends AppCompatActivity {
@@ -147,6 +148,9 @@ public class AttendeePage extends AppCompatActivity {
                         allEvents.add(event);
                     }
                 }
+                // Sort events from newest to oldest based on start time
+                Collections.sort(allEvents, (e1, e2) -> e2.getStartTime().compareTo(e1.getStartTime()));
+
                 // Refresh the ListView after fetching the events
                 if (adapter != null) {
                     adapter = new EventAttendeePageAdapter(AttendeePage.this, allEvents, attendee, uid);

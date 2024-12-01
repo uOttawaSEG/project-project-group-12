@@ -8,8 +8,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.Collections;
 import java.util.List;
+
+
 
 public class MyEventAdapter extends ArrayAdapter<Event> {
     private Context mContext;
@@ -19,6 +23,9 @@ public class MyEventAdapter extends ArrayAdapter<Event> {
         super(context, 0, eventList);
         this.mContext = context;
         this.mEventList = eventList;
+
+        // Sort the list by newest to oldest
+        sortEventsByNewest();
     }
 
     @Override
@@ -37,22 +44,28 @@ public class MyEventAdapter extends ArrayAdapter<Event> {
         // Set the 'Leave' button and the popup dialog functionality
         Button leaveButton = convertView.findViewById(R.id.leave_button_my);
         leaveButton.setOnClickListener(v -> {
-            // Show a confirmation dialog when "Leave" button is clicked
-            new AlertDialog.Builder(mContext)
-                    .setMessage("Are you sure you want to leave this event?")
-                    .setPositiveButton("Yes", (dialog, which) -> {
-                        // Handle leaving event logic here
-                        // For example, remove the event from the list or update the status
-                        mEventList.remove(position);
-                        notifyDataSetChanged();
-                    })
-                    .setNegativeButton("No", null)
-                    .show();
+            long currentTimeMillis = System.currentTimeMillis();
+            long eventStartTimeMillis = event.getStartTime().getTime();
+
+            if (eventStartTimeMillis - currentTimeMillis > 24 * 60 * 60 * 1000) {
+                new AlertDialog.Builder(mContext)
+                        .setMessage("Are you sure you want to leave this event?")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            mEventList.remove(position);
+                            notifyDataSetChanged();
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
+            } else {
+                new AlertDialog.Builder(mContext)
+                        .setMessage("You cannot leave this event as it starts in less than 24 hours.")
+                        .setPositiveButton("OK", null)
+                        .show();
+            }
         });
 
         // Set up the clickable text view for the event details popup
         titleTextView.setOnClickListener(v -> {
-            // Show event details in a popup dialog
             String details = "Description: " + event.getDescription() +
                     "\nAddress: " + event.getEventAddress() +
                     "\nStart Time: " + event.getStartTime().toString() +
@@ -67,4 +80,12 @@ public class MyEventAdapter extends ArrayAdapter<Event> {
 
         return convertView;
     }
+
+    // sort the event list from newest to oldest
+    private void sortEventsByNewest() {
+        Collections.sort(mEventList, (event1, event2) -> {
+            return Long.compare(event2.getStartTime().getTime(), event1.getStartTime().getTime());
+        });
+    }
 }
+
