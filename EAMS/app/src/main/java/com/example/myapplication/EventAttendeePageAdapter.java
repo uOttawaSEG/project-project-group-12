@@ -131,6 +131,7 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
 
     private void addToListBasedOnAutoAccept(Event event) {
         DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference("events").child(event.getEventId());
+        DatabaseReference attendeeRef = FirebaseDatabase.getInstance().getReference("users").child(uid);
 
         // Fetch the current event data to get the existing lists of attendees
         eventRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -149,11 +150,17 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
                         Log.d("EventAttendeePageAdapter", "Auto accept is ON. Adding attendee to accepted list. Event ID: " + event.getEventId());
                         acceptedAttendeesList.add(attendee);  // Add the second attendee to the accepted list
                         Toast.makeText(context, "You have been added to the accepted list!", Toast.LENGTH_SHORT).show();
+
+
+                        attendee.addEventId(event.getEventId());
+
                     } else {
                         // Add attendee to the pending list in Firebase
                         Log.d("EventAttendeePageAdapter", "Auto accept is OFF. Adding attendee to pending list. Event ID: " + event.getEventId());
                         pendingAttendeesList.add(attendee);  // Add the first attendee to the pending list
                         Toast.makeText(context, "Your registration is pending!", Toast.LENGTH_SHORT).show();
+
+                        attendee.addEventId(event.getEventId());
                     }
 
                     // Reconstruct the event object with updated lists
@@ -178,6 +185,35 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
                         } else {
                             // Handle the failure of updating the event
                             Log.d("EventAttendeePageAdapter", "Failed to update event. Event ID: " + event.getEventId());
+                        }
+                    });
+
+                    // Now update the Attendee object in the "users" node
+                    attendeeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            // Retrieve the Attendee from the database
+                            Attendee currentAttendee = dataSnapshot.getValue(Attendee.class);
+                            if (currentAttendee != null) {
+                                // Update the eventIds list of the Attendee
+                                currentAttendee.addEventId(event.getEventId());
+
+                                // Update the Attendee object in the database
+                                attendeeRef.setValue(currentAttendee).addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        Log.d("EventAttendeePageAdapter", "Attendee updated successfully with event ID.");
+                                    } else {
+                                        Log.d("EventAttendeePageAdapter", "Failed to update Attendee with event ID.");
+                                    }
+                                });
+                            } else {
+                                Log.d("EventAttendeePageAdapter", "Attendee not found. UID: " + uid);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Log.d("EventAttendeePageAdapter", "Failed to fetch Attendee data: " + databaseError.getMessage());
                         }
                     });
                 } else {
