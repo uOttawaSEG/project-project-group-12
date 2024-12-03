@@ -144,8 +144,15 @@ public class AttendeePage extends AppCompatActivity {
                 allEvents.clear();
                 for (DataSnapshot eventSnapshot : dataSnapshot.getChildren()) {
                     Event event = eventSnapshot.getValue(Event.class);
+
+                    //checks if the event is null first
                     if (event != null) {
-                        allEvents.add(event);
+                        //if not null then check if the attendee's list of events contains eventID before adding it to the adapter
+                        String eventID = event.getEventId();
+                        if(!attendee.getEventIds().contains(eventID)){
+                            allEvents.add(event);
+                        }
+
                     }
                 }
                 // Sort events from newest to oldest based on start time

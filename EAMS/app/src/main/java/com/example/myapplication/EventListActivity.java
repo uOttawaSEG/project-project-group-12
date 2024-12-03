@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Button;
@@ -70,10 +71,9 @@ public class EventListActivity extends AppCompatActivity {
                     // Create a new Attendee object
                     attendee = new Attendee(firstName, lastName, phoneNumber, address, userType, status, (ArrayList<String>) eventIds);
 
-                    // Test by showing the Attendee's toString() in a Toast
-                    Toast.makeText(EventListActivity.this, attendee.toString(), Toast.LENGTH_LONG).show();
+                    //does the call to fetch event snow or else the attendee object is null
+                    fetchEventsForAttendee(eventIds);
                 }
-
             }
 
             @Override
@@ -82,18 +82,37 @@ public class EventListActivity extends AppCompatActivity {
             }
         });
 
-
-
-        // Initialize the event list (you should replace this with actual data)
+    }
+    private void fetchEventsForAttendee(List<String> eventIds) {
         mEventList = new ArrayList<>();
+        final int[] eventsFetched = {0};
 
-        // Example data
-        mEventList.add(new Event("Event 1", "Description of Event 1", "Address 1", new Date(), new Date(), "1", "autoAccept", "organizerUId"));
-        mEventList.add(new Event("Event 2", "Description of Event 2", "Address 2", new Date(), new Date(), "2", "autoAccept", "organizerUId"));
+        DatabaseReference eventsDatabaseReference = FirebaseDatabase.getInstance().getReference("events");
 
-        // Set up the adapter and ListView
-        mEventAdapter = new MyEventAdapter(this, mEventList);
-        mEventListView = findViewById(R.id.event_list_view_my);
-        mEventListView.setAdapter(mEventAdapter);
+        for (String eventId : eventIds) {
+            eventsDatabaseReference.child(eventId).get().addOnSuccessListener(dataSnapshot -> {
+                if (dataSnapshot.exists()) {
+                    Event event = dataSnapshot.getValue(Event.class);
+                    if (event != null) {
+                        mEventList.add(event);
+                    }
+                }
+
+                eventsFetched[0]++;
+
+                //initializes the adapter inside the loop (but only once in the end) because of asynchronous firebase calls
+                if (eventsFetched[0] == eventIds.size()) {
+                    Log.d("Firebase", "users uid " + uid);
+                    Log.d("Firebase", "attendee name " + attendee.getFirstName());
+                    mEventAdapter = new MyEventAdapter(EventListActivity.this, mEventList, uid, attendee);
+                    mEventListView = findViewById(R.id.event_list_view_my);
+                    mEventListView.setAdapter(mEventAdapter);
+                    mEventAdapter.notifyDataSetChanged(); // Ensure the adapter updates with the fetched data
+                }
+            }).addOnFailureListener(e -> {
+                // Handle error during fetch
+                Log.e("Firebase", "Error fetching event data", e);
+            });
+        }
     }
 }
