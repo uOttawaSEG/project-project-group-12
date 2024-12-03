@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Button;
@@ -47,33 +48,35 @@ public class EventListActivity extends AppCompatActivity {
 
         attendeesDatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(uid);
 
-
         // Add a listener for the attendee data
         attendeesDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    // Assuming the data structure in Firebase is such that each attendee is stored under a unique ID.
-                    // For example: /users/<UID>/Attendee
+                    // Load attendee details
                     String firstName = snapshot.child("firstName").getValue(String.class);
                     String lastName = snapshot.child("lastName").getValue(String.class);
                     String phoneNumber = snapshot.child("phoneNumber").getValue(String.class);
                     String address = snapshot.child("address").getValue(String.class);
                     String userType = snapshot.child("userType").getValue(String.class);
                     String status = snapshot.child("status").getValue(String.class);
+
                     // Use GenericTypeIndicator to extract a list
                     GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {};
                     List<String> eventIds = snapshot.child("eventIds").getValue(t);
                     if (eventIds == null) {
                         eventIds = new ArrayList<>(); // Initialize as an empty list if it doesn't exist
                     }
+
                     // Create a new Attendee object
                     attendee = new Attendee(firstName, lastName, phoneNumber, address, userType, status, (ArrayList<String>) eventIds);
 
                     // Test by showing the Attendee's toString() in a Toast
                     Toast.makeText(EventListActivity.this, attendee.toString(), Toast.LENGTH_LONG).show();
-                }
 
+
+                    loadUserEvents(eventIds);
+                }
             }
 
             @Override
@@ -82,9 +85,7 @@ public class EventListActivity extends AppCompatActivity {
             }
         });
 
-
-
-        // Initialize the event list (you should replace this with actual data)
+        // Initialize the event list (retaining the original example data)
         mEventList = new ArrayList<>();
 
         // Example data
@@ -96,4 +97,28 @@ public class EventListActivity extends AppCompatActivity {
         mEventListView = findViewById(R.id.event_list_view_my);
         mEventListView.setAdapter(mEventAdapter);
     }
+
+
+    private void loadUserEvents(List<String> eventIds) {
+        DatabaseReference eventsRef = FirebaseDatabase.getInstance().getReference("events");
+        eventsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot eventSnapshot) {
+                for (DataSnapshot eventNode : eventSnapshot.getChildren()) {
+                    Event event = eventNode.getValue(Event.class);
+                    if (event != null && eventIds.contains(event.getEventId())) {
+                        mEventList.add(event);
+                    }
+                }
+
+                mEventAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("EventListActivity", "Failed to load events: " + error.getMessage());
+            }
+        });
+    }
 }
+

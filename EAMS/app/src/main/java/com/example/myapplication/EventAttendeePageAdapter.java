@@ -16,6 +16,7 @@ import android.widget.Filter;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -66,6 +67,8 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
             holder.addressEventTextView = listItem.findViewById(R.id.addressEventTextView);
             holder.startTimeTextView = listItem.findViewById(R.id.startTime);
             holder.JoinView = listItem.findViewById(R.id.JoinEvent);
+            holder.statusTextView = listItem.findViewById(R.id.eventStatus_eventlist);
+
 
             listItem.setTag(holder);
 
@@ -80,11 +83,44 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
         holder.startTimeTextView.setText(event.getStartTime().toString());
 
         // Set the Join button's click listener
+        DatabaseReference registrationRef = FirebaseDatabase.getInstance()
+                .getReference("events")
+                .child(event.getEventId())
+                .child("registrations")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        registrationRef.child("status").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                String status = task.getResult().getValue(String.class);
+                if (status != null) {
+                    holder.statusTextView.setText("Status: Applied");
+                } else {
+                    holder.statusTextView.setText("Status: Not Applied");
+                }
+            } else {
+                holder.statusTextView.setText("Status: Not Applied");
+            }
+        });
+
+        // join button
         holder.JoinView.setOnClickListener(v -> {
-            addToListBasedOnAutoAccept(event);
-            filteredEvents.remove(position);
-            originalEvents.remove(event);
-            notifyDataSetChanged();
+            if (holder.statusTextView.getText().toString().equals("Status: Applied")) {
+                Toast.makeText(context, "You have already applied for this event!", Toast.LENGTH_SHORT).show();
+            } else {
+                addToListBasedOnAutoAccept(event);
+
+                // set status in Firebase
+                registrationRef.child("status").setValue("Pending").addOnCompleteListener(updateTask -> {
+                    if (updateTask.isSuccessful()) {
+                        Toast.makeText(context, "Successfully applied for the event!", Toast.LENGTH_SHORT).show();
+                        holder.statusTextView.setText("Status: Applied");
+                    } else {
+                        Toast.makeText(context, "Failed to apply for the event!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                notifyDataSetChanged();
+            }
         });
 
         return listItem;
@@ -125,7 +161,7 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
     }
 
     private static class ViewHolder {
-        TextView eventTitleTextView, descriptionTextView, addressEventTextView, startTimeTextView;
+        TextView eventTitleTextView, descriptionTextView, addressEventTextView, startTimeTextView,statusTextView;;
         Button JoinView;
     }
 
@@ -143,12 +179,14 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
                     // Create temporary lists if the event was not retrieved
                     List<Attendee> pendingAttendeesList = eventFromDb.getPendingAttendeesList() != null ? eventFromDb.getPendingAttendeesList() : new ArrayList<>();
                     List<Attendee> acceptedAttendeesList = eventFromDb.getAcceptedAttendeesList() != null ? eventFromDb.getAcceptedAttendeesList() : new ArrayList<>();
+                    String status;
 
                     // Check the auto-accept status and add the attendee accordingly
                     if ("On".equals(event.getAutoAccept())) {
                         // Log the action and add attendee to the accepted list in Firebase
                         Log.d("EventAttendeePageAdapter", "Auto accept is ON. Adding attendee to accepted list. Event ID: " + event.getEventId());
                         acceptedAttendeesList.add(attendee);  // Add the second attendee to the accepted list
+                        status = "Accepted";
                         Toast.makeText(context, "You have been added to the accepted list!", Toast.LENGTH_SHORT).show();
 
 
@@ -158,6 +196,7 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
                         // Add attendee to the pending list in Firebase
                         Log.d("EventAttendeePageAdapter", "Auto accept is OFF. Adding attendee to pending list. Event ID: " + event.getEventId());
                         pendingAttendeesList.add(attendee);  // Add the first attendee to the pending list
+                        status = "Pending";
                         Toast.makeText(context, "Your registration is pending!", Toast.LENGTH_SHORT).show();
 
                         attendee.addEventId(event.getEventId());
@@ -187,6 +226,10 @@ public class EventAttendeePageAdapter extends ArrayAdapter<Event> {
                             Log.d("EventAttendeePageAdapter", "Failed to update event. Event ID: " + event.getEventId());
                         }
                     });
+
+                    DatabaseReference registrationRef = eventRef.child("registrations").child(uid);
+                    registrationRef.child("status").setValue(status);
+                    registrationRef.child("timestamp").setValue(System.currentTimeMillis());
 
                     // Now update the Attendee object in the "users" node
                     attendeeRef.addListenerForSingleValueEvent(new ValueEventListener() {

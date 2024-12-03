@@ -29,12 +29,12 @@ public class EventRequestPage extends AppCompatActivity {
     private List<Attendee> pendingAttendees = new ArrayList<>();
     private TextView headingTextView, descriptionTextView, dateTextView;
     private String uid;
+    private Event event;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_requests);
-
 
         // Retrieve UID from the Intent
         uid = getIntent().getStringExtra("uid");
@@ -43,42 +43,38 @@ public class EventRequestPage extends AppCompatActivity {
         pendingAttendeesListView = findViewById(R.id.pendingAttendeesListView);
         Button backButton = findViewById(R.id.backButton);
 
-
         headingTextView = findViewById(R.id.eventsRequestTitle);
         descriptionTextView = findViewById(R.id.eventsRequestDescription);
         dateTextView = findViewById(R.id.eventsRequestDate);
 
+        // Initialize adapters
         acceptedAdapter = new AcceptedAttendeesAdapter(this, acceptedAttendees);
         acceptedAttendeesListView.setAdapter(acceptedAdapter);
 
-        pendingAdapter = new PendingAttendeesAdapter(this, pendingAttendees, acceptedAttendees, acceptedAdapter);
-        pendingAttendeesListView.setAdapter(pendingAdapter);
-
-        //fetching event data from EventAdapter
+        // Retrieve event details from Intent
         Intent intent = getIntent();
         String date = intent.getStringExtra("event_date");
         String eventID = intent.getStringExtra("eventID");
         String title = intent.getStringExtra("title");
         String description = intent.getStringExtra("description");
 
+        // Fetch attendees data from Firebase
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("events").child(eventID);
 
-        // Fetch the list of attendees first
+        // Fetch pending attendees
         databaseReference.child("pendingAttendeesList").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 // Fetching the data was successful
                 DataSnapshot dataSnapshot = task.getResult();
                 if (dataSnapshot.exists()) {
-                    // Declaring variables
-                    Attendee attendee;
+                    // Declaring variables for attendee data
                     String firstName, lastName, phoneNumber, address, userType, status;
 
-                    // Clear the list to avoid adding duplicates
+                    // Clear the pending attendees list to avoid duplicates
                     pendingAttendees.clear();
 
-                    // Iterate over each attendee in the list
+                    // Iterate through each pending attendee
                     for (DataSnapshot attendeeSnapshot : dataSnapshot.getChildren()) {
-                        // Get the attendee's information from Firebase
                         firstName = attendeeSnapshot.child("firstName").getValue(String.class);
                         lastName = attendeeSnapshot.child("lastName").getValue(String.class);
                         phoneNumber = attendeeSnapshot.child("phoneNumber").getValue(String.class);
@@ -86,40 +82,34 @@ public class EventRequestPage extends AppCompatActivity {
                         userType = attendeeSnapshot.child("userType").getValue(String.class);
                         status = attendeeSnapshot.child("status").getValue(String.class);
 
-                        // Create an Attendee object
-                        List<String> eventIds = new ArrayList<>();
-                        attendee = new Attendee(firstName, lastName, phoneNumber, address, userType, status, (ArrayList<String>) eventIds);
+                        // Create a new Attendee object
+                        Attendee attendee = new Attendee(firstName, lastName, phoneNumber, address, userType, status, new ArrayList<>());
 
-                        // Add the attendee to the list
+                        // Add attendee to the pending list
                         pendingAttendees.add(attendee);
                         pendingAdapter.notifyDataSetChanged();
-
                     }
                 } else {
                     Log.e("Firebase", "Event data not found for ID: " + eventID);
                 }
             } else {
-                // Handle failure
                 Log.e("Firebase", "Error getting data", task.getException());
             }
         });
 
-        // Now fetching data for accepted attendees list
+        // Fetch accepted attendees
         databaseReference.child("acceptedAttendeesList").get().addOnCompleteListener(task1 -> {
             if (task1.isSuccessful()) {
                 // Fetching the data was successful
                 DataSnapshot dataSnapshot = task1.getResult();
                 if (dataSnapshot.exists()) {
-                    // Declaring variables
-                    Attendee attendee;
                     String firstName, lastName, phoneNumber, address, userType, status;
 
-                    // Clear the list to avoid adding duplicates
+                    // Clear the accepted attendees list to avoid duplicates
                     acceptedAttendees.clear();
 
-                    // Iterate over each attendee in the list
+                    // Iterate through each accepted attendee
                     for (DataSnapshot attendeeSnapshot : dataSnapshot.getChildren()) {
-                        // Get the attendee's information from Firebase
                         firstName = attendeeSnapshot.child("firstName").getValue(String.class);
                         lastName = attendeeSnapshot.child("lastName").getValue(String.class);
                         phoneNumber = attendeeSnapshot.child("phoneNumber").getValue(String.class);
@@ -127,11 +117,10 @@ public class EventRequestPage extends AppCompatActivity {
                         userType = attendeeSnapshot.child("userType").getValue(String.class);
                         status = attendeeSnapshot.child("status").getValue(String.class);
 
-                        // Create an Attendee object
-                        List<String> eventIds = new ArrayList<>();
-                        attendee = new Attendee(firstName, lastName, phoneNumber, address, userType, status, (ArrayList<String>) eventIds);
+                        // Create a new Attendee object
+                        Attendee attendee = new Attendee(firstName, lastName, phoneNumber, address, userType, status, new ArrayList<>());
 
-                        // Add the attendee to the list
+                        // Add attendee to the accepted list
                         acceptedAttendees.add(attendee);
                         acceptedAdapter.notifyDataSetChanged();
                     }
@@ -139,17 +128,21 @@ public class EventRequestPage extends AppCompatActivity {
                     Log.e("Firebase", "Event data not found for ID: " + eventID);
                 }
             } else {
-                // Handle failure
                 Log.e("Firebase", "Error getting data", task1.getException());
             }
         });
 
+        // Set event details on the page
         headingTextView.setText(title);
         descriptionTextView.setText(description);
         dateTextView.setText(date);
 
+        // Initialize pending adapter with event ID
+        pendingAdapter = new PendingAttendeesAdapter(this, pendingAttendees, acceptedAttendees, acceptedAdapter);
+        pendingAttendeesListView.setAdapter(pendingAdapter);
+
         backButton.setOnClickListener(v -> {
-            //update changes to Db when finishing operations
+            // Update Firebase when navigating back
             updateAttendeesInFirebase(databaseReference);
             Intent intent2 = new Intent(EventRequestPage.this, OrganizerPage.class);
             intent2.putExtra("uid", uid);
@@ -157,7 +150,7 @@ public class EventRequestPage extends AppCompatActivity {
             finish();
         });
 
-        //Approve all button
+        // Approve all pending attendees
         Button approveAll = findViewById(R.id.approveAll);
         approveAll.setOnClickListener(v -> {
             acceptedAttendees.addAll(pendingAttendees);
@@ -168,12 +161,12 @@ public class EventRequestPage extends AppCompatActivity {
 
             acceptedAdapter.notifyDataSetChanged();
             pendingAdapter.notifyDataSetChanged();
-
         });
     }
 
+    // Save updated attendees to Firebase
     public void updateAttendeesInFirebase(DatabaseReference databaseReference){
-        //save updated pendingAttendees list
+        // Save updated pending attendees list
         databaseReference.child("pendingAttendeesList").setValue(pendingAdapter.getPendingAttendees())
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -183,7 +176,7 @@ public class EventRequestPage extends AppCompatActivity {
                     }
                 });
 
-        //save updated acceptedAttendees list
+        // Save updated accepted attendees list
         databaseReference.child("acceptedAttendeesList").setValue(acceptedAdapter.getAcceptedAttendees())
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -194,3 +187,4 @@ public class EventRequestPage extends AppCompatActivity {
                 });
     }
 }
+
