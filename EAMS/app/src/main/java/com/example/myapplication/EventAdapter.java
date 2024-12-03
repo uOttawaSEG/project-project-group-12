@@ -195,18 +195,16 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
                                                 if (eventFromDb != null) {
                                                     // Retrieve attendee lists or initialize them as empty lists
-                                                    List<Attendee> pendingAttendeesList = eventFromDb.getPendingAttendeesList() != null
-                                                            ? eventFromDb.getPendingAttendeesList()
-                                                            : new ArrayList<>();
+
                                                     List<Attendee> acceptedAttendeesList = eventFromDb.getAcceptedAttendeesList() != null
                                                             ? eventFromDb.getAcceptedAttendeesList()
                                                             : new ArrayList<>();
 
                                                     // Check if either list contains elements
-                                                    if (!pendingAttendeesList.isEmpty() || !acceptedAttendeesList.isEmpty()) {
+                                                    if (!acceptedAttendeesList.isEmpty()) {
                                                         new AlertDialog.Builder(v1.getContext())
                                                                 .setTitle("Error")
-                                                                .setMessage("You can't delete an event with attendees in it.")
+                                                                .setMessage("You can't delete an event with accepted attendees in it.")
                                                                 .setPositiveButton("OK", null)
                                                                 .show();
                                                     } else {
