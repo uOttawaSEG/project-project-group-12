@@ -102,7 +102,9 @@ public class EventListActivity extends AppCompatActivity {
 
                 //initializes the adapter inside the loop (but only once in the end) because of asynchronous firebase calls
                 if (eventsFetched[0] == eventIds.size()) {
-                    mEventAdapter = new MyEventAdapter(EventListActivity.this, mEventList);
+                    Log.d("Firebase", "users uid " + uid);
+                    Log.d("Firebase", "attendee name " + attendee.getFirstName());
+                    mEventAdapter = new MyEventAdapter(EventListActivity.this, mEventList, uid, attendee);
                     mEventListView = findViewById(R.id.event_list_view_my);
                     mEventListView.setAdapter(mEventAdapter);
                     mEventAdapter.notifyDataSetChanged(); // Ensure the adapter updates with the fetched data
