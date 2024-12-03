@@ -29,7 +29,7 @@ public class EventRequestPage extends AppCompatActivity {
     private List<Attendee> pendingAttendees = new ArrayList<>();
     private TextView headingTextView, descriptionTextView, dateTextView;
     private String uid;
-
+    private String currentEventId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +51,7 @@ public class EventRequestPage extends AppCompatActivity {
         acceptedAdapter = new AcceptedAttendeesAdapter(this, acceptedAttendees);
         acceptedAttendeesListView.setAdapter(acceptedAdapter);
 
-        pendingAdapter = new PendingAttendeesAdapter(this, pendingAttendees, acceptedAttendees, acceptedAdapter);
+        pendingAdapter = new PendingAttendeesAdapter(this, pendingAttendees, acceptedAttendees, acceptedAdapter,currentEventId);
         pendingAttendeesListView.setAdapter(pendingAdapter);
 
         //fetching event data from EventAdapter
@@ -61,6 +61,7 @@ public class EventRequestPage extends AppCompatActivity {
         String title = intent.getStringExtra("title");
         String description = intent.getStringExtra("description");
 
+        assert eventID != null;
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("events").child(eventID);
 
         // Fetch the list of attendees first

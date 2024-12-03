@@ -8,13 +8,20 @@
     <!-- Event Title TextView -->
     <TextView
         android:id="@+id/event_title_my"
-        android:layout_width="0dp"
+        android:layout_width="129dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Event Title"
         android:textSize="16sp" />
 
     <!-- Leave Button -->
+    <TextView
+        android:id="@+id/eventStatus"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="TextView" />
+
     <Button
         android:id="@+id/leave_button_my"
         android:layout_width="wrap_content"

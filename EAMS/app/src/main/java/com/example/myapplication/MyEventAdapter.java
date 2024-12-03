@@ -9,9 +9,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,26 +49,75 @@ public class MyEventAdapter extends ArrayAdapter<Event> {
 
         // Set up the text views
         TextView titleTextView = convertView.findViewById(R.id.event_title_my);
+        TextView statusTextView = convertView.findViewById(R.id.eventStatus);
         titleTextView.setText(event.getTitle());
+
+        // Check the attendee status before proceeding
+        DatabaseReference registrationRef = FirebaseDatabase.getInstance()
+                .getReference("events")
+                .child(event.getEventId())
+                .child("registrations")
+                .child(uid); // Use the new uid structure
+
+        // Fetch and display the registration status
+        registrationRef.child("status").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                String status = task.getResult().getValue(String.class);
+                statusTextView.setText("Status: " + (status != null ? status : "Unknown"));
+            } else {
+                statusTextView.setText("Status: Unknown");
+            }
+        });
 
         // Set the 'Leave' button and the popup dialog functionality
         Button leaveButton = convertView.findViewById(R.id.leave_button_my);
         leaveButton.setOnClickListener(v -> {
             // Show a confirmation dialog when "Leave" button is clicked
-            new AlertDialog.Builder(mContext)
-                    .setMessage("Are you sure you want to leave this event?")
-                    .setPositiveButton("Yes", (dialog, which) -> {
-                        // Handle leaving event logic here
-                        // For example, remove the event from the list or update the status
-                        removeAttendeeFromPendingList(mEventList.get(position));
+            long currentTimeMillis = System.currentTimeMillis();
+            long eventStartTimeMillis = event.getStartTime().getTime();
 
-                        mEventList.remove(position);
-                        notifyDataSetChanged();
-                    })
-                    .setNegativeButton("No", null)
-                    .show();
+            // Check if the start time is more than 24 hours from now
+            if (eventStartTimeMillis - currentTimeMillis <= 24 * 60 * 60 * 1000) {
+                Toast.makeText(mContext, "You cannot leave this event as it starts in less than 24 hours.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+
+
+            registrationRef.child("status").get().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult() != null) {
+                    String status = task.getResult().getValue(String.class);
+
+                    if ("Rejected".equalsIgnoreCase(status)) {
+                        new AlertDialog.Builder(mContext)
+                                .setMessage("You cannot leave this event as your status is 'Rejected'.")
+                                .setPositiveButton("OK", null)
+                                .show();
+                    } else if ("Pending".equalsIgnoreCase(status) || "Approved".equalsIgnoreCase(status)) {
+                        // Original leave logic of the new version
+                        new AlertDialog.Builder(mContext)
+                                .setMessage("Are you sure you want to leave this event?")
+                                .setPositiveButton("Yes", (dialog, which) -> {
+                                    removeAttendeeFromPendingList(event);
+                                    mEventList.remove(position);
+                                    notifyDataSetChanged();
+                                })
+                                .setNegativeButton("No", null)
+                                .show();
+                    } else {
+                        new AlertDialog.Builder(mContext)
+                                .setMessage("Your status is unknown so you can't leave this event.")
+                                .setPositiveButton("OK", null)
+                                .show();
+                    }
+                } else {
+                    new AlertDialog.Builder(mContext)
+                            .setMessage("Failed to retrieve your status. Please try again later.")
+                            .setPositiveButton("OK", null)
+                            .show();
+                }
+            });
         });
-
         // Set up the clickable text view for the event details popup
         titleTextView.setOnClickListener(v -> {
             // Show event details in a popup dialog

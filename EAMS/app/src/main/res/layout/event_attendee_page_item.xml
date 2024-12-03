@@ -27,8 +27,8 @@
         android:layout_marginTop="8dp"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@id/JoinEvent"
         app:layout_constraintEnd_toStartOf="@id/startTime"
+        app:layout_constraintStart_toEndOf="@id/JoinEvent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Event Title" />
 
@@ -48,9 +48,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/eventTitleTextView"
-        app:layout_constraintTop_toBottomOf="@id/eventTitleTextView"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/eventTitleTextView">
 
         <TextView
             android:id="@+id/eventDescriptionTextView"
@@ -65,8 +65,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:textSize="14sp"
-            android:text="Address of the Event" />
+            android:text="Address of the Event"
+            android:textSize="14sp" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/eventStatus_eventlist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="80dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
