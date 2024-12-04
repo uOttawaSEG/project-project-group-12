@@ -26,5 +26,6 @@
         android:id="@+id/leave_button_my"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/darker_gray"
         android:text="Leave" />
 </LinearLayout>
