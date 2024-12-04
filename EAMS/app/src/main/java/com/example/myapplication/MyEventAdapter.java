@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -16,6 +17,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -48,16 +50,81 @@ public class MyEventAdapter extends ArrayAdapter<Event> {
         // Set up the text views
         TextView titleTextView = convertView.findViewById(R.id.event_title_my);
         titleTextView.setText(event.getTitle());
+        TextView statusTextView = convertView.findViewById(R.id.eventStatus);
+
+        DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference("events").child(event.getEventId());
+        eventRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Event updatedEvent = dataSnapshot.getValue(Event.class);
+                if (updatedEvent != null) {
+                    List<Attendee> pendingAttendeesList = updatedEvent.getPendingAttendeesList();
+                    List<Attendee> acceptedAttendeesList = updatedEvent.getAcceptedAttendeesList();
+
+
+                    if (pendingAttendeesList == null) pendingAttendeesList = new ArrayList<>();
+                    if (acceptedAttendeesList == null) acceptedAttendeesList = new ArrayList<>();
+
+
+                    String fullName = attendee.getFirstName() + " " + attendee.getLastName();
+                    boolean isInPending = false;
+                    boolean isInAccepted = false;
+
+
+                    for (Attendee a : pendingAttendeesList) {
+                        String listFullName = a.getFirstName() + " " + a.getLastName();
+                        if (listFullName.equals(fullName)) {
+                            isInPending = true;
+                            break;
+                        }
+                    }
+                    for (Attendee a : acceptedAttendeesList) {
+                        String listFullName = a.getFirstName() + " " + a.getLastName();
+                        if (listFullName.equals(fullName)) {
+                            isInAccepted = true;
+                            break;
+                        }
+                    }
+
+
+                    if (isInAccepted) {
+                        statusTextView.setText("Approved");
+                    } else if (isInPending) {
+                        statusTextView.setText("Pending");
+                    } else {
+                        statusTextView.setText("Rejected");
+                    }
+                } else {
+                    statusTextView.setText("Event data not available");
+                    Log.e("MyEventAdapter", "Event not found in database: " + event.getEventId());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("MyEventAdapter", "Failed to fetch event data: " + databaseError.getMessage());
+            }
+        });
+
 
         // Set the 'Leave' button and the popup dialog functionality
         Button leaveButton = convertView.findViewById(R.id.leave_button_my);
         leaveButton.setOnClickListener(v -> {
+
             // Show a confirmation dialog when "Leave" button is clicked
             new AlertDialog.Builder(mContext)
                     .setMessage("Are you sure you want to leave this event?")
                     .setPositiveButton("Yes", (dialog, which) -> {
+                        // Check if the event starts in less than 24 hours
+                        long currentTimeMillis = System.currentTimeMillis();
+                        long eventStartTimeMillis = event.getStartTime().getTime(); // Ensure startTime is Date type
+
+                        if (eventStartTimeMillis - currentTimeMillis <= 24 * 60 * 60 * 1000) {
+                            Toast.makeText(mContext, "Cannot leave: Event starts in less than 24 hours.", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
                         // Handle leaving event logic here
-                        // For example, remove the event from the list or update the status
                         removeAttendeeFromPendingList(mEventList.get(position));
 
                         mEventList.remove(position);
@@ -66,23 +133,6 @@ public class MyEventAdapter extends ArrayAdapter<Event> {
                     .setNegativeButton("No", null)
                     .show();
         });
-
-        // Set up the clickable text view for the event details popup
-        titleTextView.setOnClickListener(v -> {
-            // Show event details in a popup dialog
-            String details = "Description: " + event.getDescription() +
-                    "\nAddress: " + event.getEventAddress() +
-                    "\nStart Time: " + event.getStartTime().toString() +
-                    "\nEnd Time: " + event.getEndTime().toString();
-
-            new AlertDialog.Builder(mContext)
-                    .setTitle(event.getTitle())
-                    .setMessage(details)
-                    .setPositiveButton("Close", null)
-                    .show();
-        });
-
-
         return convertView;
     }
 

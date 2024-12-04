@@ -52,7 +52,17 @@ public class Attendee extends User {
             eventIds.add(eventId);
         }
     }
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Attendee attendee = (Attendee) o;
+        return getUid() != null && getUid().equals(attendee.getUid());
+    }
 
+    @Override
+    public int hashCode() {
+        return getUid() != null ? getUid().hashCode() : 0;
+    }
     /**
      * Removes an event ID from the list.
      *
