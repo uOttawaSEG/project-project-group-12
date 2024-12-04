@@ -30,10 +30,6 @@ public class RegistrationValidator {
         return address != null && !address.trim().isEmpty();
     }
 
-    public static boolean isRadioGroupSelected(int radioButtonId) {
-        return radioButtonId != -1;
-    }
-
     public static boolean isValidOrganizationName(String organizationName) {
         return organizationName != null && !organizationName.trim().isEmpty();
     }

@@ -300,10 +300,6 @@ public class RegistrationPage extends AppCompatActivity {
             allFieldsValid = false;
         }
 
-        if (!RegistrationValidator.isRadioGroupSelected(radioGroupField.getCheckedRadioButtonId())) {
-            Toast.makeText(this, "Please select registering as Attendee or Organizer", Toast.LENGTH_SHORT).show();
-            allFieldsValid = false;
-        }
 
         if (((RadioButton) findViewById(radioGroupField.getCheckedRadioButtonId())).getText().toString().equals("Organizer")
                 && !RegistrationValidator.isValidOrganizationName(organizationNameField.getText().toString())) {
