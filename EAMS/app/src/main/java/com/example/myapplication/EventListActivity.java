@@ -19,6 +19,7 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -93,8 +94,23 @@ public class EventListActivity extends AppCompatActivity {
             eventsDatabaseReference.child(eventId).get().addOnSuccessListener(dataSnapshot -> {
                 if (dataSnapshot.exists()) {
                     Event event = dataSnapshot.getValue(Event.class);
+
                     if (event != null) {
                         mEventList.add(event);
+
+                        //
+                        Date currentTIme = new Date();
+
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(currentTIme);
+                        calendar.add(Calendar.HOUR_OF_DAY, 24);
+
+                        Date updatedDate = calendar.getTime();
+
+                        if (event.getStartTime().compareTo(updatedDate) <= 0){
+                            String msg = event.getTitle() + " starts in les sthan 24 hours";
+                            Toast.makeText(EventListActivity.this, msg, Toast.LENGTH_LONG).show();
+                        }
                     }
                 }
 
