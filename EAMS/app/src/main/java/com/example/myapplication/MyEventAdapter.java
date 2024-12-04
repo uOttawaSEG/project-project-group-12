@@ -20,8 +20,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MyEventAdapter extends ArrayAdapter<Event> {
     private Context mContext;
@@ -133,6 +136,18 @@ public class MyEventAdapter extends ArrayAdapter<Event> {
                     .setNegativeButton("No", null)
                     .show();
         });
+
+        // Set an OnClickListener for the title to show event details
+        titleTextView.setOnClickListener(v -> {
+            String formattedTime = formatEventTime(event.getStartTime(), event.getEndTime());
+            new AlertDialog.Builder(mContext)
+                    .setTitle(event.getTitle())
+                    .setMessage("Description: " + event.getDescription() + "\n\n" +
+                            "Address: " + event.getEventAddress() + "\n\n" +
+                            "Time: " + formattedTime)
+                    .setPositiveButton("OK", null)
+                    .show();
+        });
         return convertView;
     }
 
@@ -225,5 +240,10 @@ public class MyEventAdapter extends ArrayAdapter<Event> {
                 Log.d("EventAttendeePageAdapter", "Failed to fetch event data: " + databaseError.getMessage());
             }
         });
+    }
+
+    private String formatEventTime(Date startTime, Date endTime) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault());
+        return dateFormat.format(startTime) + " - " + dateFormat.format(endTime);
     }
 }
